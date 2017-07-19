@@ -1,6 +1,7 @@
 require "dotenv/load"
 require "faraday"
 require "json"
+require "securerandom"
 
 require "lightrail_client_ruby/version"
 

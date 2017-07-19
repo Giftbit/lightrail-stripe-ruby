@@ -3,28 +3,40 @@ require "spec_helper"
 RSpec.describe LightrailClientRuby::GiftCharge do
 
   describe ".create" do
-    it "creates a drawdown transaction by default" do
-      charge_object = {
-          amount: 1,
-          currency: 'USD',
-          userSuppliedId: 'ruby-test-' + rand().to_s,
+    context "when given valid params" do
+      it "creates a drawdown transaction with minimum required params" do
+        charge_object = {
+            amount: 1,
+            currency: 'USD',
           code: ENV['TEST_CODE'],
-      }
-      charge_response = LightrailClientRuby::GiftCharge.create(charge_object)
-      expect(charge_response['transaction']['transactionType']).to eq('DRAWDOWN')
+        }
+        charge_response = LightrailClientRuby::GiftCharge.create(charge_object)
+        expect(charge_response['transaction']['transactionType']).to eq('DRAWDOWN')
+      end
+
+      it "uses userSuppliedId if supplied in param hash" do
+        charge_object = {
+            amount: 1,
+            currency: 'USD',
+            code: ENV['TEST_CODE'],
+            userSuppliedId: 'test-charge-' + rand().to_s,
+        }
+        charge_response = LightrailClientRuby::GiftCharge.create(charge_object)
+        expect(charge_response['transaction']['userSuppliedId']).to eq(charge_object[:userSuppliedId])
+      end
+
+      it "creates a pending transaction when 'capture=false'" do
+        charge_object = {
+            amount: 1,
+            currency: 'USD',
+            code: ENV['TEST_CODE'],
+            capture: false,
+        }
+        charge_response = LightrailClientRuby::GiftCharge.create(charge_object)
+        expect(charge_response['transaction']['transactionType']).to eq('PENDING_CREATE')
+      end
     end
 
-    it "creates a pending transaction when 'capture=false'" do
-      charge_object = {
-          amount: 1,
-          currency: 'USD',
-          userSuppliedId: 'ruby-test-' + rand().to_s,
-          code: 'GFBT-ACXN5-KCT7Z-PYXZL-YLM4W',
-          capture: false,
-      }
-      charge_response = LightrailClientRuby::GiftCharge.create(charge_object)
-      expect(charge_response['transaction']['transactionType']).to eq('PENDING_CREATE')
-    end
   end
 
   describe ".cancel" do
@@ -32,7 +44,6 @@ RSpec.describe LightrailClientRuby::GiftCharge do
       charge_object_to_handle = {
           amount: 1,
           currency: 'USD',
-          userSuppliedId: 'ruby-test-' + rand().to_s,
           code: ENV['TEST_CODE'],
           capture: false,
       }
@@ -47,7 +58,6 @@ RSpec.describe LightrailClientRuby::GiftCharge do
       charge_object_to_handle = {
           amount: 1,
           currency: 'USD',
-          userSuppliedId: 'ruby-test-' + rand().to_s,
           code: ENV['TEST_CODE'],
           capture: false,
       }

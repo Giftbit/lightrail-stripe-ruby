@@ -7,7 +7,6 @@ RSpec.describe LightrailClientRuby::Refund do
       charge_object = {
           amount: 1,
           currency: 'USD',
-          userSuppliedId: 'ruby-test-' + rand().to_s,
           code: ENV['TEST_CODE'],
           capture: true,
       }

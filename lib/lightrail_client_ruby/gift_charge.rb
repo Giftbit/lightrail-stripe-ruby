@@ -8,8 +8,7 @@ module LightrailClientRuby
       # Replace positive 'amount' to charge (Stripe expectation) with negative 'value' to charge (Lightrail expectation)
       charge_object_to_send_to_lightrail[:value] = -charge_object_to_send_to_lightrail.delete(:amount)
       # Replace 'capture' (Stripe expectation) with 'pending' (Lightrail expectation), using inverse value if key is present
-      # charge_object_to_send_to_lightrail[:pending] = charge_object_to_send_to_lightrail[:capture] === nil ? false : !charge_object_to_send_to_lightrail.delete(:capture)
-      charge_object_to_send_to_lightrail[:pending] = !charge_object_to_send_to_lightrail.delete(:capture)
+      charge_object_to_send_to_lightrail[:pending] = charge_object_to_send_to_lightrail[:capture] === nil ? false : !charge_object_to_send_to_lightrail.delete(:capture)
 
       resp = Connection.connection.post do |req|
         req.url "#{Connection.api_base}/codes/#{code}/transactions"

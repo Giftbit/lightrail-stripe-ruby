@@ -3,12 +3,24 @@ require "spec_helper"
 RSpec.describe LightrailClientRuby::GiftCharge do
 
   describe ".create" do
-    it "creates a pending transaction by default" do
+    it "creates a drawdown transaction by default" do
       charge_object = {
           amount: 1,
           currency: 'USD',
           userSuppliedId: 'ruby-test-' + rand().to_s,
           code: ENV['TEST_CODE'],
+      }
+      charge_response = LightrailClientRuby::GiftCharge.create(charge_object)
+      expect(charge_response['transaction']['transactionType']).to eq('DRAWDOWN')
+    end
+
+    it "creates a pending transaction when 'capture=false'" do
+      charge_object = {
+          amount: 1,
+          currency: 'USD',
+          userSuppliedId: 'ruby-test-' + rand().to_s,
+          code: 'GFBT-ACXN5-KCT7Z-PYXZL-YLM4W',
+          capture: false,
       }
       charge_response = LightrailClientRuby::GiftCharge.create(charge_object)
       expect(charge_response['transaction']['transactionType']).to eq('PENDING_CREATE')

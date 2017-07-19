@@ -2,7 +2,7 @@ module LightrailClientRuby
   class GiftCharge
     def self.create (charge_object)
 
-      charge_object_to_send_to_lightrail = charge_object.clone # TODO: decide whether it is problematic to use a shallow copy of the charge_object arg
+      charge_object_to_send_to_lightrail = charge_object.clone
       code = charge_object_to_send_to_lightrail.delete(:code)
 
       # Replace positive 'amount' to charge (Stripe expectation) with negative 'value' to charge (Lightrail expectation)

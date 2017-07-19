@@ -7,7 +7,7 @@ module LightrailClientRuby
 
       resp = Connection.connection.post do |req|
         req.url "#{Connection.api_base}/cards/#{card_id}/transactions/#{transaction_id}/refund"
-        req.body = JSON.generate({userSuppliedId: "ruby-refunding-#{transaction_id}"})
+        req.body = JSON.generate({userSuppliedId: "#{transaction_id}-refund"})
       end
 
       JSON.parse(resp.body)

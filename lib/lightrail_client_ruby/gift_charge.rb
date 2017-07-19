@@ -34,7 +34,7 @@ module LightrailClientRuby
       transaction_id = original_transaction_response['transaction']['transactionId']
       card_id = original_transaction_response['transaction']['cardId']
       body = {
-          userSuppliedId: "ruby-handle-pending-#{void_or_capture}-" + rand().to_s,
+          userSuppliedId: "#{transaction_id}-#{void_or_capture}",
       }
 
       resp = Connection.connection.post do |req|

@@ -9,6 +9,7 @@ require "lightrail_client_ruby/ping"
 require "lightrail_client_ruby/gift_value"
 require "lightrail_client_ruby/gift_charge"
 require "lightrail_client_ruby/gift_fund"
+require "lightrail_client_ruby/refund"
 
 module LightrailClientRuby
 end

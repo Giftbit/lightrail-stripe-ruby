@@ -13,7 +13,7 @@ module LightrailClientRuby
       charge_object_to_send_to_lightrail[:userSuppliedId] ||=  SecureRandom::uuid
 
       resp = Connection.connection.post do |req|
-        req.url "#{Connection.api_base}/codes/#{code}/transactions"
+        req.url "codes/#{code}/transactions"
         req.body = JSON.generate(charge_object_to_send_to_lightrail)
       end
 
@@ -38,7 +38,7 @@ module LightrailClientRuby
       }
 
       resp = Connection.connection.post do |req|
-        req.url "#{Connection.api_base}/cards/#{card_id}/transactions/#{transaction_id}/#{void_or_capture}"
+        req.url "cards/#{card_id}/transactions/#{transaction_id}/#{void_or_capture}"
         req.body = JSON.generate(body)
       end
 

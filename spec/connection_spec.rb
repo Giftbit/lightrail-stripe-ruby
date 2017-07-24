@@ -9,6 +9,10 @@ RSpec.describe LightrailClientRuby::Connection do
   end
 
   describe ".connection" do
+    it "has the right base URL" do
+      expect(LightrailClientRuby::Connection.connection.url_prefix.to_s).to eq(LightrailClientRuby::Connection.api_base)
+    end
+
     it "has the right headers" do
       expect(LightrailClientRuby::Connection.connection.headers['Content-Type']).to eq('application/json; charset=utf-8')
       # expect(LightrailClientRuby::Connection.connection.headers['Authorization'].to eq('Bearer'))

@@ -8,7 +8,7 @@ module LightrailClientRuby
     @api_key = ENV['LIGHTRAIL_API_KEY']
 
     def self.connection
-      conn = Faraday.new
+      conn = Faraday.new self.api_base
       conn.headers['Content-Type'] = 'application/json; charset=utf-8'
       conn.headers['Authorization'] = "Bearer #{self.api_key}"
       conn

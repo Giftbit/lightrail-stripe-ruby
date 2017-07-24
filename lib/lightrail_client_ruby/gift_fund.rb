@@ -8,7 +8,7 @@ module LightrailClientRuby
       fund_object_to_send_to_lightrail[:userSuppliedId] ||=  SecureRandom::uuid
 
       resp = Connection::connection.post do |req|
-        req.url "#{Connection.api_base}/cards/#{card_id}/transactions"
+        req.url "cards/#{card_id}/transactions"
         req.body = JSON.generate(fund_object_to_send_to_lightrail)
       end
 

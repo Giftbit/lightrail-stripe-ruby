@@ -1,3 +1,5 @@
+require "dotenv/load"
+
 require "lightrail_client_ruby/version"
 
 module LightrailClientRuby

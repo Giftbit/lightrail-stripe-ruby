@@ -37,6 +37,14 @@ RSpec.describe LightrailClientRuby::GiftCharge do
       end
     end
 
+    context "when given bad/missing params" do
+      it "throws an error when required params are missing" do
+        expect{LightrailClientRuby::GiftCharge.create()}.to raise_error(ArgumentError)
+        expect{LightrailClientRuby::GiftCharge.create({})}.to raise_error(ArgumentError)
+        expect{LightrailClientRuby::GiftCharge.create({code: ENV['TEST_CODE']})}.to raise_error(ArgumentError)
+      end
+    end
+
   end
 
   describe ".cancel" do

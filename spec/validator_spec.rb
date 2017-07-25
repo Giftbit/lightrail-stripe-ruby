@@ -1,6 +1,25 @@
 require "spec_helper"
 
 RSpec.describe LightrailClientRuby::Validator do
+  describe ".is_valid_charge_object?" do
+    it "returns true when the required keys are present" do
+      charge_object = {
+          amount: 1,
+          currency: 'USD',
+          code: ENV['TEST_CODE'],
+      }
+      expect(LightrailClientRuby::Validator.is_valid_charge_object?(charge_object)).to be true
+    end
+
+    it "returns false when missing required params" do
+      charge_object = {
+          amount: 1,
+          currency: 'USD',
+      }
+      expect(LightrailClientRuby::Validator.is_valid_charge_object?(charge_object)).to be false
+      expect(LightrailClientRuby::Validator.is_valid_charge_object?({})).to be false
+    end
+  end
 
   describe ".is_valid_card_id?" do
     it "returns true for a string of the right format" do

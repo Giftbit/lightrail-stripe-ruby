@@ -1,7 +1,8 @@
 module LightrailClientRuby
   class Validator
     def self.is_valid_charge_object? (charge_object)
-      self.is_valid_code?(charge_object[:code]) &&
+      (charge_object.is_a? Hash) &&
+          self.is_valid_code?(charge_object[:code]) &&
           self.is_valid_amount?(charge_object[:amount]) &&
           self.is_valid_currency?(charge_object[:currency])
     end

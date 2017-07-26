@@ -6,6 +6,14 @@ module LightrailClientRuby
           self.is_valid_currency?(charge_object[:currency])
     end
 
+    def self.is_valid_transaction_response? (transaction_response)
+      (transaction_response.is_a? Hash) &&
+          (transaction_response['transaction'].is_a? Hash) &&
+          !transaction_response['transaction'].empty? &&
+          self.is_valid_transaction_id?(transaction_response['transaction']['transactionId']) &&
+          self.is_valid_card_id?(transaction_response['transaction']['cardId'])
+    end
+
     private
 
     def self.is_valid_card_id? (card_id)

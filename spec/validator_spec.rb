@@ -21,6 +21,29 @@ RSpec.describe LightrailClientRuby::Validator do
     end
   end
 
+  describe ".is_valid_transaction_response?" do
+    it "returns true when the required keys are present & formatted" do
+      transaction_response = {
+          'transaction' => {
+              'transactionId' => ENV['TEST_TRANSACTION_ID'],
+              'cardId' => ENV['TEST_CARD']
+          }
+      }
+      expect(LightrailClientRuby::Validator.is_valid_transaction_response?(transaction_response)).to be true
+    end
+
+    it "returns false when missing required params" do
+      transaction_response = {
+          'transaction' => {
+              'transactionId' => ENV['TEST_TRANSACTION_ID'],
+          }
+      }
+      expect(LightrailClientRuby::Validator.is_valid_transaction_response?(transaction_response)).to be false
+      expect(LightrailClientRuby::Validator.is_valid_transaction_response?({})).to be false
+      expect(LightrailClientRuby::Validator.is_valid_transaction_response?([])).to be false
+    end
+  end
+
   describe ".is_valid_card_id?" do
     it "returns true for a string of the right format" do
       expect(LightrailClientRuby::Validator.is_valid_card_id? (ENV['TEST_CARD'])).to be true

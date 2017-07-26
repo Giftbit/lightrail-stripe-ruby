@@ -36,18 +36,23 @@ module LightrailClientRuby
     private
 
     def self.handle_pending (original_transaction_response, void_or_capture)
-      transaction_id = original_transaction_response['transaction']['transactionId']
-      card_id = original_transaction_response['transaction']['cardId']
-      body = {
-          userSuppliedId: "#{transaction_id}-#{void_or_capture}",
-      }
+      if LightrailClientRuby::Validator.is_valid_transaction_response?(original_transaction_response)
+        transaction_id = original_transaction_response['transaction']['transactionId']
+        card_id = original_transaction_response['transaction']['cardId']
+        body = {
+            userSuppliedId: "#{transaction_id}-#{void_or_capture}",
+        }
 
-      resp = Connection.connection.post do |req|
-        req.url "cards/#{card_id}/transactions/#{transaction_id}/#{void_or_capture}"
-        req.body = JSON.generate(body)
+        resp = Connection.connection.post do |req|
+          req.url "cards/#{card_id}/transactions/#{transaction_id}/#{void_or_capture}"
+          req.body = JSON.generate(body)
+        end
+
+        JSON.parse(resp.body)
+
+      else
+        raise ArgumentError.new("Invalid original_transaction_response")
       end
-
-      JSON.parse(resp.body)
     end
 
   end

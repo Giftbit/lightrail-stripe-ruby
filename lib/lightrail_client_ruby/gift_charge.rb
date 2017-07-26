@@ -1,5 +1,6 @@
 module LightrailClientRuby
   class GiftCharge
+
     def self.create (charge_object)
       if LightrailClientRuby::Validator.is_valid_charge_object? (charge_object)
 

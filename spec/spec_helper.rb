@@ -11,4 +11,35 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+
+  # Ensure card balance will go back to same state after test suite runs
+
+  config.before(:suite) do
+    balance_response = LightrailClientRuby::GiftValue.retrieve(ENV['TEST_CODE'])
+    if (balance_response.is_a? Hash) && (balance_response['balance'].is_a? Hash)
+      $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS = balance_response['balance']['principal']['currentValue']
+    end
+    puts "Card balance before tests: #{$LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS}"
+  end
+
+  config.after(:suite) do
+    balance_response = LightrailClientRuby::GiftValue.retrieve(ENV['TEST_CODE'])
+    if (balance_response.is_a? Hash) && (balance_response['balance'].is_a? Hash)
+      balance_after_tests = balance_response['balance']['principal']['currentValue']
+    end
+
+    difference = $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS - balance_after_tests
+    fund_object_to_restore_balance = {
+        cardId: ENV['TEST_CARD_ID'],
+        amount: difference,
+        currency: ENV['TEST_CURRENCY'],
+        userSuppliedId: 'restoring-balance-after-tests-' + SecureRandom::uuid
+    }
+    restorative_transaction = LightrailClientRuby::GiftFund.create(fund_object_to_restore_balance)
+    confirmation_new_balance = restorative_transaction['transaction']['valueAvailableAfterTransaction']
+    puts "Card balance restored after tests: #{confirmation_new_balance}"
+    $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS = nil
+  end
+
 end

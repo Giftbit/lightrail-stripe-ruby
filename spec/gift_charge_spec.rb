@@ -1,7 +1,6 @@
 require "spec_helper"
 
 RSpec.describe LightrailClientRuby::GiftCharge do
-
   describe ".create" do
     context "when given valid params" do
       it "creates a drawdown transaction with minimum required params" do
@@ -105,5 +104,7 @@ RSpec.describe LightrailClientRuby::GiftCharge do
       end
     end
   end
+
+
 
 end

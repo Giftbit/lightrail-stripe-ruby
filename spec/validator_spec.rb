@@ -44,6 +44,23 @@ RSpec.describe LightrailClientRuby::Validator do
     end
   end
 
+  describe ".is_valid_fund_object?" do
+    it "returns true when the required keys are present & formatted" do
+      fund_object = {
+          cardId: ENV['TEST_CARD_ID'],
+          amount: 20,
+          currency: 'USD',
+      }
+      expect(LightrailClientRuby::Validator.is_valid_fund_object?(fund_object)).to be true
+    end
+
+    it "returns false when missing required params" do
+      expect(LightrailClientRuby::Validator.is_valid_fund_object?({amount: 1, currency: 'USD'})).to be false
+      expect(LightrailClientRuby::Validator.is_valid_fund_object?({})).to be false
+      expect(LightrailClientRuby::Validator.is_valid_fund_object?([])).to be false
+    end
+  end
+
   describe ".is_valid_card_id?" do
     it "returns true for a string of the right format" do
       expect(LightrailClientRuby::Validator.is_valid_card_id? (ENV['TEST_CARD_ID'])).to be true

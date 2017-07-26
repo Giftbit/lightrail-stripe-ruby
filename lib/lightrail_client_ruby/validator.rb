@@ -14,6 +14,13 @@ module LightrailClientRuby
           self.is_valid_card_id?(transaction_response['transaction']['cardId'])
     end
 
+    def self.is_valid_fund_object? (fund_object)
+      (fund_object.is_a? Hash) &&
+          self.is_valid_card_id?(fund_object[:cardId]) &&
+          self.is_valid_amount?(fund_object[:amount]) &&
+          self.is_valid_currency?(fund_object[:currency])
+    end
+
     private
 
     def self.is_valid_card_id? (card_id)

@@ -1,22 +1,28 @@
 module LightrailClientRuby
   class GiftCharge
     def self.create (charge_object)
-      charge_object_to_send_to_lightrail = charge_object.clone
-      code = charge_object_to_send_to_lightrail.delete(:code)
+      if LightrailClientRuby::Validator.is_valid_charge_object? (charge_object)
 
-      # Replace positive 'amount' to charge (Stripe expectation) with negative 'value' to charge (Lightrail expectation)
-      charge_object_to_send_to_lightrail[:value] = -charge_object_to_send_to_lightrail.delete(:amount)
-      # Replace 'capture' (Stripe expectation) with 'pending' (Lightrail expectation), using inverse value if key is present
-      charge_object_to_send_to_lightrail[:pending] = charge_object_to_send_to_lightrail[:capture] === nil ? false : !charge_object_to_send_to_lightrail.delete(:capture)
-      # Add 'userSuppliedId' if not present
-      charge_object_to_send_to_lightrail[:userSuppliedId] ||= SecureRandom::uuid
+        charge_object_to_send_to_lightrail = charge_object.clone
+        code = charge_object_to_send_to_lightrail.delete(:code)
 
-      resp = Connection.connection.post do |req|
-        req.url "codes/#{code}/transactions"
-        req.body = JSON.generate(charge_object_to_send_to_lightrail)
+        # Replace positive 'amount' to charge (Stripe expectation) with negative 'value' to charge (Lightrail expectation)
+        charge_object_to_send_to_lightrail[:value] = -charge_object_to_send_to_lightrail.delete(:amount)
+        # Replace 'capture' (Stripe expectation) with 'pending' (Lightrail expectation), using inverse value if key is present
+        charge_object_to_send_to_lightrail[:pending] = charge_object_to_send_to_lightrail[:capture] === nil ? false : !charge_object_to_send_to_lightrail.delete(:capture)
+        # Add 'userSuppliedId' if not present
+        charge_object_to_send_to_lightrail[:userSuppliedId] ||= SecureRandom::uuid
+
+        resp = Connection.connection.post do |req|
+          req.url "codes/#{code}/transactions"
+          req.body = JSON.generate(charge_object_to_send_to_lightrail)
+        end
+
+        JSON.parse(resp.body)
+
+      else
+        raise ArgumentError.new("Invalid charge_object")
       end
-
-      JSON.parse(resp.body)
     end
 
     def self.cancel (original_transaction_response)

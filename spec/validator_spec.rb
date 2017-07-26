@@ -26,7 +26,7 @@ RSpec.describe LightrailClientRuby::Validator do
       transaction_response = {
           'transaction' => {
               'transactionId' => ENV['TEST_TRANSACTION_ID'],
-              'cardId' => ENV['TEST_CARD']
+              'cardId' => ENV['TEST_CARD_ID']
           }
       }
       expect(LightrailClientRuby::Validator.is_valid_transaction_response?(transaction_response)).to be true
@@ -46,7 +46,7 @@ RSpec.describe LightrailClientRuby::Validator do
 
   describe ".is_valid_card_id?" do
     it "returns true for a string of the right format" do
-      expect(LightrailClientRuby::Validator.is_valid_card_id? (ENV['TEST_CARD'])).to be true
+      expect(LightrailClientRuby::Validator.is_valid_card_id? (ENV['TEST_CARD_ID'])).to be true
     end
 
     it "returns false for any other type" do
@@ -77,7 +77,7 @@ RSpec.describe LightrailClientRuby::Validator do
       expect(LightrailClientRuby::Validator.is_valid_transaction_id? (ENV['TEST_TRANSACTION_ID'])).to be true
     end
 
-    it "returns true false for any other type" do
+    it "returns false for any other type" do
       expect(LightrailClientRuby::Validator.is_valid_transaction_id? ('')).to be false
       # expect(LightrailClientRuby::Validator.is_transaction_id_valid? ('some random string')).to be false
       expect(LightrailClientRuby::Validator.is_valid_transaction_id? (123)).to be false

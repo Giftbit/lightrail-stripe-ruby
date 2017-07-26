@@ -8,7 +8,7 @@ RSpec.describe LightrailClientRuby::GiftFund do
         fund_object = {
             amount: 1,
             currency: 'USD',
-            cardId: ENV['TEST_CARD'],
+            cardId: ENV['TEST_CARD_ID'],
         }
         fund_response = LightrailClientRuby::GiftFund.create(fund_object)
         expect(fund_response['transaction']['transactionType']).to eq('FUND')

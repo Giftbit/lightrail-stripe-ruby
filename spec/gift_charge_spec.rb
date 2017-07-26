@@ -8,7 +8,7 @@ RSpec.describe LightrailClientRuby::GiftCharge do
         charge_object = {
             amount: 1,
             currency: 'USD',
-          code: ENV['TEST_CODE'],
+            code: ENV['TEST_CODE'],
         }
         charge_response = LightrailClientRuby::GiftCharge.create(charge_object)
         expect(charge_response['transaction']['transactionType']).to eq('DRAWDOWN')
@@ -39,9 +39,9 @@ RSpec.describe LightrailClientRuby::GiftCharge do
 
     context "when given bad/missing params" do
       it "throws an error when required params are missing" do
-        expect{LightrailClientRuby::GiftCharge.create()}.to raise_error(ArgumentError)
-        expect{LightrailClientRuby::GiftCharge.create({})}.to raise_error(ArgumentError)
-        expect{LightrailClientRuby::GiftCharge.create({code: ENV['TEST_CODE']})}.to raise_error(ArgumentError)
+        expect {LightrailClientRuby::GiftCharge.create()}.to raise_error(ArgumentError)
+        expect {LightrailClientRuby::GiftCharge.create({})}.to raise_error(ArgumentError)
+        expect {LightrailClientRuby::GiftCharge.create({code: ENV['TEST_CODE']})}.to raise_error(ArgumentError)
       end
     end
 

@@ -1,10 +1,7 @@
 module LightrailClientRuby
   class GiftValue
     def self.retrieve (code)
-      resp = Connection.connection.get do |req|
-        req.url "codes/#{code}/balance/details"
-      end
-      JSON.parse(resp.body)
+      LightrailClientRuby::Connection.make_get_request_and_parse_response("codes/#{code}/balance/details")
     end
   end
 end

@@ -14,12 +14,7 @@ module LightrailClientRuby
         # Add 'userSuppliedId' if not present
         charge_object_to_send_to_lightrail[:userSuppliedId] ||= SecureRandom::uuid
 
-        resp = Connection.connection.post do |req|
-          req.url "codes/#{code}/transactions"
-          req.body = JSON.generate(charge_object_to_send_to_lightrail)
-        end
-
-        JSON.parse(resp.body)
+        LightrailClientRuby::Connection.make_post_request_and_parse_response("codes/#{code}/transactions", charge_object_to_send_to_lightrail)
 
       else
         raise ArgumentError.new("Invalid charge_object")
@@ -44,12 +39,7 @@ module LightrailClientRuby
             userSuppliedId: "#{transaction_id}-#{void_or_capture}",
         }
 
-        resp = Connection.connection.post do |req|
-          req.url "cards/#{card_id}/transactions/#{transaction_id}/#{void_or_capture}"
-          req.body = JSON.generate(body)
-        end
-
-        JSON.parse(resp.body)
+        LightrailClientRuby::Connection.make_post_request_and_parse_response("cards/#{card_id}/transactions/#{transaction_id}/#{void_or_capture}", body)
 
       else
         raise ArgumentError.new("Invalid original_transaction_response")

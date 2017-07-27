@@ -14,5 +14,20 @@ module LightrailClientRuby
       conn
     end
 
+    def self.make_post_request_and_parse_response (url, body)
+      resp = LightrailClientRuby::Connection.connection.post do |req|
+        req.url url
+        req.body = JSON.generate(body)
+      end
+      JSON.parse(resp.body)
+    end
+
+    def self.make_get_request_and_parse_response (url)
+      resp = LightrailClientRuby::Connection.connection.get do |req|
+        req.url url
+      end
+      JSON.parse(resp.body)
+    end
+
   end
 end

@@ -5,12 +5,11 @@ module LightrailClientRuby
       card_id = transaction_object['transaction']['cardId']
       transaction_id = transaction_object['transaction']['transactionId']
 
-      resp = Connection.connection.post do |req|
-        req.url "cards/#{card_id}/transactions/#{transaction_id}/refund"
-        req.body = JSON.generate({userSuppliedId: "#{transaction_id}-refund"})
-      end
+      body = {
+          userSuppliedId: "#{transaction_id}-refund"
+      }
 
-      JSON.parse(resp.body)
+      LightrailClientRuby::Connection.make_post_request_and_parse_response("cards/#{card_id}/transactions/#{transaction_id}/refund", body)
     end
 
   end

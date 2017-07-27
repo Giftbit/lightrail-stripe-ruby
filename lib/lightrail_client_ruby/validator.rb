@@ -22,7 +22,6 @@ module LightrailClientRuby
           self.is_valid_currency?(fund_object[:currency])
     end
 
-    private
 
     def self.is_valid_card_id? (card_id)
       (card_id.is_a? String) && !card_id.empty?

@@ -30,15 +30,21 @@ RSpec.configure do |config|
     end
 
     difference = $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS - balance_after_tests
-    fund_object_to_restore_balance = {
-        cardId: ENV['TEST_CARD_ID'],
-        amount: difference,
-        currency: ENV['TEST_CURRENCY'],
-        userSuppliedId: 'restoring-balance-after-tests-' + SecureRandom::uuid
-    }
-    restorative_transaction = LightrailClientRuby::GiftFund.create(fund_object_to_restore_balance)
-    confirmation_new_balance = restorative_transaction['transaction']['valueAvailableAfterTransaction']
-    puts "Card balance restored after tests: #{confirmation_new_balance}"
+
+    if difference != 0
+      fund_object_to_restore_balance = {
+          cardId: ENV['TEST_CARD_ID'],
+          amount: difference,
+          currency: ENV['TEST_CURRENCY'],
+          userSuppliedId: 'restoring-balance-after-tests-' + SecureRandom::uuid
+      }
+      restorative_transaction = LightrailClientRuby::GiftFund.create(fund_object_to_restore_balance)
+      confirmation_new_balance = restorative_transaction['transaction']['valueAvailableAfterTransaction']
+      puts "Card balance restored after tests: #{confirmation_new_balance}"
+    else
+      puts "Card balance not changed by tests: #{balance_after_tests}"
+    end
+
     $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS = nil
   end
 

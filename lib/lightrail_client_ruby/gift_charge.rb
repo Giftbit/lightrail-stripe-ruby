@@ -14,7 +14,9 @@ module LightrailClientRuby
         # Add 'userSuppliedId' if not present
         charge_object_to_send_to_lightrail[:userSuppliedId] ||= SecureRandom::uuid
 
-        LightrailClientRuby::Connection.make_post_request_and_parse_response("codes/#{code}/transactions", charge_object_to_send_to_lightrail)
+        url = LightrailClientRuby::Connection.api_endpoint_code_transaction(code)
+
+        LightrailClientRuby::Connection.make_post_request_and_parse_response(url, charge_object_to_send_to_lightrail)
 
       else
         raise ArgumentError.new("Invalid charge_object")
@@ -35,11 +37,13 @@ module LightrailClientRuby
       if LightrailClientRuby::Validator.is_valid_transaction_response?(original_transaction_response)
         transaction_id = original_transaction_response['transaction']['transactionId']
         card_id = original_transaction_response['transaction']['cardId']
+
+        url = LightrailClientRuby::Connection.api_endpoint_handle_pending(card_id, transaction_id, void_or_capture)
         body = {
             userSuppliedId: "#{transaction_id}-#{void_or_capture}",
         }
 
-        LightrailClientRuby::Connection.make_post_request_and_parse_response("cards/#{card_id}/transactions/#{transaction_id}/#{void_or_capture}", body)
+        LightrailClientRuby::Connection.make_post_request_and_parse_response(url, body)
 
       else
         raise ArgumentError.new("Invalid original_transaction_response")

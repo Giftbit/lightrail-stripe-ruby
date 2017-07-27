@@ -29,5 +29,29 @@ module LightrailClientRuby
       JSON.parse(resp.body)
     end
 
+    def self.api_endpoint_ping
+      "ping"
+    end
+
+    def self.api_endpoint_code_balance (code)
+      "codes/#{code}/balance/details"
+    end
+
+    def self.api_endpoint_code_transaction (code)
+      "codes/#{code}/transactions"
+    end
+
+    def self.api_endpoint_handle_pending (card_id, transaction_id, void_or_capture)
+      "cards/#{card_id}/transactions/#{transaction_id}/#{void_or_capture}"
+    end
+
+    def self.api_endpoint_card_transaction (card_id)
+      "cards/#{card_id}/transactions"
+    end
+
+    def self.api_endpoint_refund_transaction (card_id, transaction_id)
+      "cards/#{card_id}/transactions/#{transaction_id}/refund"
+    end
+
   end
 end

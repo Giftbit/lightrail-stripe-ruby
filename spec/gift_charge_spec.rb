@@ -1,6 +1,8 @@
 require "spec_helper"
 
 RSpec.describe LightrailClientRuby::GiftCharge do
+  subject(:gift_charge) {LightrailClientRuby::GiftCharge}
+
   describe ".create" do
     context "when given valid params" do
       it "creates a drawdown transaction with minimum required params" do
@@ -9,7 +11,7 @@ RSpec.describe LightrailClientRuby::GiftCharge do
             currency: 'USD',
             code: ENV['TEST_CODE'],
         }
-        charge_response = LightrailClientRuby::GiftCharge.create(charge_object)
+        charge_response = gift_charge.create(charge_object)
         expect(charge_response['transaction']['transactionType']).to eq('DRAWDOWN')
       end
 
@@ -20,7 +22,7 @@ RSpec.describe LightrailClientRuby::GiftCharge do
             code: ENV['TEST_CODE'],
             userSuppliedId: 'test-charge-' + rand().to_s,
         }
-        charge_response = LightrailClientRuby::GiftCharge.create(charge_object)
+        charge_response = gift_charge.create(charge_object)
         expect(charge_response['transaction']['userSuppliedId']).to eq(charge_object[:userSuppliedId])
       end
 
@@ -31,17 +33,17 @@ RSpec.describe LightrailClientRuby::GiftCharge do
             code: ENV['TEST_CODE'],
             capture: false,
         }
-        charge_response = LightrailClientRuby::GiftCharge.create(charge_object)
+        charge_response = gift_charge.create(charge_object)
         expect(charge_response['transaction']['transactionType']).to eq('PENDING_CREATE')
       end
     end
 
     context "when given bad/missing params" do
       it "throws an error when required params are missing" do
-        expect {LightrailClientRuby::GiftCharge.create()}.to raise_error(ArgumentError)
-        expect {LightrailClientRuby::GiftCharge.create({})}.to raise_error(ArgumentError)
-        expect {LightrailClientRuby::GiftCharge.create({code: ENV['TEST_CODE']})}.to raise_error(ArgumentError)
-        expect {LightrailClientRuby::GiftCharge.create([])}.to raise_error(ArgumentError)
+        expect {gift_charge.create()}.to raise_error(ArgumentError)
+        expect {gift_charge.create({})}.to raise_error(ArgumentError)
+        expect {gift_charge.create({code: ENV['TEST_CODE']})}.to raise_error(ArgumentError)
+        expect {gift_charge.create([])}.to raise_error(ArgumentError)
       end
     end
 
@@ -55,12 +57,12 @@ RSpec.describe LightrailClientRuby::GiftCharge do
           code: ENV['TEST_CODE'],
           capture: false,
       }
-      @pending_to_void = LightrailClientRuby::GiftCharge.create(charge_object_to_handle)
+      @pending_to_void = gift_charge.create(charge_object_to_handle)
     end
 
     context "when given valid params" do
       it "voids a pending transaction" do
-        voiding_response = LightrailClientRuby::GiftCharge.cancel(@pending_to_void)
+        voiding_response = gift_charge.cancel(@pending_to_void)
         expect(voiding_response['transaction']['transactionType']).to eq('PENDING_VOID')
       end
     end
@@ -68,10 +70,10 @@ RSpec.describe LightrailClientRuby::GiftCharge do
     context "when given bad/missing params" do
       it "throws an error when required params are missing or in the wrong format" do
         @pending_to_void['transaction'].delete('transactionId')
-        expect {LightrailClientRuby::GiftCharge.cancel(@pending_to_void)}.to raise_error(ArgumentError)
-        expect {LightrailClientRuby::GiftCharge.cancel({})}.to raise_error(ArgumentError)
-        expect {LightrailClientRuby::GiftCharge.cancel([])}.to raise_error(ArgumentError)
-        expect {LightrailClientRuby::GiftCharge.cancel('')}.to raise_error(ArgumentError)
+        expect {gift_charge.cancel(@pending_to_void)}.to raise_error(ArgumentError)
+        expect {gift_charge.cancel({})}.to raise_error(ArgumentError)
+        expect {gift_charge.cancel([])}.to raise_error(ArgumentError)
+        expect {gift_charge.cancel('')}.to raise_error(ArgumentError)
       end
     end
   end
@@ -84,12 +86,12 @@ RSpec.describe LightrailClientRuby::GiftCharge do
           code: ENV['TEST_CODE'],
           capture: false,
       }
-      @pending_to_capture = LightrailClientRuby::GiftCharge.create(charge_object_to_handle)
+      @pending_to_capture = gift_charge.create(charge_object_to_handle)
     end
 
     context "when given valid params" do
       it "captures a pending transaction" do
-        capture_response = LightrailClientRuby::GiftCharge.capture(@pending_to_capture)
+        capture_response = gift_charge.capture(@pending_to_capture)
         expect(capture_response['transaction']['transactionType']).to eq('DRAWDOWN')
       end
     end
@@ -97,10 +99,10 @@ RSpec.describe LightrailClientRuby::GiftCharge do
     context "when given bad/missing params" do
       it "throws an error when required params are missing or in the wrong format" do
         @pending_to_capture['transaction'].delete('transactionId')
-        expect {LightrailClientRuby::GiftCharge.capture(@pending_to_void)}.to raise_error(ArgumentError)
-        expect {LightrailClientRuby::GiftCharge.capture({})}.to raise_error(ArgumentError)
-        expect {LightrailClientRuby::GiftCharge.capture([])}.to raise_error(ArgumentError)
-        expect {LightrailClientRuby::GiftCharge.capture('')}.to raise_error(ArgumentError)
+        expect {gift_charge.capture(@pending_to_void)}.to raise_error(ArgumentError)
+        expect {gift_charge.capture({})}.to raise_error(ArgumentError)
+        expect {gift_charge.capture([])}.to raise_error(ArgumentError)
+        expect {gift_charge.capture('')}.to raise_error(ArgumentError)
       end
     end
   end

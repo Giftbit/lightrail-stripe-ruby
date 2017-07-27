@@ -12,9 +12,11 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
+  config.before(:suite) do
+    LightrailClientRuby.api_key = ENV['LIGHTRAIL_API_KEY']
+  end
 
   # Ensure card balance will go back to same state after test suite runs
-
   config.before(:suite) do
     balance_response = LightrailClientRuby::GiftValue.retrieve(ENV['TEST_CODE'])
     if (balance_response.is_a? Hash) && (balance_response['balance'].is_a? Hash)

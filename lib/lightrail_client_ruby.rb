@@ -14,4 +14,8 @@ require "lightrail_client_ruby/gift_fund"
 require "lightrail_client_ruby/refund"
 
 module LightrailClientRuby
+  class << self
+    attr_accessor :api_base, :api_key
+  end
+  @api_base = 'https://dev.lightrail.com/v1'
 end

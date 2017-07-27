@@ -4,7 +4,7 @@ RSpec.describe LightrailClientRuby::Connection do
 
   describe ".connection" do
     it "has the right base URL" do
-      expect(LightrailClientRuby::Connection.connection.url_prefix.to_s).to eq(LightrailClientRuby::Connection.api_base)
+      expect(LightrailClientRuby::Connection.connection.url_prefix.to_s).to eq(LightrailClientRuby.api_base)
     end
 
     it "has the right headers" do

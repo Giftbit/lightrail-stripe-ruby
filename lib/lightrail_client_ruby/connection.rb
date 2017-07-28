@@ -13,14 +13,41 @@ module LightrailClientRuby
         req.url url
         req.body = JSON.generate(body)
       end
-      JSON.parse(resp.body)
+      resp.status == 200 ? JSON.parse(resp.body) : self.raise_error_from_response(resp)
     end
 
     def self.make_get_request_and_parse_response (url)
       resp = LightrailClientRuby::Connection.connection.get do |req|
         req.url url
       end
-      JSON.parse(resp.body)
+      resp.status == 200 ? JSON.parse(resp.body) : self.raise_error_from_response(resp)
+    end
+
+    def self.raise_error_from_response(response)
+      case response.status
+        when 400
+          raise StandardError.new("Insufficient value (if in message) or bad param (#{response.status})")
+          # PSEUDO:
+          # if response message contains "Insufficient value"
+          #   raise insufficient_value error
+          # else
+          #   raise bad_param error
+          # end
+        # when 401
+        #   # ...
+        # when 402
+        #   # ...
+        when 403
+          raise StandardError.new("Authorization error, status 401 (#{response.status})")
+        when 404
+          raise StandardError.new("Could not find object error, status 404 (#{response.status})")
+        when 409
+          raise StandardError.new("Idempotency error, status 409 (#{response.status})")
+        when 500
+          raise StandardError.new("Server/network error, status 500 (#{response.status})")
+        else
+          raise StandardError.new("Server responded with: #{response.status}")
+      end
     end
 
     def self.api_endpoint_ping

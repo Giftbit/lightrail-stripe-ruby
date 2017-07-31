@@ -3,9 +3,25 @@ module LightrailClientRuby
     attr_reader :message
     attr_accessor :response
 
-    def initialize (message=nil,response)
+    def initialize (message='',response)
       @message = message
       @response = response
     end
   end
+
+  class AuthorizationError < LightrailError
+  end
+
+  class InsufficientValueError < LightrailError
+  end
+
+  class BadParameterError < LightrailError
+  end
+
+  class CouldNotFindObjectError < LightrailError
+  end
+
+  class IdempotencyError < LightrailError
+  end
+
 end

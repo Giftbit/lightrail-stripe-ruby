@@ -24,29 +24,23 @@ module LightrailClientRuby
     end
 
     def self.raise_error_from_response(response)
+      body = JSON.parse(response.body) || {}
+      message = body['message'] || ''
       case response.status
         when 400
-          raise StandardError.new("Insufficient value (if in message) or bad param (#{response.status})")
-          # PSEUDO:
-          # if response message contains "Insufficient value"
-          #   raise insufficient_value error
-          # else
-          #   raise bad_param error
-          # end
-        # when 401
-        #   # ...
-        # when 402
-        #   # ...
-        when 403
-          raise StandardError.new("Authorization error, status 401 (#{response.status})")
+          if (message =~ /insufficient value/i)
+            raise LightrailClientRuby::InsufficientValueError.new(response.status, response)
+          else
+            raise LightrailClientRuby::BadParameterError.new(response.status, response)
+          end
+        when 401, 403
+          raise LightrailClientRuby::AuthorizationError.new(response.status, response)
         when 404
-          raise StandardError.new("Could not find object error, status 404 (#{response.status})")
+          raise LightrailClientRuby::CouldNotFindObjectError.new(message, response)
         when 409
-          raise StandardError.new("Idempotency error, status 409 (#{response.status})")
-        when 500
-          raise StandardError.new("Server/network error, status 500 (#{response.status})")
+          raise LightrailClientRuby::BadParameterError.new(message, response)
         else
-          raise StandardError.new("Server responded with: #{response.status}")
+          raise LightrailError.new("Server responded with: (#{response.status}) #{message}", response)
       end
     end
 

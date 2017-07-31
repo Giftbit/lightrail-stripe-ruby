@@ -19,9 +19,9 @@ RSpec.describe LightrailClientRuby::Connection do
   describe ".make_get_request_and_parse_response" do
     context "bad API response" do
       it "should throw an error" do
-        response_404 = Faraday::Response.new(status: 404)
-        allow(LightrailClientRuby::Connection).to receive_message_chain('connection.get').and_return(response_404)
-        expect {LightrailClientRuby::Connection.make_get_request_and_parse_response('ping')}.to raise_error(StandardError)
+        response_401 = Faraday::Response.new(status: 401, body: "{\"status\":401,\"message\":\"Unauthorized\"}")
+        allow(LightrailClientRuby::Connection).to receive_message_chain('connection.get').and_return(response_401)
+        expect {LightrailClientRuby::Connection.make_get_request_and_parse_response('ping')}.to raise_error(LightrailClientRuby::AuthenticationError)
       end
     end
   end

@@ -24,4 +24,8 @@ module LightrailClientRuby
   class IdempotencyError < LightrailError
   end
 
+
+  class LightrailArgumentError < ArgumentError
+  end
+
 end

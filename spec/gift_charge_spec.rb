@@ -36,6 +36,20 @@ RSpec.describe LightrailClientRuby::GiftCharge do
         charge_response = gift_charge.create(charge_object)
         expect(charge_response['transaction']['transactionType']).to eq('PENDING_CREATE')
       end
+
+      context "when an error response comes back from the API anyway" do
+        it "should produce a meaningful error" do
+          charge_object = {
+              amount: 1,
+              currency: 'USD',
+              code: ENV['TEST_CODE'],
+              metadata: {
+                  giftbit_exception_action: 'transaction:create'
+              }
+          }
+          expect{gift_charge.create(charge_object)}.to raise_error(LightrailClientRuby::LightrailError, /Server responded with/), "expected a LightrailError with message 'Server responded with:'"
+        end
+      end
     end
 
     context "when given bad/missing params" do

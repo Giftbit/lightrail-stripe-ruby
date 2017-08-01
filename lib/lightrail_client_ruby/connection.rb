@@ -29,12 +29,12 @@ module LightrailClientRuby
       case response.status
         when 400
           if (message =~ /insufficient value/i)
-            raise LightrailClientRuby::InsufficientValueError.new(response.status, response)
+            raise LightrailClientRuby::InsufficientValueError.new(message, response)
           else
-            raise LightrailClientRuby::BadParameterError.new(response.status, response)
+            raise LightrailClientRuby::BadParameterError.new(message, response)
           end
         when 401, 403
-          raise LightrailClientRuby::AuthorizationError.new(response.status, response)
+          raise LightrailClientRuby::AuthorizationError.new(message, response)
         when 404
           raise LightrailClientRuby::CouldNotFindObjectError.new(message, response)
         when 409

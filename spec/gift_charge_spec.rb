@@ -84,7 +84,7 @@ RSpec.describe LightrailClientRuby::GiftCharge do
     context "when given bad/missing params" do
       it "throws an error when required params are missing or in the wrong format" do
         @pending_to_void['transaction'].delete('transactionId')
-        expect {gift_charge.cancel(@pending_to_void)}.to raise_error(ArgumentError), "called GiftCharge.cancel with no params"
+        expect {gift_charge.cancel(@pending_to_void)}.to raise_error(ArgumentError), "called GiftCharge.cancel with transaction missing key 'transactionId': #{@pending_to_void}"
         expect {gift_charge.cancel({})}.to raise_error(ArgumentError), "called GiftCharge.cancel with empty object"
         expect {gift_charge.cancel([])}.to raise_error(ArgumentError), "called GiftCharge.cancel with empty array"
         expect {gift_charge.cancel('')}.to raise_error(ArgumentError), "called GiftCharge.cancel with empty string"
@@ -113,7 +113,7 @@ RSpec.describe LightrailClientRuby::GiftCharge do
     context "when given bad/missing params" do
       it "throws an error when required params are missing or in the wrong format" do
         @pending_to_capture['transaction'].delete('transactionId')
-        expect {gift_charge.capture(@pending_to_void)}.to raise_error(ArgumentError), "called GiftCharge.capture with no params"
+        expect {gift_charge.capture(@pending_to_capture)}.to raise_error(ArgumentError), "called GiftCharge.capture with transaction missing key 'transactionId': #{@pending_to_capture}"
         expect {gift_charge.capture({})}.to raise_error(ArgumentError), "called GiftCharge.capture with empty object"
         expect {gift_charge.capture([])}.to raise_error(ArgumentError), "called GiftCharge.capture with empty array"
         expect {gift_charge.capture('')}.to raise_error(ArgumentError), "called GiftCharge.capture with empty string"

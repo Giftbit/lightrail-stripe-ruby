@@ -13,20 +13,22 @@ module LightrailClientRuby
         req.url url
         req.body = JSON.generate(body)
       end
-      resp.status == 200 ? JSON.parse(resp.body) : self.raise_error_from_response(resp)
+      self.handle_response(resp)
     end
 
     def self.make_get_request_and_parse_response (url)
       resp = LightrailClientRuby::Connection.connection.get do |req|
         req.url url
       end
-      resp.status == 200 ? JSON.parse(resp.body) : self.raise_error_from_response(resp)
+      self.handle_response(resp)
     end
 
-    def self.raise_error_from_response(response)
+    def self.handle_response(response)
       body = JSON.parse(response.body) || {}
       message = body['message'] || ''
       case response.status
+        when 200...300
+          JSON.parse(response.body)
         when 400
           if (message =~ /insufficient value/i)
             raise LightrailClientRuby::InsufficientValueError.new(message, response)

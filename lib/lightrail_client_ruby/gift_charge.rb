@@ -4,13 +4,9 @@ module LightrailClientRuby
     def self.create (charge_object)
       LightrailClientRuby::Validator.is_valid_charge_object? (charge_object)
 
-      charge_object_to_send_to_lightrail = charge_object.clone
+      charge_object_to_send_to_lightrail = LightrailClientRuby::Translator.translate(charge_object)
       code = charge_object_to_send_to_lightrail.delete(:code)
 
-      # Replace positive 'amount' to charge (Stripe expectation) with negative 'value' to charge (Lightrail expectation)
-      charge_object_to_send_to_lightrail[:value] = -charge_object_to_send_to_lightrail.delete(:amount)
-      # Replace 'capture' (Stripe expectation) with 'pending' (Lightrail expectation), using inverse value if key is present
-      charge_object_to_send_to_lightrail[:pending] = charge_object_to_send_to_lightrail[:capture] === nil ? false : !charge_object_to_send_to_lightrail.delete(:capture)
       # Add 'userSuppliedId' if not present
       charge_object_to_send_to_lightrail[:userSuppliedId] ||= SecureRandom::uuid
 

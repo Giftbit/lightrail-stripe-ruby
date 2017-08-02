@@ -7,6 +7,7 @@ require "lightrail_client_ruby/version"
 
 require "lightrail_client_ruby/errors"
 require "lightrail_client_ruby/validator"
+require "lightrail_client_ruby/translator"
 require "lightrail_client_ruby/connection"
 require "lightrail_client_ruby/ping"
 require "lightrail_client_ruby/gift_value"

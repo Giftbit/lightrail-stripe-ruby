@@ -1,10 +1,8 @@
 module LightrailClientRuby
   class Ping
     def self.ping
-      resp = Connection.connection.get do |req|
-        req.url "#{Connection.api_base}/ping"
-      end
-      JSON.parse(resp.body)
+      url = LightrailClientRuby::Connection.api_endpoint_ping
+      LightrailClientRuby::Connection.make_get_request_and_parse_response(url)
     end
   end
 end

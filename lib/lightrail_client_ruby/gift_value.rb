@@ -1,10 +1,15 @@
 module LightrailClientRuby
   class GiftValue
     def self.retrieve (code)
-      resp = Connection.connection.get do |req|
-        req.url "#{Connection.api_base}/codes/#{code}/balance/details"
+
+      if LightrailClientRuby::Validator.is_valid_code? (code)
+        url = LightrailClientRuby::Connection.api_endpoint_code_balance(code)
+        LightrailClientRuby::Connection.make_get_request_and_parse_response(url)
+
+      else
+        raise ArgumentError.new("Invalid fund_object")
       end
-      JSON.parse(resp.body)
+
     end
   end
 end

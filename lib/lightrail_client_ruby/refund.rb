@@ -1,16 +1,21 @@
 module LightrailClientRuby
   class Refund
 
-    def self.create(transaction_object)
-      card_id = transaction_object['transaction']['cardId']
-      transaction_id = transaction_object['transaction']['transactionId']
+    def self.create(original_transaction_response)
+      if LightrailClientRuby::Validator.is_valid_transaction_response? (original_transaction_response)
+        card_id = original_transaction_response['transaction']['cardId']
+        transaction_id = original_transaction_response['transaction']['transactionId']
 
-      resp = Connection.connection.post do |req|
-        req.url "#{Connection.api_base}/cards/#{card_id}/transactions/#{transaction_id}/refund"
-        req.body = JSON.generate({userSuppliedId: "#{transaction_id}-refund"})
+        url = LightrailClientRuby::Connection.api_endpoint_refund_transaction(card_id, transaction_id)
+        body = {
+            userSuppliedId: "#{transaction_id}-refund"
+        }
+
+        LightrailClientRuby::Connection.make_post_request_and_parse_response(url, body)
+
+      else
+        raise ArgumentError.new("Invalid original_transaction_response")
       end
-
-      JSON.parse(resp.body)
     end
 
   end

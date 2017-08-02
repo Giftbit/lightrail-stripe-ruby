@@ -19,7 +19,7 @@ module LightrailClientRuby
         LightrailClientRuby::Connection.make_post_request_and_parse_response(url, charge_object_to_send_to_lightrail)
 
       else
-        raise ArgumentError.new("Invalid charge_object")
+        raise LightrailClientRuby::LightrailArgumentError.new("Invalid charge_object")
       end
     end
 
@@ -46,7 +46,7 @@ module LightrailClientRuby
         LightrailClientRuby::Connection.make_post_request_and_parse_response(url, body)
 
       else
-        raise ArgumentError.new("Invalid original_transaction_response")
+        raise LightrailClientRuby::LightrailArgumentError.new("Invalid original_transaction_response")
       end
     end
 

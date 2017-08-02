@@ -13,7 +13,7 @@ module LightrailClientRuby
         LightrailClientRuby::Connection.make_post_request_and_parse_response(url, fund_object_to_send_to_lightrail)
 
       else
-        raise ArgumentError.new("Invalid fund_object")
+        raise LightrailClientRuby::LightrailArgumentError.new("Invalid fund_object")
       end
     end
   end

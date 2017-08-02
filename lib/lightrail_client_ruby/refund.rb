@@ -14,7 +14,7 @@ module LightrailClientRuby
         LightrailClientRuby::Connection.make_post_request_and_parse_response(url, body)
 
       else
-        raise ArgumentError.new("Invalid original_transaction_response")
+        raise LightrailClientRuby::LightrailArgumentError.new("Invalid original_transaction_response")
       end
     end
 

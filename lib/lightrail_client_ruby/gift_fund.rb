@@ -2,7 +2,7 @@ module LightrailClientRuby
   class GiftFund
 
     def self.create(fund_object)
-      LightrailClientRuby::Validator.is_valid_fund_object?(fund_object)
+      LightrailClientRuby::Validator.validate_fund_object!(fund_object)
 
       fund_object_to_send_to_lightrail = LightrailClientRuby::Translator.translate(fund_object, true)
 

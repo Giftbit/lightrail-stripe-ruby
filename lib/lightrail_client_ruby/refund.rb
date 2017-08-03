@@ -2,7 +2,7 @@ module LightrailClientRuby
   class Refund
 
     def self.create(original_transaction_response)
-      LightrailClientRuby::Validator.is_valid_transaction_response? (original_transaction_response)
+      LightrailClientRuby::Validator.validate_transaction_response! (original_transaction_response)
 
       card_id = original_transaction_response['transaction']['cardId']
       transaction_id = original_transaction_response['transaction']['transactionId']

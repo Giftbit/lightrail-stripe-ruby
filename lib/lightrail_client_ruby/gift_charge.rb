@@ -2,7 +2,7 @@ module LightrailClientRuby
   class GiftCharge
 
     def self.create (charge_object)
-      LightrailClientRuby::Validator.is_valid_charge_object? (charge_object)
+      LightrailClientRuby::Validator.validate_charge_object! (charge_object)
 
       charge_object_to_send_to_lightrail = LightrailClientRuby::Translator.translate(charge_object)
       code = charge_object_to_send_to_lightrail.delete(:code)
@@ -23,7 +23,7 @@ module LightrailClientRuby
     private
 
     def self.handle_pending (original_transaction_response, void_or_capture)
-      LightrailClientRuby::Validator.is_valid_transaction_response?(original_transaction_response)
+      LightrailClientRuby::Validator.validate_transaction_response!(original_transaction_response)
 
       transaction_id = original_transaction_response['transaction']['transactionId']
       card_id = original_transaction_response['transaction']['cardId']

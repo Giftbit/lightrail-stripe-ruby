@@ -7,9 +7,6 @@ module LightrailClientRuby
       charge_object_to_send_to_lightrail = LightrailClientRuby::Translator.translate(charge_object)
       code = charge_object_to_send_to_lightrail.delete(:code)
 
-      # Add 'userSuppliedId' if not present
-      charge_object_to_send_to_lightrail[:userSuppliedId] ||= SecureRandom::uuid
-
       url = LightrailClientRuby::Connection.api_endpoint_code_transaction(code)
 
       LightrailClientRuby::Connection.make_post_request_and_parse_response(url, charge_object_to_send_to_lightrail)

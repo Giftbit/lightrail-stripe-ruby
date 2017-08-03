@@ -8,8 +8,6 @@ module LightrailClientRuby
 
       card_id = fund_object_to_send_to_lightrail.delete(:cardId)
 
-      fund_object_to_send_to_lightrail[:userSuppliedId] ||= SecureRandom::uuid
-
       url = LightrailClientRuby::Connection.api_endpoint_card_transaction(card_id)
 
       LightrailClientRuby::Connection.make_post_request_and_parse_response(url, fund_object_to_send_to_lightrail)

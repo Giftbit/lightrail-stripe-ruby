@@ -15,6 +15,7 @@ module LightrailClientRuby
 
       response = LightrailClientRuby::Connection.make_post_request_and_parse_response(url, body)
 
+      LightrailClientRuby::Validator.validate_transaction_response! (response)
       self.new(response['transaction'])
     end
 

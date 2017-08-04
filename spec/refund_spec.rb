@@ -15,7 +15,8 @@ RSpec.describe LightrailClientRuby::Refund do
         }
         charge = LightrailClientRuby::GiftCharge.create(charge_object)
         refund_response = refund.create(charge)
-        expect(refund_response['transaction']['transactionType']).to eq('DRAWDOWN_REFUND')
+        expect(refund_response.transactionType).to eq('DRAWDOWN_REFUND')
+        expect(refund_response.parentTransactionId).to eq(charge.transactionId)
       end
     end
 

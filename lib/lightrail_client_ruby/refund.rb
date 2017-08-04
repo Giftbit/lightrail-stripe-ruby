@@ -1,5 +1,6 @@
 module LightrailClientRuby
-  class Refund
+  class Refund < LightrailClientRuby::LightrailObject
+    attr_accessor :transactionId, :value, :userSuppliedId, :dateCreated, :transactionType, :transactionAccessMethod, :valueAvailableAfterTransaction, :giftbitUserId, :cardId, :currency, :parentTransactionId, :metadata, :codeLastFour
 
     def self.create(original_transaction_response)
       LightrailClientRuby::Validator.validate_transaction_response! (original_transaction_response)
@@ -12,7 +13,9 @@ module LightrailClientRuby
           userSuppliedId: "#{transaction_id}-refund"
       }
 
-      LightrailClientRuby::Connection.make_post_request_and_parse_response(url, body)
+      response = LightrailClientRuby::Connection.make_post_request_and_parse_response(url, body)
+
+      self.new(response['transaction'])
     end
 
   end

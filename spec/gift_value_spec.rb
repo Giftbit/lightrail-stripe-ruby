@@ -8,7 +8,7 @@ RSpec.describe LightrailClientRuby::GiftValue do
     context "when given valid params" do
       it "checks balance" do
         balance_response = gift_value.retrieve(ENV['TEST_CODE'])
-        expect(balance_response).to have_key('balance')
+        expect(balance_response.principal).to have_key('currentValue')
       end
     end
 

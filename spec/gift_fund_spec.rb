@@ -12,7 +12,7 @@ RSpec.describe LightrailClientRuby::GiftFund do
             cardId: ENV['TEST_CARD_ID'],
         }
         fund_response = gift_fund.create(fund_object)
-        expect(fund_response['transaction']['transactionType']).to eq('FUND'), "called GiftFund.create with #{fund_object}, got back #{fund_response}"
+        expect(fund_response.transactionType).to eq('FUND'), "called GiftFund.create with #{fund_object.inspect}, got back #{fund_response.inspect}"
       end
 
       it "uses userSuppliedId if supplied in param hash" do
@@ -23,7 +23,7 @@ RSpec.describe LightrailClientRuby::GiftFund do
             userSuppliedId: 'test-fund-' + rand().to_s,
         }
         fund_response = gift_fund.create(fund_object)
-        expect(fund_response['transaction']['userSuppliedId']).to eq(fund_object[:userSuppliedId]), "called GiftFund.create with #{fund_object}, got back #{fund_response}"
+        expect(fund_response.userSuppliedId).to eq(fund_object[:userSuppliedId]), "called GiftFund.create with #{fund_object.inspect}, got back #{fund_response.inspect}"
       end
     end
 

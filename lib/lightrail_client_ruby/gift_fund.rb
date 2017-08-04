@@ -1,5 +1,6 @@
 module LightrailClientRuby
-  class GiftFund
+  class GiftFund < LightrailClientRuby::LightrailObject
+    attr_accessor :transactionId, :value, :userSuppliedId, :dateCreated, :transactionType, :transactionAccessMethod, :valueAvailableAfterTransaction, :giftbitUserId, :cardId, :currency, :codeLastFour
 
     def self.create(fund_object)
       LightrailClientRuby::Validator.validate_fund_object!(fund_object)
@@ -10,7 +11,9 @@ module LightrailClientRuby
 
       url = LightrailClientRuby::Connection.api_endpoint_card_transaction(card_id)
 
-      LightrailClientRuby::Connection.make_post_request_and_parse_response(url, fund_object_to_send_to_lightrail)
+      response = LightrailClientRuby::Connection.make_post_request_and_parse_response(url, fund_object_to_send_to_lightrail)
+
+      self.new(response['transaction'])
     end
   end
 end

@@ -41,7 +41,7 @@ RSpec.configure do |config|
           userSuppliedId: 'restoring-balance-after-tests-' + SecureRandom::uuid
       }
       restorative_transaction = LightrailClientRuby::GiftFund.create(fund_object_to_restore_balance)
-      confirmation_new_balance = restorative_transaction['transaction']['valueAvailableAfterTransaction']
+      confirmation_new_balance = restorative_transaction.valueAvailableAfterTransaction
       puts "Card balance restored after tests: #{confirmation_new_balance}"
     else
       puts "Card balance not changed by tests: #{balance_after_tests}"

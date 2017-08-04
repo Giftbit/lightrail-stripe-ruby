@@ -1,5 +1,6 @@
 module LightrailClientRuby
-  class GiftCharge
+  class GiftCharge < LightrailClientRuby::LightrailObject
+    attr_accessor :transactionId, :value, :userSuppliedId, :dateCreated, :transactionType, :transactionAccessMethod, :valueAvailableAfterTransaction, :giftbitUserId, :cardId, :currency, :codeLastFour
 
     def self.create (charge_object)
       LightrailClientRuby::Validator.validate_charge_object! (charge_object)
@@ -9,7 +10,9 @@ module LightrailClientRuby
 
       url = LightrailClientRuby::Connection.api_endpoint_code_transaction(code)
 
-      LightrailClientRuby::Connection.make_post_request_and_parse_response(url, charge_object_to_send_to_lightrail)
+      response = LightrailClientRuby::Connection.make_post_request_and_parse_response(url, charge_object_to_send_to_lightrail)
+
+      self.new(response['transaction'])
     end
 
     def self.cancel (original_transaction_response)
@@ -25,15 +28,17 @@ module LightrailClientRuby
     def self.handle_pending (original_transaction_response, void_or_capture)
       LightrailClientRuby::Validator.validate_transaction_response!(original_transaction_response)
 
-      transaction_id = original_transaction_response['transaction']['transactionId']
-      card_id = original_transaction_response['transaction']['cardId']
+      transaction_id = original_transaction_response.transactionId || original_transaction_response['transaction']['transactionId']
+      card_id = original_transaction_response.cardId || original_transaction_response['transaction']['cardId']
 
       url = LightrailClientRuby::Connection.api_endpoint_handle_pending(card_id, transaction_id, void_or_capture)
       body = {
           userSuppliedId: "#{transaction_id}-#{void_or_capture}",
       }
 
-      LightrailClientRuby::Connection.make_post_request_and_parse_response(url, body)
+      response = LightrailClientRuby::Connection.make_post_request_and_parse_response(url, body)
+
+      self.new(response['transaction'])
     end
 
   end

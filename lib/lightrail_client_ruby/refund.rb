@@ -4,8 +4,8 @@ module LightrailClientRuby
     def self.create(original_transaction_response)
       LightrailClientRuby::Validator.validate_transaction_response! (original_transaction_response)
 
-      card_id = original_transaction_response['transaction']['cardId']
-      transaction_id = original_transaction_response['transaction']['transactionId']
+      card_id = original_transaction_response.cardId || original_transaction_response['transaction']['cardId']
+      transaction_id = original_transaction_response.transactionId || original_transaction_response['transaction']['transactionId']
 
       url = LightrailClientRuby::Connection.api_endpoint_refund_transaction(card_id, transaction_id)
       body = {

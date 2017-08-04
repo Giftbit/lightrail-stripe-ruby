@@ -38,6 +38,17 @@ module LightrailClientRuby
         raise LightrailClientRuby::LightrailArgumentError.new("Invalid fund_object: #{fund_object}")
     end
 
+    def self.validate_ping_response! (ping_response)
+      begin
+        return true if ((ping_response.is_a? Hash) &&
+            (ping_response['user'].is_a? Hash) &&
+            !ping_response['user'].empty? &&
+            self.validate_username!(ping_response['user']['username']))
+      rescue LightrailClientRuby::LightrailArgumentError
+      end
+        raise LightrailClientRuby::LightrailArgumentError.new("Invalid ping_response: #{ping_response}")
+    end
+
 
     def self.validate_card_id! (card_id)
       return true if ((card_id.is_a? String) && !card_id.empty?)
@@ -62,6 +73,11 @@ module LightrailClientRuby
     def self.validate_currency! (currency)
       return true if (/\A[A-Z]{3}\z/ === currency)
       raise LightrailClientRuby::LightrailArgumentError.new("Invalid currency: #{currency}")
+    end
+
+    def self.validate_username!(username)
+      return true if ((username.is_a? String) && !username.empty?)
+      raise LightrailClientRuby::LightrailArgumentError.new("Invalid username: #{username}")
     end
   end
 end

@@ -8,21 +8,21 @@ RSpec.describe LightrailClientRuby::Validator do
 
     describe ".validate_charge_object!" do
       it "returns true when the required keys are present" do
-        charge_object = {
+        charge_params = {
             amount: 1,
             currency: 'USD',
             code: ENV['TEST_CODE'],
         }
-        expect(validator.validate_charge_object!(charge_object)).to be true
+        expect(validator.validate_charge_object!(charge_params)).to be true
       end
 
       it "raises LightrailArgumentError when missing required params" do
-        charge_object = {
+        charge_params = {
             amount: 1,
             currency: 'USD',
         }
-        expect{validator.validate_charge_object!(charge_object)}.to raise_error(lr_argument_error, /charge_object/)
-        expect{validator.validate_charge_object!({})}.to raise_error(lr_argument_error, /charge_object/)
+        expect{validator.validate_charge_object!(charge_params)}.to raise_error(lr_argument_error, /charge_params/)
+        expect{validator.validate_charge_object!({})}.to raise_error(lr_argument_error, /charge_params/)
       end
     end
 
@@ -51,19 +51,19 @@ RSpec.describe LightrailClientRuby::Validator do
 
     describe ".validate_fund_object!" do
       it "returns true when the required keys are present & formatted" do
-        fund_object = {
+        fund_params = {
             cardId: ENV['TEST_CARD_ID'],
             amount: 20,
             currency: 'USD',
         }
-        expect(validator.validate_fund_object!(fund_object)).to be true
+        expect(validator.validate_fund_object!(fund_params)).to be true
       end
 
       it "raises LightrailArgumentError when missing required params" do
-        fund_object = {amount: 1, currency: 'USD'}
-        expect{validator.validate_fund_object!(fund_object)}.to raise_error(lr_argument_error, /fund_object/)
-        expect{validator.validate_fund_object!({})}.to raise_error(lr_argument_error, /fund_object/)
-        expect{validator.validate_fund_object!([])}.to raise_error(lr_argument_error, /fund_object/)
+        fund_params = {amount: 1, currency: 'USD'}
+        expect{validator.validate_fund_object!(fund_params)}.to raise_error(lr_argument_error, /fund_params/)
+        expect{validator.validate_fund_object!({})}.to raise_error(lr_argument_error, /fund_params/)
+        expect{validator.validate_fund_object!([])}.to raise_error(lr_argument_error, /fund_params/)
       end
     end
 

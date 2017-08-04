@@ -2,15 +2,15 @@ module LightrailClientRuby
   class GiftCharge < LightrailClientRuby::LightrailObject
     attr_accessor :transactionId, :value, :userSuppliedId, :dateCreated, :transactionType, :transactionAccessMethod, :valueAvailableAfterTransaction, :giftbitUserId, :cardId, :currency, :codeLastFour
 
-    def self.create (charge_object)
-      LightrailClientRuby::Validator.validate_charge_object! (charge_object)
+    def self.create (charge_params)
+      LightrailClientRuby::Validator.validate_charge_object! (charge_params)
 
-      charge_object_to_send_to_lightrail = LightrailClientRuby::Translator.translate(charge_object)
-      code = charge_object_to_send_to_lightrail.delete(:code)
+      charge_params_to_send_to_lightrail = LightrailClientRuby::Translator.translate(charge_params)
+      code = charge_params_to_send_to_lightrail.delete(:code)
 
       url = LightrailClientRuby::Connection.api_endpoint_code_transaction(code)
 
-      response = LightrailClientRuby::Connection.make_post_request_and_parse_response(url, charge_object_to_send_to_lightrail)
+      response = LightrailClientRuby::Connection.make_post_request_and_parse_response(url, charge_params_to_send_to_lightrail)
 
       LightrailClientRuby::Validator.validate_transaction_response! (response)
       self.new(response['transaction'])

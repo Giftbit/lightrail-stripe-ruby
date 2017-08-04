@@ -18,41 +18,41 @@ RSpec.describe LightrailClientRuby::GiftCharge do
   describe ".create" do
     context "when given valid params" do
       it "creates a drawdown transaction with minimum required params" do
-        charge_object = {
+        charge_params = {
             amount: 1,
             currency: 'USD',
             code: ENV['TEST_CODE'],
         }
-        charge_response = gift_charge.create(charge_object)
+        charge_response = gift_charge.create(charge_params)
         expect(charge_response).to be_a(gift_charge)
         expect(charge_response.transactionType).to eq('DRAWDOWN')
       end
 
       it "uses userSuppliedId if supplied in param hash" do
-        charge_object = {
+        charge_params = {
             amount: 1,
             currency: 'USD',
             code: ENV['TEST_CODE'],
             userSuppliedId: 'test-charge-' + rand().to_s,
         }
-        charge_response = gift_charge.create(charge_object)
-        expect(charge_response.userSuppliedId).to eq(charge_object[:userSuppliedId])
+        charge_response = gift_charge.create(charge_params)
+        expect(charge_response.userSuppliedId).to eq(charge_params[:userSuppliedId])
       end
 
       it "creates a pending transaction when 'capture=false'" do
-        charge_object = {
+        charge_params = {
             amount: 1,
             currency: 'USD',
             code: ENV['TEST_CODE'],
             capture: false,
         }
-        charge_response = gift_charge.create(charge_object)
+        charge_response = gift_charge.create(charge_params)
         expect(charge_response.transactionType).to eq('PENDING_CREATE')
       end
 
       context "when an error response comes back from the API anyway" do
         it "should produce a meaningful error" do
-          charge_object = {
+          charge_params = {
               amount: 1,
               currency: 'USD',
               code: ENV['TEST_CODE'],
@@ -60,7 +60,7 @@ RSpec.describe LightrailClientRuby::GiftCharge do
                   giftbit_exception_action: 'transaction:create'
               }
           }
-          expect {gift_charge.create(charge_object)}.to raise_error(LightrailClientRuby::LightrailError, /Server responded with/), "expected a LightrailError with message 'Server responded with:'"
+          expect {gift_charge.create(charge_params)}.to raise_error(LightrailClientRuby::LightrailError, /Server responded with/), "expected a LightrailError with message 'Server responded with:'"
         end
       end
     end
@@ -78,13 +78,13 @@ RSpec.describe LightrailClientRuby::GiftCharge do
 
   describe ".cancel" do
     before(:each) do
-      charge_object_to_handle = {
+      charge_params_to_handle = {
           amount: 1,
           currency: 'USD',
           code: ENV['TEST_CODE'],
           capture: false,
       }
-      @pending_to_void = gift_charge.create(charge_object_to_handle)
+      @pending_to_void = gift_charge.create(charge_params_to_handle)
     end
 
     context "when given valid params" do
@@ -107,13 +107,13 @@ RSpec.describe LightrailClientRuby::GiftCharge do
 
   describe ".capture" do
     before(:each) do
-      charge_object_to_handle = {
+      charge_params_to_handle = {
           amount: 1,
           currency: 'USD',
           code: ENV['TEST_CODE'],
           capture: false,
       }
-      @pending_to_capture = gift_charge.create(charge_object_to_handle)
+      @pending_to_capture = gift_charge.create(charge_params_to_handle)
     end
 
     context "when given valid params" do

@@ -6,24 +6,24 @@ RSpec.describe LightrailClientRuby::GiftFund do
   describe ".create" do
     context "when given valid params" do
       it "funds a gift card with minimum required params" do
-        fund_object = {
+        fund_params = {
             amount: 1,
             currency: 'USD',
             cardId: ENV['TEST_CARD_ID'],
         }
-        fund_response = gift_fund.create(fund_object)
-        expect(fund_response.transactionType).to eq('FUND'), "called GiftFund.create with #{fund_object.inspect}, got back #{fund_response.inspect}"
+        fund_response = gift_fund.create(fund_params)
+        expect(fund_response.transactionType).to eq('FUND'), "called GiftFund.create with #{fund_params.inspect}, got back #{fund_response.inspect}"
       end
 
       it "uses userSuppliedId if supplied in param hash" do
-        fund_object = {
+        fund_params = {
             amount: 1,
             currency: 'USD',
             cardId: ENV['TEST_CARD_ID'],
             userSuppliedId: 'test-fund-' + rand().to_s,
         }
-        fund_response = gift_fund.create(fund_object)
-        expect(fund_response.userSuppliedId).to eq(fund_object[:userSuppliedId]), "called GiftFund.create with #{fund_object.inspect}, got back #{fund_response.inspect}"
+        fund_response = gift_fund.create(fund_params)
+        expect(fund_response.userSuppliedId).to eq(fund_params[:userSuppliedId]), "called GiftFund.create with #{fund_params.inspect}, got back #{fund_response.inspect}"
       end
     end
 

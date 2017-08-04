@@ -7,13 +7,13 @@ RSpec.describe LightrailClientRuby::Refund do
 
     context "when given valid params" do
       it "refunds a transaction" do
-        charge_object = {
+        charge_params = {
             amount: 1,
             currency: 'USD',
             code: ENV['TEST_CODE'],
             capture: true,
         }
-        charge = LightrailClientRuby::GiftCharge.create(charge_object)
+        charge = LightrailClientRuby::GiftCharge.create(charge_params)
         refund_response = refund.create(charge)
         expect(refund_response.transactionType).to eq('DRAWDOWN_REFUND')
         expect(refund_response.parentTransactionId).to eq(charge.transactionId)

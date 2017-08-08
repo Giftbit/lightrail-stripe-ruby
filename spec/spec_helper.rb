@@ -19,16 +19,20 @@ RSpec.configure do |config|
   # Ensure card balance will go back to same state after test suite runs
   config.before(:suite) do
     balance_response = LightrailClientRuby::GiftValue.retrieve(ENV['TEST_CODE'])
-    if (balance_response.is_a? Hash) && (balance_response['balance'].is_a? Hash)
-      $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS = balance_response['balance']['principal']['currentValue']
+    if (balance_response.is_a? LightrailClientRuby::GiftValue)
+      $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS = balance_response.principal['currentValue']
+    else
+      fail "balance_response was not an instance of LightrailClientRuby::GiftValue"
     end
     puts "Card balance before tests: #{$LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS}"
   end
 
   config.after(:suite) do
     balance_response = LightrailClientRuby::GiftValue.retrieve(ENV['TEST_CODE'])
-    if (balance_response.is_a? Hash) && (balance_response['balance'].is_a? Hash)
-      balance_after_tests = balance_response['balance']['principal']['currentValue']
+    if (balance_response.is_a? LightrailClientRuby::GiftValue)
+      balance_after_tests = balance_response.principal['currentValue']
+    else
+      fail "balance_response was not an instance of LightrailClientRuby::GiftValue"
     end
 
     difference = $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS - balance_after_tests
@@ -41,7 +45,7 @@ RSpec.configure do |config|
           userSuppliedId: 'restoring-balance-after-tests-' + SecureRandom::uuid
       }
       restorative_transaction = LightrailClientRuby::GiftFund.create(fund_object_to_restore_balance)
-      confirmation_new_balance = restorative_transaction['transaction']['valueAvailableAfterTransaction']
+      confirmation_new_balance = restorative_transaction.valueAvailableAfterTransaction
       puts "Card balance restored after tests: #{confirmation_new_balance}"
     else
       puts "Card balance not changed by tests: #{balance_after_tests}"

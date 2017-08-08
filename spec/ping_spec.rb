@@ -6,9 +6,8 @@ RSpec.describe LightrailClientRuby::Ping do
   describe ".ping" do
     it "pings" do
       ping_response = ping.ping
-      expect(ping_response).to have_key('user')
+      expect(ping_response).to be_a(ping)
     end
-
   end
 
 end

@@ -1,37 +1,52 @@
 module LightrailClientRuby
   class Validator
-    def self.validate_charge_object! (charge_object)
+    def self.validate_charge_object! (charge_params)
       begin
-        return true if ((charge_object.is_a? Hash) &&
-            self.validate_code!(charge_object[:code]) &&
-            self.validate_amount!(charge_object[:amount]) &&
-            self.validate_currency!(charge_object[:currency]))
+        return true if ((charge_params.is_a? Hash) &&
+            self.validate_code!(charge_params[:code]) &&
+            self.validate_amount!(charge_params[:amount]) &&
+            self.validate_currency!(charge_params[:currency]))
       rescue LightrailClientRuby::LightrailArgumentError
       end
-        raise LightrailClientRuby::LightrailArgumentError.new("Invalid charge_object: #{charge_object}")
+        raise LightrailClientRuby::LightrailArgumentError.new("Invalid charge_params: #{charge_params}")
     end
 
     def self.validate_transaction_response! (transaction_response)
       begin
+
+        return true if (transaction_response.is_a? LightrailClientRuby::GiftCharge) && transaction_response.transactionId && transaction_response.cardId
+
         return true if ((transaction_response.is_a? Hash) &&
             (transaction_response['transaction'].is_a? Hash) &&
             !transaction_response['transaction'].empty? &&
             self.validate_transaction_id!(transaction_response['transaction']['transactionId']) &&
             self.validate_card_id!(transaction_response['transaction']['cardId']))
+
       rescue LightrailClientRuby::LightrailArgumentError
       end
         raise LightrailClientRuby::LightrailArgumentError.new("Invalid transaction_response: #{transaction_response}")
     end
 
-    def self.validate_fund_object! (fund_object)
+    def self.validate_fund_object! (fund_params)
       begin
-        return true if ((fund_object.is_a? Hash) &&
-            self.validate_card_id!(fund_object[:cardId]) &&
-            self.validate_amount!(fund_object[:amount]) &&
-            self.validate_currency!(fund_object[:currency]))
+        return true if ((fund_params.is_a? Hash) &&
+            self.validate_card_id!(fund_params[:cardId]) &&
+            self.validate_amount!(fund_params[:amount]) &&
+            self.validate_currency!(fund_params[:currency]))
       rescue LightrailClientRuby::LightrailArgumentError
       end
-        raise LightrailClientRuby::LightrailArgumentError.new("Invalid fund_object: #{fund_object}")
+        raise LightrailClientRuby::LightrailArgumentError.new("Invalid fund_params: #{fund_params}")
+    end
+
+    def self.validate_ping_response! (ping_response)
+      begin
+        return true if ((ping_response.is_a? Hash) &&
+            (ping_response['user'].is_a? Hash) &&
+            !ping_response['user'].empty? &&
+            self.validate_username!(ping_response['user']['username']))
+      rescue LightrailClientRuby::LightrailArgumentError
+      end
+        raise LightrailClientRuby::LightrailArgumentError.new("Invalid ping_response: #{ping_response}")
     end
 
 
@@ -58,6 +73,11 @@ module LightrailClientRuby
     def self.validate_currency! (currency)
       return true if (/\A[A-Z]{3}\z/ === currency)
       raise LightrailClientRuby::LightrailArgumentError.new("Invalid currency: #{currency}")
+    end
+
+    def self.validate_username!(username)
+      return true if ((username.is_a? String) && !username.empty?)
+      raise LightrailClientRuby::LightrailArgumentError.new("Invalid username: #{username}")
     end
   end
 end

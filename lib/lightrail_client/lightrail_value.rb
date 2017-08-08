@@ -1,5 +1,5 @@
 module LightrailClient
-  class GiftValue < LightrailClient::LightrailObject
+  class LightrailValue < LightrailClient::LightrailObject
     attr_accessor :principal, :attached, :currency, :cardType, :balanceDate, :cardId
 
     def self.retrieve (code)

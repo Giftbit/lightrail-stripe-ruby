@@ -18,21 +18,21 @@ RSpec.configure do |config|
 
   # Ensure card balance will go back to same state after test suite runs
   config.before(:suite) do
-    balance_response = LightrailClient::GiftValue.retrieve(ENV['TEST_CODE'])
-    if (balance_response.is_a? LightrailClient::GiftValue)
+    balance_response = LightrailClient::LightrailValue.retrieve(ENV['TEST_CODE'])
+    if (balance_response.is_a? LightrailClient::LightrailValue)
       $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS = balance_response.principal['currentValue']
     else
-      fail "balance_response was not an instance of LightrailClient::GiftValue"
+      fail "balance_response was not an instance of LightrailClient::LightrailValue"
     end
     puts "Card balance before tests: #{$LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS}"
   end
 
   config.after(:suite) do
-    balance_response = LightrailClient::GiftValue.retrieve(ENV['TEST_CODE'])
-    if (balance_response.is_a? LightrailClient::GiftValue)
+    balance_response = LightrailClient::LightrailValue.retrieve(ENV['TEST_CODE'])
+    if (balance_response.is_a? LightrailClient::LightrailValue)
       balance_after_tests = balance_response.principal['currentValue']
     else
-      fail "balance_response was not an instance of LightrailClient::GiftValue"
+      fail "balance_response was not an instance of LightrailClient::LightrailValue"
     end
 
     difference = $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS - balance_after_tests

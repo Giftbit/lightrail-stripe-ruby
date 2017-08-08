@@ -1,17 +1,17 @@
 require "spec_helper"
 
-RSpec.describe LightrailClientRuby::GiftCharge do
-  subject(:gift_charge) {LightrailClientRuby::GiftCharge}
+RSpec.describe LightrailClient::LightrailCharge do
+  subject(:lightrail_charge) {LightrailClient::LightrailCharge}
 
   describe ".new" do
-    it "creates a new gift charge object from valid API response" do
+    it "creates a new charge object from valid API response" do
       charge_params = {
           amount: 1,
           currency: 'USD',
           code: ENV['TEST_CODE'],
       }
-      charge_response = gift_charge.create(charge_params)
-      expect(charge_response).to be_a(gift_charge)
+      charge_response = lightrail_charge.create(charge_params)
+      expect(charge_response).to be_a(lightrail_charge)
     end
   end
 
@@ -23,8 +23,8 @@ RSpec.describe LightrailClientRuby::GiftCharge do
             currency: 'USD',
             code: ENV['TEST_CODE'],
         }
-        charge_response = gift_charge.create(charge_params)
-        expect(charge_response).to be_a(gift_charge)
+        charge_response = lightrail_charge.create(charge_params)
+        expect(charge_response).to be_a(lightrail_charge)
         expect(charge_response.transactionType).to eq('DRAWDOWN')
       end
 
@@ -35,7 +35,7 @@ RSpec.describe LightrailClientRuby::GiftCharge do
             code: ENV['TEST_CODE'],
             userSuppliedId: 'test-charge-' + rand().to_s,
         }
-        charge_response = gift_charge.create(charge_params)
+        charge_response = lightrail_charge.create(charge_params)
         expect(charge_response.userSuppliedId).to eq(charge_params[:userSuppliedId])
       end
 
@@ -46,7 +46,7 @@ RSpec.describe LightrailClientRuby::GiftCharge do
             code: ENV['TEST_CODE'],
             capture: false,
         }
-        charge_response = gift_charge.create(charge_params)
+        charge_response = lightrail_charge.create(charge_params)
         expect(charge_response.transactionType).to eq('PENDING_CREATE')
       end
 
@@ -60,17 +60,17 @@ RSpec.describe LightrailClientRuby::GiftCharge do
                   giftbit_exception_action: 'transaction:create'
               }
           }
-          expect {gift_charge.create(charge_params)}.to raise_error(LightrailClientRuby::LightrailError, /Server responded with/), "expected a LightrailError with message 'Server responded with:'"
+          expect {lightrail_charge.create(charge_params)}.to raise_error(LightrailClient::LightrailError, /Server responded with/), "expected a LightrailError with message 'Server responded with:'"
         end
       end
     end
 
     context "when given bad/missing params" do
       it "throws an error when required params are missing" do
-        expect {gift_charge.create()}.to raise_error(ArgumentError), "called GiftCharge.create with no params"
-        expect {gift_charge.create({})}.to raise_error(LightrailClientRuby::LightrailArgumentError), "called GiftCharge.create with empty object"
-        expect {gift_charge.create({code: ENV['TEST_CODE']})}.to raise_error(LightrailClientRuby::LightrailArgumentError), "called GiftCharge.create with '{code: ENV['TEST_CODE']}'"
-        expect {gift_charge.create([])}.to raise_error(LightrailClientRuby::LightrailArgumentError), "called GiftCharge.create with empty array"
+        expect {lightrail_charge.create()}.to raise_error(ArgumentError), "called LightrailCharge.create with no params"
+        expect {lightrail_charge.create({})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.create with empty object"
+        expect {lightrail_charge.create({code: ENV['TEST_CODE']})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.create with '{code: ENV['TEST_CODE']}'"
+        expect {lightrail_charge.create([])}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.create with empty array"
       end
     end
 
@@ -84,12 +84,12 @@ RSpec.describe LightrailClientRuby::GiftCharge do
           code: ENV['TEST_CODE'],
           capture: false,
       }
-      @pending_to_void = gift_charge.create(charge_params_to_handle)
+      @pending_to_void = lightrail_charge.create(charge_params_to_handle)
     end
 
     context "when given valid params" do
       it "voids a pending transaction" do
-        voiding_response = gift_charge.cancel(@pending_to_void)
+        voiding_response = lightrail_charge.cancel(@pending_to_void)
         expect(voiding_response.transactionType).to eq('PENDING_VOID')
       end
     end
@@ -97,10 +97,10 @@ RSpec.describe LightrailClientRuby::GiftCharge do
     context "when given bad/missing params" do
       it "throws an error when required params are missing or in the wrong format" do
         @pending_to_void.remove_instance_variable(:@transactionId)
-        expect {gift_charge.cancel(@pending_to_void)}.to raise_error(LightrailClientRuby::LightrailArgumentError)
-        expect {gift_charge.cancel({})}.to raise_error(LightrailClientRuby::LightrailArgumentError), "called GiftCharge.cancel with empty object"
-        expect {gift_charge.cancel([])}.to raise_error(LightrailClientRuby::LightrailArgumentError), "called GiftCharge.cancel with empty array"
-        expect {gift_charge.cancel('')}.to raise_error(LightrailClientRuby::LightrailArgumentError), "called GiftCharge.cancel with empty string"
+        expect {lightrail_charge.cancel(@pending_to_void)}.to raise_error(LightrailClient::LightrailArgumentError)
+        expect {lightrail_charge.cancel({})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.cancel with empty object"
+        expect {lightrail_charge.cancel([])}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.cancel with empty array"
+        expect {lightrail_charge.cancel('')}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.cancel with empty string"
       end
     end
   end
@@ -113,12 +113,12 @@ RSpec.describe LightrailClientRuby::GiftCharge do
           code: ENV['TEST_CODE'],
           capture: false,
       }
-      @pending_to_capture = gift_charge.create(charge_params_to_handle)
+      @pending_to_capture = lightrail_charge.create(charge_params_to_handle)
     end
 
     context "when given valid params" do
       it "captures a pending transaction" do
-        capture_response = gift_charge.capture(@pending_to_capture)
+        capture_response = lightrail_charge.capture(@pending_to_capture)
         expect(capture_response.transactionType).to eq('DRAWDOWN')
       end
     end
@@ -126,10 +126,10 @@ RSpec.describe LightrailClientRuby::GiftCharge do
     context "when given bad/missing params" do
       it "throws an error when required params are missing or in the wrong format" do
         @pending_to_capture.remove_instance_variable(:@transactionId)
-        expect {gift_charge.capture(@pending_to_capture)}.to raise_error(LightrailClientRuby::LightrailArgumentError)
-        expect {gift_charge.capture({})}.to raise_error(LightrailClientRuby::LightrailArgumentError), "called GiftCharge.capture with empty object"
-        expect {gift_charge.capture([])}.to raise_error(LightrailClientRuby::LightrailArgumentError), "called GiftCharge.capture with empty array"
-        expect {gift_charge.capture('')}.to raise_error(LightrailClientRuby::LightrailArgumentError), "called GiftCharge.capture with empty string"
+        expect {lightrail_charge.capture(@pending_to_capture)}.to raise_error(LightrailClient::LightrailArgumentError)
+        expect {lightrail_charge.capture({})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.capture with empty object"
+        expect {lightrail_charge.capture([])}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.capture with empty array"
+        expect {lightrail_charge.capture('')}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.capture with empty string"
       end
     end
   end

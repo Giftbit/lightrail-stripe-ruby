@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "lightrail_client_ruby"
+require "lightrail_client"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -13,26 +13,26 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
-    LightrailClientRuby.api_key = ENV['LIGHTRAIL_API_KEY']
+    LightrailClient.api_key = ENV['LIGHTRAIL_API_KEY']
   end
 
   # Ensure card balance will go back to same state after test suite runs
   config.before(:suite) do
-    balance_response = LightrailClientRuby::GiftValue.retrieve(ENV['TEST_CODE'])
-    if (balance_response.is_a? LightrailClientRuby::GiftValue)
+    balance_response = LightrailClient::LightrailValue.retrieve(ENV['TEST_CODE'])
+    if (balance_response.is_a? LightrailClient::LightrailValue)
       $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS = balance_response.principal['currentValue']
     else
-      fail "balance_response was not an instance of LightrailClientRuby::GiftValue"
+      fail "balance_response was not an instance of LightrailClient::LightrailValue"
     end
     puts "Card balance before tests: #{$LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS}"
   end
 
   config.after(:suite) do
-    balance_response = LightrailClientRuby::GiftValue.retrieve(ENV['TEST_CODE'])
-    if (balance_response.is_a? LightrailClientRuby::GiftValue)
+    balance_response = LightrailClient::LightrailValue.retrieve(ENV['TEST_CODE'])
+    if (balance_response.is_a? LightrailClient::LightrailValue)
       balance_after_tests = balance_response.principal['currentValue']
     else
-      fail "balance_response was not an instance of LightrailClientRuby::GiftValue"
+      fail "balance_response was not an instance of LightrailClient::LightrailValue"
     end
 
     difference = $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS - balance_after_tests
@@ -44,7 +44,7 @@ RSpec.configure do |config|
           currency: ENV['TEST_CURRENCY'],
           userSuppliedId: 'restoring-balance-after-tests-' + SecureRandom::uuid
       }
-      restorative_transaction = LightrailClientRuby::GiftFund.create(fund_object_to_restore_balance)
+      restorative_transaction = LightrailClient::LightrailFund.create(fund_object_to_restore_balance)
       confirmation_new_balance = restorative_transaction.valueAvailableAfterTransaction
       puts "Card balance restored after tests: #{confirmation_new_balance}"
     else

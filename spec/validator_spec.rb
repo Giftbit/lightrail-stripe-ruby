@@ -1,10 +1,10 @@
 require "spec_helper"
 
-RSpec.describe LightrailClientRuby::Validator do
-  subject(:validator) {LightrailClientRuby::Validator}
+RSpec.describe LightrailClient::Validator do
+  subject(:validator) {LightrailClient::Validator}
 
   describe "grouped validator methods" do
-    let(:lr_argument_error) {LightrailClientRuby::LightrailArgumentError}
+    let(:lr_argument_error) {LightrailClient::LightrailArgumentError}
 
     describe ".validate_charge_object!" do
       it "returns true when the required keys are present" do
@@ -92,7 +92,7 @@ RSpec.describe LightrailClientRuby::Validator do
   end
 
   describe "single validator methods" do
-    let(:lr_argument_error) {LightrailClientRuby::LightrailArgumentError}
+    let(:lr_argument_error) {LightrailClient::LightrailArgumentError}
 
     describe ".validate_card_id!" do
       it "returns true for a string of the right format" do

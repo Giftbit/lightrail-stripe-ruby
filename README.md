@@ -7,7 +7,7 @@ Acquire and retain customers using account credits, gift cards, promotions, and 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'lightrail_client_ruby'
+gem 'lightrail_client'
 ```
 
 And then execute:
@@ -16,7 +16,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install lightrail_client_ruby
+    $ gem install lightrail_client
 
 ## Development
 

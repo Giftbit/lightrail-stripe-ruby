@@ -1,4 +1,4 @@
-module LightrailClientRuby
+module LightrailClient
   class LightrailObject
 
     def initialize(hash)

@@ -1,7 +1,7 @@
 require "spec_helper"
 
-RSpec.describe LightrailClientRuby::Ping do
-  subject(:ping) {LightrailClientRuby::Ping}
+RSpec.describe LightrailClient::Ping do
+  subject(:ping) {LightrailClient::Ping}
 
   describe ".ping" do
     it "pings" do

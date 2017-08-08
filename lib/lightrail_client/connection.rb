@@ -1,15 +1,15 @@
-module LightrailClientRuby
+module LightrailClient
   class Connection
 
     def self.connection
-      conn = Faraday.new LightrailClientRuby.api_base
+      conn = Faraday.new LightrailClient.api_base
       conn.headers['Content-Type'] = 'application/json; charset=utf-8'
-      conn.headers['Authorization'] = "Bearer #{LightrailClientRuby.api_key}"
+      conn.headers['Authorization'] = "Bearer #{LightrailClient.api_key}"
       conn
     end
 
     def self.make_post_request_and_parse_response (url, body)
-      resp = LightrailClientRuby::Connection.connection.post do |req|
+      resp = LightrailClient::Connection.connection.post do |req|
         req.url url
         req.body = JSON.generate(body)
       end
@@ -17,7 +17,7 @@ module LightrailClientRuby
     end
 
     def self.make_get_request_and_parse_response (url)
-      resp = LightrailClientRuby::Connection.connection.get do |req|
+      resp = LightrailClient::Connection.connection.get do |req|
         req.url url
       end
       self.handle_response(resp)
@@ -31,16 +31,16 @@ module LightrailClientRuby
           JSON.parse(response.body)
         when 400
           if (message =~ /insufficient value/i)
-            raise LightrailClientRuby::InsufficientValueError.new(message, response)
+            raise LightrailClient::InsufficientValueError.new(message, response)
           else
-            raise LightrailClientRuby::BadParameterError.new(message, response)
+            raise LightrailClient::BadParameterError.new(message, response)
           end
         when 401, 403
-          raise LightrailClientRuby::AuthorizationError.new(message, response)
+          raise LightrailClient::AuthorizationError.new(message, response)
         when 404
-          raise LightrailClientRuby::CouldNotFindObjectError.new(message, response)
+          raise LightrailClient::CouldNotFindObjectError.new(message, response)
         when 409
-          raise LightrailClientRuby::BadParameterError.new(message, response)
+          raise LightrailClient::BadParameterError.new(message, response)
         else
           raise LightrailError.new("Server responded with: (#{response.status}) #{message}", response)
       end

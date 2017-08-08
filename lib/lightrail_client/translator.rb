@@ -1,4 +1,4 @@
-module LightrailClientRuby
+module LightrailClient
   class Translator
 
     def self.translate (stripe_object, is_value_positive=false)

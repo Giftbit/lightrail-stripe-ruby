@@ -1,7 +1,7 @@
 require "spec_helper"
 
-RSpec.describe LightrailClientRuby::GiftValue do
-  subject(:gift_value) {LightrailClientRuby::GiftValue}
+RSpec.describe LightrailClient::GiftValue do
+  subject(:gift_value) {LightrailClient::GiftValue}
 
   describe ".retrieve" do
 
@@ -15,9 +15,9 @@ RSpec.describe LightrailClientRuby::GiftValue do
     context "when given bad/missing params" do
       it "throws an error when required params are missing" do
         expect {gift_value.retrieve()}.to raise_error(ArgumentError), "called GiftValue.retrieve with no params"
-        expect {gift_value.retrieve('')}.to raise_error(LightrailClientRuby::LightrailArgumentError), "called GiftValue.retrieve with empty string"
-        expect {gift_value.retrieve({})}.to raise_error(LightrailClientRuby::LightrailArgumentError), "called GiftValue.retrieve with empty object"
-        expect {gift_value.retrieve([])}.to raise_error(LightrailClientRuby::LightrailArgumentError), "called GiftValue.retrieve with empty array"
+        expect {gift_value.retrieve('')}.to raise_error(LightrailClient::LightrailArgumentError), "called GiftValue.retrieve with empty string"
+        expect {gift_value.retrieve({})}.to raise_error(LightrailClient::LightrailArgumentError), "called GiftValue.retrieve with empty object"
+        expect {gift_value.retrieve([])}.to raise_error(LightrailClient::LightrailArgumentError), "called GiftValue.retrieve with empty array"
       end
     end
 

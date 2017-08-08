@@ -1,5 +1,5 @@
 module LightrailClient
-  class GiftCharge < LightrailClient::LightrailObject
+  class LightrailCharge < LightrailClient::LightrailObject
     attr_accessor :transactionId, :value, :userSuppliedId, :dateCreated, :transactionType, :transactionAccessMethod, :valueAvailableAfterTransaction, :giftbitUserId, :cardId, :currency, :codeLastFour
 
     def self.create (charge_params)

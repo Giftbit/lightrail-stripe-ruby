@@ -14,7 +14,7 @@ module LightrailClient
     def self.validate_transaction_response! (transaction_response)
       begin
 
-        return true if (transaction_response.is_a? LightrailClient::GiftCharge) && transaction_response.transactionId && transaction_response.cardId
+        return true if (transaction_response.is_a? LightrailClient::LightrailCharge) && transaction_response.transactionId && transaction_response.cardId
 
         return true if ((transaction_response.is_a? Hash) &&
             (transaction_response['transaction'].is_a? Hash) &&

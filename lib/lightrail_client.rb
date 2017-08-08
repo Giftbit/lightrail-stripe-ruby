@@ -13,7 +13,7 @@ require "lightrail_client/connection"
 require "lightrail_client/lightrail_object"
 require "lightrail_client/ping"
 require "lightrail_client/gift_value"
-require "lightrail_client/gift_charge"
+require "lightrail_client/lightrail_charge"
 require "lightrail_client/gift_fund"
 require "lightrail_client/refund"
 

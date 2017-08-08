@@ -13,7 +13,7 @@ RSpec.describe LightrailClient::Refund do
             code: ENV['TEST_CODE'],
             capture: true,
         }
-        charge = LightrailClient::GiftCharge.create(charge_params)
+        charge = LightrailClient::LightrailCharge.create(charge_params)
         refund_response = refund.create(charge)
         expect(refund_response.transactionType).to eq('DRAWDOWN_REFUND')
         expect(refund_response.parentTransactionId).to eq(charge.transactionId)

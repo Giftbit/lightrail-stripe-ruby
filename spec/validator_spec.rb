@@ -28,12 +28,12 @@ RSpec.describe LightrailClient::Validator do
 
     describe ".validate_transaction_response!" do
       it "returns true when the required keys are present & formatted" do
-        transaction_response = {
-            'transaction' => {
-                'transactionId' => ENV['TEST_TRANSACTION_ID'],
-                'cardId' => ENV['TEST_CARD_ID']
-            }
+        charge_params = {
+            amount: 1,
+            currency: 'USD',
+            code: ENV['TEST_CODE'],
         }
+        transaction_response = LightrailClient::LightrailCharge.create(charge_params)
         expect(validator.validate_transaction_response!(transaction_response)).to be true
       end
 

@@ -13,15 +13,7 @@ module LightrailClient
 
     def self.validate_transaction_response! (transaction_response)
       begin
-
         return true if (transaction_response.is_a? LightrailClient::LightrailCharge) && transaction_response.transactionId && transaction_response.cardId
-
-        return true if ((transaction_response.is_a? Hash) &&
-            (transaction_response['transaction'].is_a? Hash) &&
-            !transaction_response['transaction'].empty? &&
-            self.validate_transaction_id!(transaction_response['transaction']['transactionId']) &&
-            self.validate_card_id!(transaction_response['transaction']['cardId']))
-
       rescue LightrailClient::LightrailArgumentError
       end
         raise LightrailClient::LightrailArgumentError.new("Invalid transaction_response: #{transaction_response}")

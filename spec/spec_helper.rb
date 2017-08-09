@@ -44,8 +44,10 @@ RSpec.configure do |config|
           currency: ENV['TEST_CURRENCY'],
           userSuppliedId: 'restoring-balance-after-tests-' + SecureRandom::uuid
       }
-      restorative_transaction = LightrailClient::LightrailFund.create(fund_object_to_restore_balance)
-      confirmation_new_balance = restorative_transaction.valueAvailableAfterTransaction
+
+      LightrailClient::LightrailFund.create(fund_object_to_restore_balance)
+
+      confirmation_new_balance = LightrailClient::LightrailValue.retrieve(ENV['TEST_CODE']).principal['currentValue']
       puts "Card balance restored after tests: #{confirmation_new_balance}"
     else
       puts "Card balance not changed by tests: #{balance_after_tests}"

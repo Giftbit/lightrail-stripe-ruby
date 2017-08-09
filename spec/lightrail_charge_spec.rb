@@ -17,11 +17,22 @@ RSpec.describe LightrailClient::LightrailCharge do
 
   describe ".create" do
     context "when given valid params" do
-      it "creates a drawdown transaction with minimum required params" do
+      it "creates a drawdown code transaction with minimum required params" do
         charge_params = {
             amount: 1,
             currency: 'USD',
             code: ENV['TEST_CODE'],
+        }
+        charge_response = lightrail_charge.create(charge_params)
+        expect(charge_response).to be_a(lightrail_charge)
+        expect(charge_response.transactionType).to eq('DRAWDOWN')
+      end
+
+      it "creates a drawdown card transaction with minimum required params" do
+        charge_params = {
+            amount: 1,
+            currency: 'USD',
+            cardId: ENV['TEST_CARD_ID'],
         }
         charge_response = lightrail_charge.create(charge_params)
         expect(charge_response).to be_a(lightrail_charge)

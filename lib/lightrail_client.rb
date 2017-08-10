@@ -1,5 +1,6 @@
 require "dotenv/load"
 require "faraday"
+require "openssl"
 require "json"
 require "securerandom"
 

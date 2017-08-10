@@ -2,7 +2,7 @@ module LightrailClient
   class Connection
 
     def self.connection
-      conn = Faraday.new LightrailClient.api_base
+      conn = Faraday.new LightrailClient.api_base, ssl: {version: :TLSv1_2}
       conn.headers['Content-Type'] = 'application/json; charset=utf-8'
       conn.headers['Authorization'] = "Bearer #{LightrailClient.api_key}"
       conn

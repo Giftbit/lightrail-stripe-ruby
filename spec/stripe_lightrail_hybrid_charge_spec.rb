@@ -4,7 +4,7 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
   subject(:hybrid_charge) {LightrailClient::StripeLightrailHybridCharge}
 
   before do
-      Stripe.api_key = ENV['STRIPE_API_KEY']
+    Stripe.api_key = ENV['STRIPE_API_KEY']
   end
 
   context "EXAMPLE" do
@@ -41,11 +41,45 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
         expect(hybrid_charge_response).to be_a(hybrid_charge)
       end
 
-      it "charges Lightrail only, when card balance is sufficient"
+      it "charges Lightrail only, when card balance is sufficient" do
+        charge_params = {
+            amount: 1,
+            currency: 'USD',
+            lightrail_code: ENV['TEST_CODE'],
+            code: ENV['TEST_CODE'],
+            stripe_source: 'tok_mastercard',
+        }
+        hybrid_charge_response = hybrid_charge.create(charge_params)
+        # puts "#{hybrid_charge_response.inspect}"
+        expect(hybrid_charge_response).to be_a(hybrid_charge)
+        expect(hybrid_charge_response.lightrail_charge).to be_a(LightrailClient::LightrailCharge)
+        expect(hybrid_charge_response.stripe_charge).to be(nil)
+      end
 
-      it "charges Lightrail only, when no Stripe params given"
+      it "charges Lightrail only, when no Stripe params given" do
+        charge_params = {
+            amount: 1,
+            currency: 'USD',
+            lightrail_code: ENV['TEST_CODE'],
+            code: ENV['TEST_CODE'],
+        }
+        hybrid_charge_response = hybrid_charge.create(charge_params)
+        expect(hybrid_charge_response).to be_a(hybrid_charge)
+        expect(hybrid_charge_response.lightrail_charge).to be_a(LightrailClient::LightrailCharge)
+        expect(hybrid_charge_response.stripe_charge).to be(nil)
+      end
 
-      it "charges Stripe only, when no Lightrail params given"
+      it "charges Stripe only, when no Lightrail params given" do
+        charge_params = {
+            amount: 1000,
+            currency: 'USD',
+            stripe_source: 'tok_mastercard',
+        }
+        hybrid_charge_response = hybrid_charge.create(charge_params)
+        expect(hybrid_charge_response).to be_a(hybrid_charge)
+        expect(hybrid_charge_response.stripe_charge).to be_a(Stripe::Charge)
+        expect(hybrid_charge_response.lightrail_charge).to be(nil)
+      end
 
     end
   end

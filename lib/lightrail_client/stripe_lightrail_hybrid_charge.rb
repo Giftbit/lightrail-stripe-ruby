@@ -41,9 +41,9 @@ module LightrailClient
             LightrailClient::LightrailCharge.cancel(lightrail_pending_transaction)
             raise LightrailClient::ThirdPartyPaymentError.new("Stripe payment failed", stripe_transaction)
           end
-
-          lightrail_captured_transaction = LightrailClient::LightrailCharge.capture(lightrail_pending_transaction)
         end
+
+        lightrail_captured_transaction = LightrailClient::LightrailCharge.capture(lightrail_pending_transaction)
 
         # # else charge all to stripe (catch error throw ThirdPartyPaymentError)
       else # all to stripe
@@ -66,11 +66,11 @@ module LightrailClient
     private
 
     def self.has_lightrail_payment_option?(charge_params)
-      !!charge_params.keys.detect { |param| param =~ /lightrail/ }
+      !!charge_params.keys.detect {|param| param =~ /lightrail/}
     end
 
     def self.has_stripe_payment_option?(charge_params)
-      !!charge_params.keys.detect { |param| param =~ /stripe/ }
+      !!charge_params.keys.detect {|param| param =~ /stripe/}
     end
 
     def self.determine_lightrail_share(charge_params)

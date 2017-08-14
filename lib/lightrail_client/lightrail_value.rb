@@ -11,5 +11,17 @@ module LightrailClient
 
       self.new(response['balance'])
     end
+
+
+    def total_available
+      total = self.principal['currentValue']
+      self.attached.reduce(total) do |sum, valueStore|
+        if valueStore['state'] == "ACTIVE"
+          total += valueStore['currentValue']
+        end
+      end
+      total
+    end
+
   end
 end

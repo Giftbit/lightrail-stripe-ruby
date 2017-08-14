@@ -22,4 +22,18 @@ RSpec.describe LightrailClient::LightrailValue do
     end
 
   end
+
+  describe "#total_available" do
+
+    it "returns the sum of all active value stores" do
+      balance_response = lightrail_value.retrieve(ENV['TEST_CODE'])
+      expect(balance_response.total_available).to be_an(Integer)
+    end
+
+    it "excludes value stores if their state is not active" do
+      #pending "create a transaction response with an artificial expired/inactive value store"
+    end
+
+  end
+
 end

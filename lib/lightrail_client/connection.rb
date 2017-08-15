@@ -54,6 +54,10 @@ module LightrailClient
       "codes/#{code}/balance/details"
     end
 
+    def self.api_endpoint_card_balance (card_id)
+      "cards/#{card_id}/balance"
+    end
+
     def self.api_endpoint_code_transaction (code)
       "codes/#{code}/transactions"
     end

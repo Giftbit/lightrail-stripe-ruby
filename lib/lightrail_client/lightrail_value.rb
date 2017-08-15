@@ -4,11 +4,22 @@ module LightrailClient
 
     def self.retrieve (code)
       LightrailClient::Validator.validate_code! (code)
-
       url = LightrailClient::Connection.api_endpoint_code_balance(code)
-
       response = LightrailClient::Connection.make_get_request_and_parse_response(url)
+      self.new(response['balance'])
+    end
 
+    def self.retrieve_by_code (code)
+      LightrailClient::Validator.validate_code! (code)
+      url = LightrailClient::Connection.api_endpoint_code_balance(code)
+      response = LightrailClient::Connection.make_get_request_and_parse_response(url)
+      self.new(response['balance'])
+    end
+
+    def self.retrieve_by_card_id (card_id)
+      LightrailClient::Validator.validate_card_id!(card_id)
+      url = LightrailClient::Connection.api_endpoint_card_balance(card_id)
+      response = LightrailClient::Connection.make_get_request_and_parse_response(url)
       self.new(response['balance'])
     end
 

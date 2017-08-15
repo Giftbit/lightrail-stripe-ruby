@@ -11,6 +11,18 @@ module LightrailClient
       raise LightrailClient::LightrailArgumentError.new("Invalid charge_params: #{charge_params.inspect}")
     end
 
+    def self.validate_hybrid_charge_params! (hybrid_charge_params)
+      begin
+        return true if ((hybrid_charge_params.is_a? Hash) &&
+            self.validate_amount!(hybrid_charge_params[:amount]) &&
+            self.validate_currency!(hybrid_charge_params[:currency]) &&
+            (self.has_lightrail_payment_option?(hybrid_charge_params) ||
+                self.has_stripe_payment_option?(hybrid_charge_params)))
+      rescue LightrailClient::LightrailArgumentError
+      end
+      raise LightrailClient::LightrailArgumentError.new("Invalid hybrid_charge_params: #{hybrid_charge_params.inspect}")
+    end
+
     def self.validate_transaction_response! (transaction_response)
       begin
         return true if (transaction_response.is_a? LightrailClient::LightrailCharge) && transaction_response.transactionId && transaction_response.cardId
@@ -75,11 +87,22 @@ module LightrailClient
     private
 
     def self.has_valid_code?(charge_params)
-      charge_params[:code] && self.validate_code!(charge_params[:code])
+      code = LightrailClient::Translator.get_code(charge_params)
+      code && self.validate_code!(charge_params[:code])
     end
 
     def self.has_valid_card_id?(charge_params)
-      charge_params[:cardId] && self.validate_card_id!(charge_params[:cardId])
+      cardId = LightrailClient::Translator.get_card_id(charge_params)
+      cardId && self.validate_card_id!(charge_params[:cardId])
     end
+
+    def self.has_lightrail_payment_option?(charge_params)
+      (self.has_valid_code?(charge_params) || self.has_valid_card_id?(charge_params))
+    end
+
+    def self.has_stripe_payment_option?(charge_params)
+      charge_params.has_key?(:source) || charge_params.has_key?(:customer)
+    end
+
   end
 end

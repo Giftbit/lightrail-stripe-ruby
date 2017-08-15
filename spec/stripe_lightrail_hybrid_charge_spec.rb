@@ -29,9 +29,8 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
         charge_params = {
             amount: 1000,
             currency: 'USD',
-            lightrail_code: ENV['TEST_CODE_497'],
             code: ENV['TEST_CODE_497'],
-            stripe_source: 'tok_mastercard',
+            source: 'tok_mastercard',
         }
 
         hybrid_charge_response = hybrid_charge.create(charge_params)
@@ -47,7 +46,7 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
             currency: 'USD',
             lightrail_code: ENV['TEST_CODE'],
             code: ENV['TEST_CODE'],
-            stripe_source: 'tok_mastercard',
+            source: 'tok_mastercard',
         }
         hybrid_charge_response = hybrid_charge.create(charge_params)
         # puts "#{hybrid_charge_response.inspect}"
@@ -73,7 +72,7 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
         charge_params = {
             amount: 1000,
             currency: 'USD',
-            stripe_source: 'tok_mastercard',
+            source: 'tok_mastercard',
         }
         hybrid_charge_response = hybrid_charge.create(charge_params)
         expect(hybrid_charge_response).to be_a(hybrid_charge)
@@ -82,6 +81,17 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
       end
 
     end
+
+    context "when given bad/missing params" do
+      it "throws an error when missing both Stripe and Lightrail payment options" do
+        charge_params = {
+            amount: 1000,
+            currency: 'USD',
+        }
+        expect {hybrid_charge.create(charge_params)}.to raise_error(LightrailClient::LightrailArgumentError)
+      end
+    end
+
   end
 
 end

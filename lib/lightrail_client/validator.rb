@@ -8,7 +8,7 @@ module LightrailClient
             self.validate_currency!(charge_params[:currency]))
       rescue LightrailClient::LightrailArgumentError
       end
-      raise LightrailClient::LightrailArgumentError.new("Invalid charge_params: #{charge_params}")
+      raise LightrailClient::LightrailArgumentError.new("Invalid charge_params: #{charge_params.inspect}")
     end
 
     def self.validate_transaction_response! (transaction_response)
@@ -16,7 +16,7 @@ module LightrailClient
         return true if (transaction_response.is_a? LightrailClient::LightrailCharge) && transaction_response.transactionId && transaction_response.cardId
       rescue LightrailClient::LightrailArgumentError
       end
-      raise LightrailClient::LightrailArgumentError.new("Invalid transaction_response: #{transaction_response}")
+      raise LightrailClient::LightrailArgumentError.new("Invalid transaction_response: #{transaction_response.inspect}")
     end
 
     def self.validate_fund_object! (fund_params)
@@ -27,7 +27,7 @@ module LightrailClient
             self.validate_currency!(fund_params[:currency]))
       rescue LightrailClient::LightrailArgumentError
       end
-      raise LightrailClient::LightrailArgumentError.new("Invalid fund_params: #{fund_params}")
+      raise LightrailClient::LightrailArgumentError.new("Invalid fund_params: #{fund_params.inspect}")
     end
 
     def self.validate_ping_response! (ping_response)
@@ -38,38 +38,38 @@ module LightrailClient
             self.validate_username!(ping_response['user']['username']))
       rescue LightrailClient::LightrailArgumentError
       end
-      raise LightrailClient::LightrailArgumentError.new("Invalid ping_response: #{ping_response}")
+      raise LightrailClient::LightrailArgumentError.new("Invalid ping_response: #{ping_response.inspect}")
     end
 
 
     def self.validate_card_id! (card_id)
       return true if ((card_id.is_a? String) && !card_id.empty?)
-      raise LightrailClient::LightrailArgumentError.new("Invalid card_id: #{card_id}")
+      raise LightrailClient::LightrailArgumentError.new("Invalid card_id: #{card_id.inspect}")
     end
 
     def self.validate_code! (code)
       return true if ((code.is_a? String) && !code.empty?)
-      raise LightrailClient::LightrailArgumentError.new("Invalid code: #{code}")
+      raise LightrailClient::LightrailArgumentError.new("Invalid code: #{code.inspect}")
     end
 
     def self.validate_transaction_id! (transaction_id)
       return true if ((transaction_id.is_a? String) && !transaction_id.empty?)
-      raise LightrailClient::LightrailArgumentError.new("Invalid transaction_id: #{transaction_id}")
+      raise LightrailClient::LightrailArgumentError.new("Invalid transaction_id: #{transaction_id.inspect}")
     end
 
     def self.validate_amount! (amount)
       return true if (amount.is_a? Integer)
-      raise LightrailClient::LightrailArgumentError.new("Invalid amount: #{amount}")
+      raise LightrailClient::LightrailArgumentError.new("Invalid amount: #{amount.inspect}")
     end
 
     def self.validate_currency! (currency)
       return true if (/\A[A-Z]{3}\z/ === currency)
-      raise LightrailClient::LightrailArgumentError.new("Invalid currency: #{currency}")
+      raise LightrailClient::LightrailArgumentError.new("Invalid currency: #{currency.inspect}")
     end
 
     def self.validate_username!(username)
       return true if ((username.is_a? String) && !username.empty?)
-      raise LightrailClient::LightrailArgumentError.new("Invalid username: #{username}")
+      raise LightrailClient::LightrailArgumentError.new("Invalid username: #{username.inspect}")
     end
 
     private

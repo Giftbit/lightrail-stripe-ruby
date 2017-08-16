@@ -8,12 +8,12 @@ module LightrailClient
       card_id = original_transaction_response.cardId
       transaction_id = original_transaction_response.transactionId
 
-      url = LightrailClient::Connection.api_endpoint_refund_transaction(card_id, transaction_id)
+      # TODO: take userSuppliedId if provided in params
       body = {
           userSuppliedId: "#{transaction_id}-refund"
       }
 
-      response = LightrailClient::Connection.make_post_request_and_parse_response(url, body)
+      response = LightrailClient::Connection.post_refund(card_id, transaction_id, body)
 
       self.new(response['transaction'])
     end

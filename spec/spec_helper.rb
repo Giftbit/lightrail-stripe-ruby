@@ -19,7 +19,7 @@ RSpec.configure do |config|
 
   # Ensure card balance will go back to same state after test suite runs
   config.before(:suite) do
-    balance_response = LightrailClient::LightrailValue.retrieve(ENV['TEST_CODE'])
+    balance_response = LightrailClient::LightrailValue.retrieve_by_code(ENV['TEST_CODE'])
     if (balance_response.is_a? LightrailClient::LightrailValue)
       $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS = balance_response.principal['currentValue']
     else
@@ -29,7 +29,7 @@ RSpec.configure do |config|
   end
 
   config.after(:suite) do
-    balance_response = LightrailClient::LightrailValue.retrieve(ENV['TEST_CODE'])
+    balance_response = LightrailClient::LightrailValue.retrieve_by_code(ENV['TEST_CODE'])
     if (balance_response.is_a? LightrailClient::LightrailValue)
       balance_after_tests = balance_response.principal['currentValue']
     else
@@ -48,7 +48,7 @@ RSpec.configure do |config|
 
       LightrailClient::LightrailFund.create(fund_object_to_restore_balance)
 
-      confirmation_new_balance = LightrailClient::LightrailValue.retrieve(ENV['TEST_CODE']).principal['currentValue']
+      confirmation_new_balance = LightrailClient::LightrailValue.retrieve_by_code(ENV['TEST_CODE']).principal['currentValue']
       puts "Card balance restored after tests: #{confirmation_new_balance}"
     else
       puts "Card balance not changed by tests: #{balance_after_tests}"

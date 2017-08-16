@@ -31,7 +31,7 @@ module LightrailClient
           begin
             self.update_charge_params_for_stripe!(charge_params, [lr_payment_param_key])
             stripe_transaction = Stripe::Charge.create(charge_params)
-          rescue # TODO decide which error responses to handle
+          rescue
             LightrailClient::LightrailCharge.cancel(lightrail_pending_transaction)
             raise $!, "Stripe payment failed: #{$!}", $!.backtrace
           end

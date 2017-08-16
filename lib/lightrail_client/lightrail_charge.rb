@@ -9,11 +9,9 @@ module LightrailClient
       charge_method = charge_params_to_send_to_lightrail[:code] ? 'code' : 'cardId'
       code_or_card_id = charge_params_to_send_to_lightrail.delete(charge_method.to_sym)
 
-      url = (charge_method == 'code') ?
-          LightrailClient::Connection.api_endpoint_code_transaction(code_or_card_id) :
-          LightrailClient::Connection.api_endpoint_card_transaction(code_or_card_id)
-
-      response = LightrailClient::Connection.make_post_request_and_parse_response(url, charge_params_to_send_to_lightrail)
+      response = (charge_method == 'code') ?
+          LightrailClient::Connection.make_code_transaction(code_or_card_id, charge_params_to_send_to_lightrail) :
+          LightrailClient::Connection.make_card_id_transaction(code_or_card_id, charge_params_to_send_to_lightrail)
 
       self.new(response['transaction'])
     end

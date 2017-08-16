@@ -47,6 +47,10 @@ module LightrailClient
     end
 
 
+    def self.ping
+      self.send :make_get_request_and_parse_response, "ping"
+    end
+
     def self.get_code_balance(code)
       self.send :make_get_request_and_parse_response, "codes/#{code}/balance/details"
     end
@@ -55,10 +59,6 @@ module LightrailClient
       self.send :make_get_request_and_parse_response, "cards/#{card_id}/balance"
     end
 
-
-    def self.api_endpoint_ping
-      "ping"
-    end
 
     def self.api_endpoint_code_transaction (code)
       "codes/#{code}/transactions"

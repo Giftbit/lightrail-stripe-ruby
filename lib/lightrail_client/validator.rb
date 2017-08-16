@@ -4,7 +4,7 @@ module LightrailClient
       begin
         return true if ((charge_params.is_a? Hash) &&
             (self.has_valid_code?(charge_params) || self.has_valid_card_id?(charge_params)) &&
-            self.validate_amount!(charge_params[:amount]) &&
+            self.validate_amount!(charge_params[:amount] || charge_params[:value]) &&
             self.validate_currency!(charge_params[:currency]))
       rescue LightrailClient::LightrailArgumentError
       end

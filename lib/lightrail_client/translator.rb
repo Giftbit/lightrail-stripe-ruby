@@ -12,10 +12,12 @@ module LightrailClient
       lightrail_object
     end
 
-    def self.construct_pending_charge_params_from_hybrid(hybrid_charge_params)
+    def self.construct_pending_charge_params_from_hybrid(hybrid_charge_params, lr_share)
       lightrail_params = hybrid_charge_params.clone
 
       lightrail_params[:pending] = true
+      lightrail_params[:value] = -lr_share
+      lightrail_params.delete(:amount)
 
       lightrail_params[:code] ||= self.get_code(lightrail_params)
       lightrail_params[:cardId] ||= self.get_card_id(lightrail_params)

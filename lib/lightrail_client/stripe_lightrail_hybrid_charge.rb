@@ -23,8 +23,7 @@ module LightrailClient
 
 
       if lr_share > 0 # start with lightrail charge first
-        lightrail_charge_params = LightrailClient::Translator.construct_pending_charge_params_from_hybrid(charge_params)
-        lightrail_charge_params[:amount] = lr_share
+        lightrail_charge_params = LightrailClient::Translator.construct_pending_charge_params_from_hybrid(charge_params, lr_share)
 
         lightrail_pending_transaction = LightrailClient::LightrailCharge.create(lightrail_charge_params)
 

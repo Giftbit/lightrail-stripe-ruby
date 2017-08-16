@@ -15,7 +15,7 @@ module LightrailClient
       if LightrailClient::Validator.has_stripe_payment_option?(charge_params)
         stripe_share = total_amount - lr_share
       elsif (lr_share < total_amount)
-        raise LightrailClient::InsufficientValueError.new("Gift card value not sufficient to cover total amount. Please provide a credit card.")
+        raise LightrailClient::InsufficientValueError.new('Gift card value not sufficient to cover total amount. Please provide a credit card.')
       else
         stripe_share = 0
       end
@@ -67,7 +67,7 @@ module LightrailClient
                           elsif card_id
                             LightrailClient::LightrailValue.retrieve_by_card_id(card_id)
                           else
-                            raise LightrailClient::LightrailArgumentError.new("A valid Lightrail code or cardId is required for a balance check.")
+                            raise LightrailClient::LightrailArgumentError.new('A valid Lightrail code or cardId is required for a balance check.')
                           end
 
       [charge_params[:amount], lightrail_balance.total_available].min

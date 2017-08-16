@@ -67,10 +67,10 @@ module LightrailClient
       self.send :make_post_request_and_parse_response, "cards/#{card_id}/transactions", charge_params
     end
 
-
-    def self.api_endpoint_handle_pending (card_id, transaction_id, void_or_capture)
-      "cards/#{card_id}/transactions/#{transaction_id}/#{void_or_capture}"
+    def self.handle_pending(card_id, transaction_id, void_or_capture, request_body)
+      self.send :make_post_request_and_parse_response, "cards/#{card_id}/transactions/#{transaction_id}/#{void_or_capture}", request_body
     end
+
 
     def self.api_endpoint_refund_transaction (card_id, transaction_id)
       "cards/#{card_id}/transactions/#{transaction_id}/refund"

@@ -32,12 +32,11 @@ module LightrailClient
       transaction_id = original_transaction_response.transactionId
       card_id = original_transaction_response.cardId
 
-      url = LightrailClient::Connection.api_endpoint_handle_pending(card_id, transaction_id, void_or_capture)
       body = {
           userSuppliedId: "#{transaction_id}-#{void_or_capture}",
       }
 
-      response = LightrailClient::Connection.make_post_request_and_parse_response(url, body)
+      response = LightrailClient::Connection.handle_pending(card_id, transaction_id, void_or_capture, body)
 
       self.new(response['transaction'])
     end

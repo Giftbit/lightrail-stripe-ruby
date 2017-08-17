@@ -14,7 +14,6 @@ module LightrailClient
 
       if LightrailClient::Validator.has_stripe_payment_option?(charge_params)
         stripe_share = total_amount - lr_share
-        charge_params[:amount] = stripe_share
       elsif (lr_share < total_amount)
         raise LightrailClient::InsufficientValueError.new("Gift card value not sufficient to cover total amount. Please provide a credit card.")
       else
@@ -29,8 +28,8 @@ module LightrailClient
 
         if stripe_share > 0 # continue to stripe charge
           begin
-            self.update_charge_params_for_stripe!(charge_params, [lr_payment_param_key])
-            stripe_transaction = Stripe::Charge.create(charge_params)
+            stripe_params = LightrailClient::Translator.translate_charge_params_for_stripe(charge_params, stripe_share)
+            stripe_transaction = Stripe::Charge.create(stripe_params)
           rescue
             LightrailClient::LightrailCharge.cancel(lightrail_pending_transaction)
             raise $!, "Stripe payment failed: #{$!}", $!.backtrace
@@ -40,8 +39,9 @@ module LightrailClient
         lightrail_captured_transaction = LightrailClient::LightrailCharge.capture(lightrail_pending_transaction)
 
       else # all to stripe
-        self.update_charge_params_for_stripe!(charge_params, [lr_payment_param_key])
-        stripe_transaction = Stripe::Charge.create(charge_params)
+        stripe_params = LightrailClient::Translator.translate_charge_params_for_stripe(charge_params, stripe_share)
+        stripe_transaction = Stripe::Charge.create(stripe_params)
+
       end
 
       # # TODO produce payment_summary (lr amount & info incl metadata, stripe amount & info)
@@ -65,10 +65,6 @@ module LightrailClient
                           end
 
       [charge_params[:amount], lightrail_balance.total_available].min
-    end
-
-    def self.update_charge_params_for_stripe!(charge_params, delete_keys=[])
-      delete_keys.each {|charge_param_key| charge_params.delete(charge_param_key)}
     end
 
   end

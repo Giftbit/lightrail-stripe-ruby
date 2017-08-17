@@ -7,18 +7,18 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
     Stripe.api_key = ENV['STRIPE_API_KEY']
   end
 
-  context "EXAMPLE" do
-    it "posts a charge to the Stripe API" do
-      charge_params = {
-          amount: 55,
-          currency: 'USD',
-          source: 'tok_mastercard',
-      }
-
-      charge_response = Stripe::Charge.create(charge_params)
-      expect(charge_response).to be_a(Stripe::Charge)
-    end
-  end
+  # context "EXAMPLE" do
+  #   it "posts a charge to the Stripe API" do
+  #     charge_params = {
+  #         amount: 55,
+  #         currency: 'USD',
+  #         source: 'tok_mastercard',
+  #     }
+  #
+  #     charge_response = Stripe::Charge.create(charge_params)
+  #     expect(charge_response).to be_a(Stripe::Charge)
+  #   end
+  # end
 
   describe ".create" do
     context "when given valid params" do

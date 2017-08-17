@@ -52,7 +52,7 @@ module LightrailClient
     end
 
     def self.get_code_or_card_id_key(charge_params)
-      (charge_params.keys & [:code, :lightrail_code, :cardId, :card_id, :lightrail_card_id]).first
+      (charge_params.keys & LightrailClient::Constants::LIGHTRAIL_PAYMENT_METHODS).first
     end
 
     def self.user_supplied_id_translate_or_create(charge_params)

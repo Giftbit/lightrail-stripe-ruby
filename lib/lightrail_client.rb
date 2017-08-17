@@ -8,6 +8,7 @@ require "stripe"
 
 require "lightrail_client/version"
 
+require "lightrail_client/constants"
 require "lightrail_client/errors"
 require "lightrail_client/validator"
 require "lightrail_client/translator"

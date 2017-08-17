@@ -1,15 +1,18 @@
 module LightrailClient
   class Translator
 
-    def self.translate (stripe_object, is_value_positive=false)
-      lightrail_object = stripe_object.clone
-      lightrail_object[:value] ||= lightrail_object.delete(:amount) if lightrail_object[:amount]
-      lightrail_object[:pending] ||= lightrail_object[:capture] === nil ? false : !lightrail_object.delete(:capture)
-      lightrail_object[:userSuppliedId] ||= SecureRandom::uuid
+    def self.translate_charge_params(stripe_style_params)
+      lightrail_params = stripe_style_params.clone
+      lightrail_params[:value] ||= amount_to_negative_value(stripe_style_params)
 
-      lightrail_object[:value] && is_value_positive ? lightrail_object[:value] = lightrail_object[:value].abs : lightrail_object[:value] = -lightrail_object[:value].abs
+      self.translate_transaction_params_except_amount!(lightrail_params)
+    end
 
-      lightrail_object
+    def self.translate_fund_params(stripe_style_params)
+      lightrail_params = stripe_style_params.clone
+      lightrail_params[:value] ||= amount_to_positive_value(stripe_style_params)
+
+      self.translate_transaction_params_except_amount!(lightrail_params)
     end
 
     def self.construct_pending_charge_params_from_hybrid(hybrid_charge_params, lr_share)
@@ -22,7 +25,7 @@ module LightrailClient
       lightrail_params[:code] ||= self.get_code(lightrail_params)
       lightrail_params[:cardId] ||= self.get_card_id(lightrail_params)
 
-      lightrail_params[:userSuppliedId] ||= self.user_supplied_id_translate_or_create(lightrail_params)
+      lightrail_params[:userSuppliedId] ||= self.get_or_create_user_supplied_id(lightrail_params)
 
       # lightrail_params[:metadata] ||= {hybrid_charge_message: 'This is a hybrid charge'} # TODO figure out real metadata
 
@@ -42,12 +45,24 @@ module LightrailClient
 
     private
 
+    def self.translate_transaction_params_except_amount!(charge_or_fund_params)
+      charge_or_fund_params[:pending] ||= charge_or_fund_params[:capture] === nil ? false : !charge_or_fund_params.delete(:capture)
+      charge_or_fund_params[:userSuppliedId] ||= self.get_or_create_user_supplied_id(charge_or_fund_params)
+      charge_or_fund_params
+    end
+
     def self.amount_to_positive_value(charge_params)
       charge_params[:amount].abs if charge_params[:amount]
     end
 
     def self.amount_to_negative_value(charge_params)
       -(charge_params[:amount].abs) if charge_params[:amount]
+    end
+
+    def self.capture_to_pending_if_capture(charge_params)
+      if !([true, false].include?(charge_params[:pending]))
+        charge_params[:capture] === nil ? false : !charge_params[:capture]
+      end
     end
 
     def self.get_card_id(charge_params)
@@ -65,7 +80,7 @@ module LightrailClient
       (charge_params.keys & LightrailClient::Constants::LIGHTRAIL_PAYMENT_METHODS).first
     end
 
-    def self.user_supplied_id_translate_or_create(charge_params)
+    def self.get_or_create_user_supplied_id(charge_params)
       charge_params[:user_supplied_id] ||
           charge_params[:lightrail_user_supplied_id] ||
           charge_params[:idempotency_key] ||

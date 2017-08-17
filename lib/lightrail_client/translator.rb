@@ -66,14 +66,13 @@ module LightrailClient
     end
 
     def self.get_card_id(charge_params)
-      charge_params[:cardId] ||
-          charge_params[:card_id] ||
-          charge_params[:lightrail_card_id]
+      card_id_key = (charge_params.keys & LightrailClient::Constants::LIGHTRAIL_CARD_ID_KEYS).first
+      charge_params[card_id_key]
     end
 
     def self.get_code(charge_params)
-      charge_params[:code] ||
-          charge_params[:lightrail_code]
+      code_key = (charge_params.keys & LightrailClient::Constants::LIGHTRAIL_CODE_KEYS).first
+      charge_params[code_key]
     end
 
     def self.get_code_or_card_id_key(charge_params)
@@ -81,10 +80,8 @@ module LightrailClient
     end
 
     def self.get_or_create_user_supplied_id(charge_params)
-      charge_params[:user_supplied_id] ||
-          charge_params[:lightrail_user_supplied_id] ||
-          charge_params[:idempotency_key] ||
-          SecureRandom::uuid
+      user_supplied_id_key = (charge_params.keys & LightrailClient::Constants::LIGHTRAIL_USER_SUPPLIED_ID_KEYS).first
+      charge_params[user_supplied_id_key] || SecureRandom::uuid
     end
 
   end

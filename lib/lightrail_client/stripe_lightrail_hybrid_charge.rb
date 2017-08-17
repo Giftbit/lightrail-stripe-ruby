@@ -44,9 +44,15 @@ module LightrailClient
 
       end
 
-      # # TODO produce payment_summary (lr amount & info incl metadata, stripe amount & info)
 
-      self.new({lightrail_charge: lightrail_captured_transaction, stripe_charge: stripe_transaction})
+      hybrid_charge_payment_summary = {
+          total_amount: total_amount,
+          currency: currency,
+          lightrail_amount: lightrail_captured_transaction.value,
+          stripe_amount: stripe_transaction.amount,
+      }
+
+      self.new({lightrail_charge: lightrail_captured_transaction, stripe_charge: stripe_transaction, payment_summary: hybrid_charge_payment_summary})
     end
 
 

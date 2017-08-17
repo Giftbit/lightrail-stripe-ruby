@@ -55,12 +55,12 @@ module LightrailClient
 
 
     def self.validate_card_id! (card_id)
-      return true if ((card_id.is_a? String) && !card_id.empty?)
+      return true if ((card_id.is_a? String) && (/\A[A-Z0-9\-]+\z/i =~ card_id))
       raise LightrailClient::LightrailArgumentError.new("Invalid card_id: #{card_id.inspect}")
     end
 
     def self.validate_code! (code)
-      return true if ((code.is_a? String) && !code.empty?)
+      return true if ((code.is_a? String) && (/\A[A-Z0-9\-]+\z/i =~ code))
       raise LightrailClient::LightrailArgumentError.new("Invalid code: #{code.inspect}")
     end
 

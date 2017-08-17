@@ -101,7 +101,7 @@ RSpec.describe LightrailClient::Validator do
 
       it "raises LightrailArgumentError for any other type" do
         expect {validator.validate_card_id! ('')}.to raise_error(lr_argument_error), "called with empty string"
-        # expect{validator.validate_card_id! ('some random string')}.to raise_error(lr_argument_error), "called with invalid string"
+        expect{validator.validate_card_id! ('some random string')}.to raise_error(lr_argument_error), "called with invalid string"
         expect {validator.validate_card_id! (123)}.to raise_error(lr_argument_error), "called with integer"
         expect {validator.validate_card_id! ({})}.to raise_error(lr_argument_error), "called with empty hash"
         expect {validator.validate_card_id! ([])}.to raise_error(lr_argument_error), "called with empty array"
@@ -115,7 +115,7 @@ RSpec.describe LightrailClient::Validator do
 
       it "raises LightrailArgumentError for any other type" do
         expect {validator.validate_code! ('')}.to raise_error(lr_argument_error), "called with empty string"
-        # expect{validator.validate_code! ('some random string')}.to raise_error(lr_argument_error), "called with invalid string"
+        expect{validator.validate_code! ('some random string')}.to raise_error(lr_argument_error), "called with invalid string"
         expect {validator.validate_code! (123)}.to raise_error(lr_argument_error), "called with integer"
         expect {validator.validate_code! ({})}.to raise_error(lr_argument_error), "called with empty hash"
         expect {validator.validate_code! ([])}.to raise_error(lr_argument_error), "called with empty array"

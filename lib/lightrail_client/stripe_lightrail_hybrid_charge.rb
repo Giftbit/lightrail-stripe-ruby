@@ -30,13 +30,14 @@ module LightrailClient
           begin
             stripe_params = LightrailClient::Translator.translate_charge_params_for_stripe(charge_params, stripe_share)
             stripe_transaction = Stripe::Charge.create(stripe_params)
+            lightrail_metadata = LightrailClient::Translator.construct_lightrail_metadata_for_hybrid_charge(stripe_transaction)
           rescue
             LightrailClient::LightrailCharge.cancel(lightrail_pending_transaction)
             raise $!, "Stripe payment failed: #{$!}", $!.backtrace
           end
         end
 
-        lightrail_captured_transaction = LightrailClient::LightrailCharge.capture(lightrail_pending_transaction)
+        lightrail_captured_transaction = LightrailClient::LightrailCharge.capture(lightrail_pending_transaction, lightrail_metadata)
 
       else # all to stripe
         stripe_params = LightrailClient::Translator.translate_charge_params_for_stripe(charge_params, stripe_share)
@@ -48,8 +49,8 @@ module LightrailClient
       hybrid_charge_payment_summary = {
           total_amount: total_amount,
           currency: currency,
-          lightrail_amount: lightrail_captured_transaction.value,
-          stripe_amount: stripe_transaction.amount,
+          lightrail_amount: lightrail_captured_transaction ? lightrail_captured_transaction.value : 0,
+          stripe_amount: stripe_transaction ? stripe_transaction.amount : 0,
       }
 
       self.new({lightrail_charge: lightrail_captured_transaction, stripe_charge: stripe_transaction, payment_summary: hybrid_charge_payment_summary})

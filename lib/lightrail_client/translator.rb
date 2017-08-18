@@ -27,8 +27,6 @@ module LightrailClient
 
       lightrail_params[:userSuppliedId] ||= self.get_or_create_user_supplied_id(lightrail_params)
 
-      # lightrail_params[:metadata] ||= {hybrid_charge_message: 'This is a hybrid charge'} # TODO figure out real metadata
-
       lightrail_params
     end
 
@@ -40,6 +38,16 @@ module LightrailClient
       LightrailClient::Constants::LIGHTRAIL_PAYMENT_METHODS.each {|charge_param_key| stripe_params.delete(charge_param_key)}
 
       stripe_params
+    end
+
+    def self.construct_lightrail_metadata_for_hybrid_charge(stripe_transaction)
+      {
+          metadata: {
+              hybridChargeDetails: {
+                  stripeTransactionId: stripe_transaction.id
+              }
+          }
+      }
     end
 
 
@@ -82,6 +90,11 @@ module LightrailClient
     def self.get_or_create_user_supplied_id(charge_params)
       user_supplied_id_key = (charge_params.keys & LightrailClient::Constants::LIGHTRAIL_USER_SUPPLIED_ID_KEYS).first
       charge_params[user_supplied_id_key] || SecureRandom::uuid
+    end
+
+    def self.get_or_create_user_supplied_id_with_action_suffix(charge_params, new_user_supplied_id_base, action_suffix)
+      user_supplied_id_key = (charge_params.keys & LightrailClient::Constants::LIGHTRAIL_USER_SUPPLIED_ID_KEYS).first
+      charge_params[user_supplied_id_key] || "#{new_user_supplied_id_base}-#{action_suffix}"
     end
 
   end

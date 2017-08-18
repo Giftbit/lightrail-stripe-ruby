@@ -48,9 +48,7 @@ module LightrailClient
     end
 
     def self.make_get_request_and_parse_response (url)
-      resp = LightrailClient::Connection.connection.get do |req|
-        req.url url
-      end
+      resp = LightrailClient::Connection.connection.get {|req| req.url url}
       self.handle_response(resp)
     end
 

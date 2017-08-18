@@ -3,7 +3,7 @@ module LightrailClient
     attr_reader :message
     attr_accessor :response
 
-    def initialize (message='',response)
+    def initialize (message='', response)
       @message = message
       @response = response
     end
@@ -22,6 +22,9 @@ module LightrailClient
   end
 
   class IdempotencyError < LightrailError
+  end
+
+  class ThirdPartyPaymentError < LightrailError
   end
 
 

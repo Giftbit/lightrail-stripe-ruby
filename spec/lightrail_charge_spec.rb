@@ -50,12 +50,35 @@ RSpec.describe LightrailClient::LightrailCharge do
         expect(charge_response.userSuppliedId).to eq(charge_params[:userSuppliedId])
       end
 
+      it "uses 'value' instead of 'amount' if supplied in param hash" do
+        charge_params = {
+            amount: 1,
+            value: -2,
+            currency: 'USD',
+            code: ENV['TEST_CODE'],
+            userSuppliedId: 'test-charge-' + rand().to_s,
+        }
+        charge_response = lightrail_charge.create(charge_params)
+        expect(charge_response.value).to eq(charge_params[:value])
+      end
+
       it "creates a pending transaction when 'capture=false'" do
         charge_params = {
             amount: 1,
             currency: 'USD',
             code: ENV['TEST_CODE'],
             capture: false,
+        }
+        charge_response = lightrail_charge.create(charge_params)
+        expect(charge_response.transactionType).to eq('PENDING_CREATE')
+      end
+
+      it "creates a pending transaction when 'pending=true'" do
+        charge_params = {
+            amount: 1,
+            currency: 'USD',
+            code: ENV['TEST_CODE'],
+            pending: true,
         }
         charge_response = lightrail_charge.create(charge_params)
         expect(charge_response.transactionType).to eq('PENDING_CREATE')

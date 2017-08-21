@@ -1,7 +1,7 @@
 require "spec_helper"
 
-RSpec.describe LightrailClient::LightrailCharge do
-  subject(:lightrail_charge) {LightrailClient::LightrailCharge}
+RSpec.describe Lightrail::LightrailCharge do
+  subject(:lightrail_charge) {Lightrail::LightrailCharge}
 
   describe ".new" do
     it "creates a new charge object from valid API response" do
@@ -94,7 +94,7 @@ RSpec.describe LightrailClient::LightrailCharge do
                   giftbit_exception_action: 'transaction:create'
               }
           }
-          expect {lightrail_charge.create(charge_params)}.to raise_error(LightrailClient::LightrailError, /Server responded with/), "expected a LightrailError with message 'Server responded with:'"
+          expect {lightrail_charge.create(charge_params)}.to raise_error(Lightrail::LightrailError, /Server responded with/), "expected a LightrailError with message 'Server responded with:'"
         end
       end
     end
@@ -102,9 +102,9 @@ RSpec.describe LightrailClient::LightrailCharge do
     context "when given bad/missing params" do
       it "throws an error when required params are missing" do
         expect {lightrail_charge.create()}.to raise_error(ArgumentError), "called LightrailCharge.create with no params"
-        expect {lightrail_charge.create({})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.create with empty object"
-        expect {lightrail_charge.create({code: ENV['LIGHTRAIL_TEST_CODE']})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.create with '{code: ENV['LIGHTRAIL_TEST_CODE']}'"
-        expect {lightrail_charge.create([])}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.create with empty array"
+        expect {lightrail_charge.create({})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.create with empty object"
+        expect {lightrail_charge.create({code: ENV['LIGHTRAIL_TEST_CODE']})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.create with '{code: ENV['LIGHTRAIL_TEST_CODE']}'"
+        expect {lightrail_charge.create([])}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.create with empty array"
       end
     end
 
@@ -131,10 +131,10 @@ RSpec.describe LightrailClient::LightrailCharge do
     context "when given bad/missing params" do
       it "throws an error when required params are missing or in the wrong format" do
         @pending_to_void.remove_instance_variable(:@transactionId)
-        expect {lightrail_charge.cancel(@pending_to_void)}.to raise_error(LightrailClient::LightrailArgumentError)
-        expect {lightrail_charge.cancel({})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.cancel with empty object"
-        expect {lightrail_charge.cancel([])}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.cancel with empty array"
-        expect {lightrail_charge.cancel('')}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.cancel with empty string"
+        expect {lightrail_charge.cancel(@pending_to_void)}.to raise_error(Lightrail::LightrailArgumentError)
+        expect {lightrail_charge.cancel({})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.cancel with empty object"
+        expect {lightrail_charge.cancel([])}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.cancel with empty array"
+        expect {lightrail_charge.cancel('')}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.cancel with empty string"
       end
     end
   end
@@ -160,10 +160,10 @@ RSpec.describe LightrailClient::LightrailCharge do
     context "when given bad/missing params" do
       it "throws an error when required params are missing or in the wrong format" do
         @pending_to_capture.remove_instance_variable(:@transactionId)
-        expect {lightrail_charge.capture(@pending_to_capture)}.to raise_error(LightrailClient::LightrailArgumentError)
-        expect {lightrail_charge.capture({})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.capture with empty object"
-        expect {lightrail_charge.capture([])}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.capture with empty array"
-        expect {lightrail_charge.capture('')}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.capture with empty string"
+        expect {lightrail_charge.capture(@pending_to_capture)}.to raise_error(Lightrail::LightrailArgumentError)
+        expect {lightrail_charge.capture({})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.capture with empty object"
+        expect {lightrail_charge.capture([])}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.capture with empty array"
+        expect {lightrail_charge.capture('')}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.capture with empty string"
       end
     end
   end

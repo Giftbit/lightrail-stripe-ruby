@@ -1,4 +1,4 @@
-module LightrailClient
+module Lightrail
   class LightrailError < StandardError
     attr_reader :message
     attr_accessor :response

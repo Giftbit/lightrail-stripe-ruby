@@ -1,7 +1,7 @@
 require "spec_helper"
 
-RSpec.describe LightrailClient::LightrailValue do
-  subject(:lightrail_value) {LightrailClient::LightrailValue}
+RSpec.describe Lightrail::LightrailValue do
+  subject(:lightrail_value) {Lightrail::LightrailValue}
 
   describe ".retrieve_by_code" do
 
@@ -16,9 +16,9 @@ RSpec.describe LightrailClient::LightrailValue do
     context "when given bad/missing params" do
       it "throws an error when required params are missing" do
         expect {lightrail_value.retrieve_by_code()}.to raise_error(ArgumentError), "called LightrailValue.retrieve_by_code with no params"
-        expect {lightrail_value.retrieve_by_code('')}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailValue.retrieve_by_code with empty string"
-        expect {lightrail_value.retrieve_by_code({})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailValue.retrieve_by_code with empty object"
-        expect {lightrail_value.retrieve_by_code([])}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailValue.retrieve_by_code with empty array"
+        expect {lightrail_value.retrieve_by_code('')}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_by_code with empty string"
+        expect {lightrail_value.retrieve_by_code({})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_by_code with empty object"
+        expect {lightrail_value.retrieve_by_code([])}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_by_code with empty array"
       end
     end
 
@@ -37,9 +37,9 @@ RSpec.describe LightrailClient::LightrailValue do
     context "when given bad/missing params" do
       it "throws an error when required params are missing" do
         expect {lightrail_value.retrieve_by_card_id()}.to raise_error(ArgumentError), "called LightrailValue.retrieve_by_card_id with no params"
-        expect {lightrail_value.retrieve_by_card_id('')}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailValue.retrieve_by_card_id with empty string"
-        expect {lightrail_value.retrieve_by_card_id({})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailValue.retrieve_by_card_id with empty object"
-        expect {lightrail_value.retrieve_by_card_id([])}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailValue.retrieve_by_card_id with empty array"
+        expect {lightrail_value.retrieve_by_card_id('')}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_by_card_id with empty string"
+        expect {lightrail_value.retrieve_by_card_id({})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_by_card_id with empty object"
+        expect {lightrail_value.retrieve_by_card_id([])}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_by_card_id with empty array"
       end
     end
 

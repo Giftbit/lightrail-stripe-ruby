@@ -23,7 +23,7 @@ require "lightrail_client/refund"
 
 require "lightrail_client/stripe_lightrail_hybrid_charge"
 
-module LightrailClient
+module Lightrail
   class << self
     attr_accessor :api_base, :api_key
   end

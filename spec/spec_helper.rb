@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "lightrail_client"
+require "lightrail"
 require "pry"
 
 RSpec.configure do |config|
@@ -14,26 +14,26 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
-    LightrailClient.api_key = ENV['LIGHTRAIL_API_KEY']
+    Lightrail.api_key = ENV['LIGHTRAIL_API_KEY']
   end
 
   # Ensure card balance will go back to same state after test suite runs
   config.before(:suite) do
-    balance_response = LightrailClient::LightrailValue.retrieve_by_code(ENV['LIGHTRAIL_TEST_CODE'])
-    if (balance_response.is_a? LightrailClient::LightrailValue)
+    balance_response = Lightrail::LightrailValue.retrieve_by_code(ENV['LIGHTRAIL_TEST_CODE'])
+    if (balance_response.is_a? Lightrail::LightrailValue)
       $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS = balance_response.principal['currentValue']
     else
-      fail "balance_response was not an instance of LightrailClient::LightrailValue"
+      fail "balance_response was not an instance of Lightrail::LightrailValue"
     end
     puts "Card balance before tests: #{$LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS}"
   end
 
   config.after(:suite) do
-    balance_response = LightrailClient::LightrailValue.retrieve_by_code(ENV['LIGHTRAIL_TEST_CODE'])
-    if (balance_response.is_a? LightrailClient::LightrailValue)
+    balance_response = Lightrail::LightrailValue.retrieve_by_code(ENV['LIGHTRAIL_TEST_CODE'])
+    if (balance_response.is_a? Lightrail::LightrailValue)
       balance_after_tests = balance_response.principal['currentValue']
     else
-      fail "balance_response was not an instance of LightrailClient::LightrailValue"
+      fail "balance_response was not an instance of Lightrail::LightrailValue"
     end
 
     difference = $LIGHTRAIL_CARD_BALANCE_BEFORE_TESTS - balance_after_tests
@@ -46,9 +46,9 @@ RSpec.configure do |config|
           userSuppliedId: 'restoring-balance-after-tests-' + SecureRandom::uuid
       }
 
-      LightrailClient::LightrailFund.create(fund_object_to_restore_balance)
+      Lightrail::LightrailFund.create(fund_object_to_restore_balance)
 
-      confirmation_new_balance = LightrailClient::LightrailValue.retrieve_by_code(ENV['LIGHTRAIL_TEST_CODE']).principal['currentValue']
+      confirmation_new_balance = Lightrail::LightrailValue.retrieve_by_code(ENV['LIGHTRAIL_TEST_CODE']).principal['currentValue']
       puts "Card balance restored after tests: #{confirmation_new_balance}"
     else
       puts "Card balance not changed by tests: #{balance_after_tests}"

@@ -5,7 +5,7 @@ require "lightrail_client/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "lightrail_client"
-  spec.version       = LightrailClient::VERSION
+  spec.version       = Lightrail::VERSION
   spec.authors       = ["Lightrail"]
   spec.email         = ["tana.j@lightrail.com"]
 

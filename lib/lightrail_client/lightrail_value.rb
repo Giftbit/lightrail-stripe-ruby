@@ -1,16 +1,16 @@
-module LightrailClient
-  class LightrailValue < LightrailClient::LightrailObject
+module Lightrail
+  class LightrailValue < Lightrail::LightrailObject
     attr_accessor :principal, :attached, :currency, :cardType, :balanceDate, :cardId
 
     def self.retrieve_by_code (code)
-      LightrailClient::Validator.validate_code! (code)
-      response = LightrailClient::Connection.get_code_balance(code)
+      Lightrail::Validator.validate_code! (code)
+      response = Lightrail::Connection.get_code_balance(code)
       self.new(response['balance'])
     end
 
     def self.retrieve_by_card_id (card_id)
-      LightrailClient::Validator.validate_card_id!(card_id)
-      response = LightrailClient::Connection.get_card_id_balance(card_id)
+      Lightrail::Validator.validate_card_id!(card_id)
+      response = Lightrail::Connection.get_card_id_balance(card_id)
       self.new(response['balance'])
     end
 

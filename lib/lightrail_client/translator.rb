@@ -1,4 +1,4 @@
-module LightrailClient
+module Lightrail
   class Translator
 
     def self.translate_charge_params(stripe_style_params)
@@ -35,7 +35,7 @@ module LightrailClient
       stripe_params[:amount] = stripe_share
 
       # TODO review this closely!
-      LightrailClient::Constants::LIGHTRAIL_PAYMENT_METHODS.each {|charge_param_key| stripe_params.delete(charge_param_key)}
+      Lightrail::Constants::LIGHTRAIL_PAYMENT_METHODS.each {|charge_param_key| stripe_params.delete(charge_param_key)}
 
       stripe_params
     end
@@ -74,26 +74,26 @@ module LightrailClient
     end
 
     def self.get_card_id(charge_params)
-      card_id_key = (charge_params.keys & LightrailClient::Constants::LIGHTRAIL_CARD_ID_KEYS).first
+      card_id_key = (charge_params.keys & Lightrail::Constants::LIGHTRAIL_CARD_ID_KEYS).first
       charge_params[card_id_key]
     end
 
     def self.get_code(charge_params)
-      code_key = (charge_params.keys & LightrailClient::Constants::LIGHTRAIL_CODE_KEYS).first
+      code_key = (charge_params.keys & Lightrail::Constants::LIGHTRAIL_CODE_KEYS).first
       charge_params[code_key]
     end
 
     def self.get_code_or_card_id_key(charge_params)
-      (charge_params.keys & LightrailClient::Constants::LIGHTRAIL_PAYMENT_METHODS).first
+      (charge_params.keys & Lightrail::Constants::LIGHTRAIL_PAYMENT_METHODS).first
     end
 
     def self.get_or_create_user_supplied_id(charge_params)
-      user_supplied_id_key = (charge_params.keys & LightrailClient::Constants::LIGHTRAIL_USER_SUPPLIED_ID_KEYS).first
+      user_supplied_id_key = (charge_params.keys & Lightrail::Constants::LIGHTRAIL_USER_SUPPLIED_ID_KEYS).first
       charge_params[user_supplied_id_key] || SecureRandom::uuid
     end
 
     def self.get_or_create_user_supplied_id_with_action_suffix(charge_params, new_user_supplied_id_base, action_suffix)
-      user_supplied_id_key = (charge_params.keys & LightrailClient::Constants::LIGHTRAIL_USER_SUPPLIED_ID_KEYS).first
+      user_supplied_id_key = (charge_params.keys & Lightrail::Constants::LIGHTRAIL_USER_SUPPLIED_ID_KEYS).first
       charge_params[user_supplied_id_key] || "#{new_user_supplied_id_base}-#{action_suffix}"
     end
 

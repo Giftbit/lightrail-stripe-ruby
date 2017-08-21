@@ -1,10 +1,10 @@
 require "spec_helper"
 
-RSpec.describe LightrailClient::Validator do
-  subject(:validator) {LightrailClient::Validator}
+RSpec.describe Lightrail::Validator do
+  subject(:validator) {Lightrail::Validator}
 
   describe "grouped validator methods" do
-    let(:lr_argument_error) {LightrailClient::LightrailArgumentError}
+    let(:lr_argument_error) {Lightrail::LightrailArgumentError}
 
     describe ".validate_charge_object!" do
       it "returns true when the required keys are present" do
@@ -33,7 +33,7 @@ RSpec.describe LightrailClient::Validator do
             currency: 'USD',
             code: ENV['LIGHTRAIL_TEST_CODE'],
         }
-        transaction_response = LightrailClient::LightrailCharge.create(charge_params)
+        transaction_response = Lightrail::LightrailCharge.create(charge_params)
         expect(validator.validate_transaction_response!(transaction_response)).to be true
       end
 
@@ -92,7 +92,7 @@ RSpec.describe LightrailClient::Validator do
   end
 
   describe "single validator methods" do
-    let(:lr_argument_error) {LightrailClient::LightrailArgumentError}
+    let(:lr_argument_error) {Lightrail::LightrailArgumentError}
 
     describe ".validate_card_id!" do
       it "returns true for a string of the right format" do

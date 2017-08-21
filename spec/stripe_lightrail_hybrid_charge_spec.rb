@@ -29,7 +29,7 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
         charge_params = {
             amount: 1000,
             currency: 'USD',
-            code: ENV['LIGHTRAIL_TEST_CODE_497'],
+            code: ENV['LIGHTRAIL_TEST_CODE'],
             source: 'tok_mastercard',
         }
 
@@ -44,7 +44,7 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
         charge_params = {
             amount: 1000,
             currency: 'USD',
-            code: ENV['LIGHTRAIL_TEST_CODE_497'],
+            code: ENV['LIGHTRAIL_TEST_CODE'],
             source: 'tok_mastercard',
         }
 

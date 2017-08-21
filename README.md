@@ -55,7 +55,7 @@ When both a Lightrail and a Stripe parameter are provided, the library will try 
 This gem is in alpha mode and is not yet available on RubyGems. You can use it in your project by adding this line to your application's Gemfile:
 
 ```ruby
-gem 'lightrail_client_ruby', :git => 'https://github.com/Giftbit/lightrail-client-ruby.git'
+gem 'lightrail_stripe', :git => 'https://github.com/Giftbit/lightrail-client-ruby.git'
 ```
 
 And then execute:

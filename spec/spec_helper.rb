@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "lightrail"
+require "lightrail_stripe"
 require "pry"
 
 RSpec.configure do |config|

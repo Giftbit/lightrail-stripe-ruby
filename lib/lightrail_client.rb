@@ -27,5 +27,5 @@ module LightrailClient
   class << self
     attr_accessor :api_base, :api_key
   end
-  @api_base = 'https://dev.lightrail.com/v1'
+  @api_base = 'https://api.lightrail.com/v1'
 end

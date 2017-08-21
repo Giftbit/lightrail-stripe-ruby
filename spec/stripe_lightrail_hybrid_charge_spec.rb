@@ -29,7 +29,7 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
         charge_params = {
             amount: 1000,
             currency: 'USD',
-            code: ENV['TEST_CODE_497'],
+            code: ENV['LIGHTRAIL_TEST_CODE_497'],
             source: 'tok_mastercard',
         }
 
@@ -44,7 +44,7 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
         charge_params = {
             amount: 1000,
             currency: 'USD',
-            code: ENV['TEST_CODE_497'],
+            code: ENV['LIGHTRAIL_TEST_CODE_497'],
             source: 'tok_mastercard',
         }
 
@@ -59,8 +59,8 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
         charge_params = {
             amount: 1,
             currency: 'USD',
-            lightrail_code: ENV['TEST_CODE'],
-            code: ENV['TEST_CODE'],
+            lightrail_code: ENV['LIGHTRAIL_TEST_CODE'],
+            code: ENV['LIGHTRAIL_TEST_CODE'],
             source: 'tok_mastercard',
         }
         hybrid_charge_response = hybrid_charge.create(charge_params)
@@ -74,8 +74,8 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
         charge_params = {
             amount: 1,
             currency: 'USD',
-            lightrail_code: ENV['TEST_CODE'],
-            code: ENV['TEST_CODE'],
+            lightrail_code: ENV['LIGHTRAIL_TEST_CODE'],
+            code: ENV['LIGHTRAIL_TEST_CODE'],
         }
         hybrid_charge_response = hybrid_charge.create(charge_params)
         expect(hybrid_charge_response).to be_a(hybrid_charge)

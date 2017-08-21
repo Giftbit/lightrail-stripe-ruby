@@ -8,7 +8,7 @@ RSpec.describe LightrailClient::LightrailCharge do
       charge_params = {
           amount: 1,
           currency: 'USD',
-          code: ENV['TEST_CODE'],
+          code: ENV['LIGHTRAIL_TEST_CODE'],
       }
       charge_response = lightrail_charge.create(charge_params)
       expect(charge_response).to be_a(lightrail_charge)
@@ -21,7 +21,7 @@ RSpec.describe LightrailClient::LightrailCharge do
         charge_params = {
             amount: 1,
             currency: 'USD',
-            code: ENV['TEST_CODE'],
+            code: ENV['LIGHTRAIL_TEST_CODE'],
         }
         charge_response = lightrail_charge.create(charge_params)
         expect(charge_response).to be_a(lightrail_charge)
@@ -32,7 +32,7 @@ RSpec.describe LightrailClient::LightrailCharge do
         charge_params = {
             amount: 1,
             currency: 'USD',
-            cardId: ENV['TEST_CARD_ID'],
+            cardId: ENV['LIGHTRAIL_TEST_CARD_ID'],
         }
         charge_response = lightrail_charge.create(charge_params)
         expect(charge_response).to be_a(lightrail_charge)
@@ -43,7 +43,7 @@ RSpec.describe LightrailClient::LightrailCharge do
         charge_params = {
             amount: 1,
             currency: 'USD',
-            code: ENV['TEST_CODE'],
+            code: ENV['LIGHTRAIL_TEST_CODE'],
             userSuppliedId: 'test-charge-' + rand().to_s,
         }
         charge_response = lightrail_charge.create(charge_params)
@@ -55,7 +55,7 @@ RSpec.describe LightrailClient::LightrailCharge do
             amount: 1,
             value: -2,
             currency: 'USD',
-            code: ENV['TEST_CODE'],
+            code: ENV['LIGHTRAIL_TEST_CODE'],
             userSuppliedId: 'test-charge-' + rand().to_s,
         }
         charge_response = lightrail_charge.create(charge_params)
@@ -66,7 +66,7 @@ RSpec.describe LightrailClient::LightrailCharge do
         charge_params = {
             amount: 1,
             currency: 'USD',
-            code: ENV['TEST_CODE'],
+            code: ENV['LIGHTRAIL_TEST_CODE'],
             capture: false,
         }
         charge_response = lightrail_charge.create(charge_params)
@@ -77,7 +77,7 @@ RSpec.describe LightrailClient::LightrailCharge do
         charge_params = {
             amount: 1,
             currency: 'USD',
-            code: ENV['TEST_CODE'],
+            code: ENV['LIGHTRAIL_TEST_CODE'],
             pending: true,
         }
         charge_response = lightrail_charge.create(charge_params)
@@ -89,7 +89,7 @@ RSpec.describe LightrailClient::LightrailCharge do
           charge_params = {
               amount: 1,
               currency: 'USD',
-              code: ENV['TEST_CODE'],
+              code: ENV['LIGHTRAIL_TEST_CODE'],
               metadata: {
                   giftbit_exception_action: 'transaction:create'
               }
@@ -103,7 +103,7 @@ RSpec.describe LightrailClient::LightrailCharge do
       it "throws an error when required params are missing" do
         expect {lightrail_charge.create()}.to raise_error(ArgumentError), "called LightrailCharge.create with no params"
         expect {lightrail_charge.create({})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.create with empty object"
-        expect {lightrail_charge.create({code: ENV['TEST_CODE']})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.create with '{code: ENV['TEST_CODE']}'"
+        expect {lightrail_charge.create({code: ENV['LIGHTRAIL_TEST_CODE']})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.create with '{code: ENV['LIGHTRAIL_TEST_CODE']}'"
         expect {lightrail_charge.create([])}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailCharge.create with empty array"
       end
     end
@@ -115,7 +115,7 @@ RSpec.describe LightrailClient::LightrailCharge do
       charge_params_to_handle = {
           amount: 1,
           currency: 'USD',
-          code: ENV['TEST_CODE'],
+          code: ENV['LIGHTRAIL_TEST_CODE'],
           capture: false,
       }
       @pending_to_void = lightrail_charge.create(charge_params_to_handle)
@@ -144,7 +144,7 @@ RSpec.describe LightrailClient::LightrailCharge do
       charge_params_to_handle = {
           amount: 1,
           currency: 'USD',
-          code: ENV['TEST_CODE'],
+          code: ENV['LIGHTRAIL_TEST_CODE'],
           capture: false,
       }
       @pending_to_capture = lightrail_charge.create(charge_params_to_handle)

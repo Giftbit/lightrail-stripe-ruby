@@ -9,7 +9,7 @@ RSpec.describe LightrailClient::LightrailFund do
         fund_params = {
             amount: 1,
             currency: 'USD',
-            cardId: ENV['TEST_CARD_ID'],
+            cardId: ENV['LIGHTRAIL_TEST_CARD_ID'],
         }
         fund_response = lightrail_fund.create(fund_params)
         expect(fund_response.transactionType).to eq('FUND'), "called LightrailFund.create with #{fund_params.inspect}, got back #{fund_response.inspect}"
@@ -19,7 +19,7 @@ RSpec.describe LightrailClient::LightrailFund do
         fund_params = {
             amount: 1,
             currency: 'USD',
-            cardId: ENV['TEST_CARD_ID'],
+            cardId: ENV['LIGHTRAIL_TEST_CARD_ID'],
             userSuppliedId: 'test-fund-' + rand().to_s,
         }
         fund_response = lightrail_fund.create(fund_params)
@@ -31,7 +31,7 @@ RSpec.describe LightrailClient::LightrailFund do
       it "throws an error when required params are missing" do
         expect {lightrail_fund.create()}.to raise_error(ArgumentError), "called LightrailFund.create with no params"
         expect {lightrail_fund.create({})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailFund.create with empty object"
-        expect {lightrail_fund.create({card: ENV['TEST_CARD_ID']})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailFund.create with '{card: ENV['TEST_CARD_ID']}'"
+        expect {lightrail_fund.create({card: ENV['LIGHTRAIL_TEST_CARD_ID']})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailFund.create with '{card: ENV['LIGHTRAIL_TEST_CARD_ID']}'"
         expect {lightrail_fund.create([])}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailFund.create with empty array"
       end
     end

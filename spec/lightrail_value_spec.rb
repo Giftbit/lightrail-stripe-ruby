@@ -7,7 +7,7 @@ RSpec.describe LightrailClient::LightrailValue do
 
     context "when given valid params" do
       it "checks balance by code" do
-        balance_response = lightrail_value.retrieve_by_code(ENV['TEST_CODE'])
+        balance_response = lightrail_value.retrieve_by_code(ENV['LIGHTRAIL_TEST_CODE'])
         expect(balance_response).to be_a(lightrail_value)
         expect(balance_response.principal).to have_key('currentValue')
       end
@@ -28,7 +28,7 @@ RSpec.describe LightrailClient::LightrailValue do
 
     context "when given valid params" do
       it "checks balance by cardId" do
-        balance_response = lightrail_value.retrieve_by_card_id(ENV['TEST_CARD_ID'])
+        balance_response = lightrail_value.retrieve_by_card_id(ENV['LIGHTRAIL_TEST_CARD_ID'])
         expect(balance_response).to be_a(lightrail_value)
         expect(balance_response.principal).to have_key('currentValue')
       end
@@ -48,7 +48,7 @@ RSpec.describe LightrailClient::LightrailValue do
   describe "#total_available" do
 
     it "returns the sum of all active value stores" do
-      balance_response = lightrail_value.retrieve_by_code(ENV['TEST_CODE'])
+      balance_response = lightrail_value.retrieve_by_code(ENV['LIGHTRAIL_TEST_CODE'])
       expect(balance_response.total_available).to be_an(Integer)
     end
 

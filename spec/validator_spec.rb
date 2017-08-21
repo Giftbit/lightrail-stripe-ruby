@@ -11,7 +11,7 @@ RSpec.describe LightrailClient::Validator do
         charge_params = {
             amount: 1,
             currency: 'USD',
-            code: ENV['TEST_CODE'],
+            code: ENV['LIGHTRAIL_TEST_CODE'],
         }
         expect(validator.validate_charge_object!(charge_params)).to be true
       end
@@ -31,7 +31,7 @@ RSpec.describe LightrailClient::Validator do
         charge_params = {
             amount: 1,
             currency: 'USD',
-            code: ENV['TEST_CODE'],
+            code: ENV['LIGHTRAIL_TEST_CODE'],
         }
         transaction_response = LightrailClient::LightrailCharge.create(charge_params)
         expect(validator.validate_transaction_response!(transaction_response)).to be true
@@ -40,7 +40,7 @@ RSpec.describe LightrailClient::Validator do
       it "raises LightrailArgumentError when missing required params" do
         transaction_response = {
             'transaction' => {
-                'transactionId' => ENV['TEST_TRANSACTION_ID'],
+                'transactionId' => ENV['LIGHTRAIL_TEST_TRANSACTION_ID'],
             }
         }
         expect{validator.validate_transaction_response!(transaction_response)}.to raise_error(lr_argument_error, /transaction_response/)
@@ -52,7 +52,7 @@ RSpec.describe LightrailClient::Validator do
     describe ".validate_fund_object!" do
       it "returns true when the required keys are present & formatted" do
         fund_params = {
-            cardId: ENV['TEST_CARD_ID'],
+            cardId: ENV['LIGHTRAIL_TEST_CARD_ID'],
             amount: 20,
             currency: 'USD',
         }
@@ -96,7 +96,7 @@ RSpec.describe LightrailClient::Validator do
 
     describe ".validate_card_id!" do
       it "returns true for a string of the right format" do
-        expect(validator.validate_card_id! (ENV['TEST_CARD_ID'])).to be true
+        expect(validator.validate_card_id! (ENV['LIGHTRAIL_TEST_CARD_ID'])).to be true
       end
 
       it "raises LightrailArgumentError for any other type" do
@@ -110,7 +110,7 @@ RSpec.describe LightrailClient::Validator do
 
     describe ".validate_code!" do
       it "returns true for a string of the right format" do
-        expect(validator.validate_code! (ENV['TEST_CODE'])).to be true
+        expect(validator.validate_code! (ENV['LIGHTRAIL_TEST_CODE'])).to be true
       end
 
       it "raises LightrailArgumentError for any other type" do
@@ -124,7 +124,7 @@ RSpec.describe LightrailClient::Validator do
 
     describe ".validate_transaction_id!" do
       it "returns true for a string of the right format" do
-        expect(validator.validate_transaction_id! (ENV['TEST_TRANSACTION_ID'])).to be true
+        expect(validator.validate_transaction_id! (ENV['LIGHTRAIL_TEST_TRANSACTION_ID'])).to be true
       end
 
       it "raises LightrailArgumentError for any other type" do

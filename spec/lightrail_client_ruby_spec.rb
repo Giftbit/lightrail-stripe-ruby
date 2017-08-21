@@ -6,7 +6,7 @@ RSpec.describe LightrailClient do
   end
 
   it "stores the base URL for the Lightrail API" do
-    expect(LightrailClient.api_base).to eq('https://dev.lightrail.com/v1' || 'https://api.lightrail.com/v1')
+    expect(LightrailClient.api_base).to eq('https://dev.lightrail.com/v1').or(eq('https://api.lightrail.com/v1'))
   end
 
   it "stores a string for the API key" do

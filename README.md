@@ -2,7 +2,7 @@
 
 Lightrail is a modern platform for digital account credits, gift cards, promotions, and points (to learn more, visit [Lightrail](https://www.lightrail.com/)). The Lightrail Stripe gem provides a client library for developers to easily use Lightrail alongside [Stripe](https://stripe.com/).
 
-If you are looking for specific use cases or other languages, check out [related projects](https://github.com/Giftbit/lightrail-client-ruby#related-projects). For a complete list of all Lightrail libraries and integrations, check out the [Lightrail Integration page](https://github.com/Giftbit/Lightrail-API-Docs/blob/usecases/Integrations.md).
+If you are looking for specific use cases or other languages, check out [related projects](https://github.com/Giftbit/lightrail-stripe-ruby#related-projects). For a complete list of all Lightrail libraries and integrations, check out the [Lightrail Integration page](https://github.com/Giftbit/Lightrail-API-Docs/blob/usecases/Integrations.md).
 
 ## Features
 
@@ -55,7 +55,7 @@ When both a Lightrail and a Stripe parameter are provided, the library will try 
 This gem is in alpha mode and is not yet available on RubyGems. You can use it in your project by adding this line to your application's Gemfile:
 
 ```ruby
-gem 'lightrail_stripe', :git => 'https://github.com/Giftbit/lightrail-client-ruby.git'
+gem 'lightrail_stripe', :git => 'https://github.com/Giftbit/lightrail-stripe-ruby.git'
 ```
 
 And then execute:
@@ -66,7 +66,7 @@ $ bundle
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/Giftbit/lightrail_client_ruby.
+Bug reports and pull requests are welcome on GitHub at https://github.com/Giftbit/lightrail-stripe-ruby.
 
 ## Development
 

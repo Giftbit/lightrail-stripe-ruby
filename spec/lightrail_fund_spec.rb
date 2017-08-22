@@ -1,7 +1,7 @@
 require "spec_helper"
 
-RSpec.describe LightrailClient::LightrailFund do
-  subject(:lightrail_fund) {LightrailClient::LightrailFund}
+RSpec.describe Lightrail::LightrailFund do
+  subject(:lightrail_fund) {Lightrail::LightrailFund}
 
   describe ".create" do
     context "when given valid params" do
@@ -30,9 +30,9 @@ RSpec.describe LightrailClient::LightrailFund do
     context "when given bad/missing params" do
       it "throws an error when required params are missing" do
         expect {lightrail_fund.create()}.to raise_error(ArgumentError), "called LightrailFund.create with no params"
-        expect {lightrail_fund.create({})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailFund.create with empty object"
-        expect {lightrail_fund.create({card: ENV['LIGHTRAIL_TEST_CARD_ID']})}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailFund.create with '{card: ENV['LIGHTRAIL_TEST_CARD_ID']}'"
-        expect {lightrail_fund.create([])}.to raise_error(LightrailClient::LightrailArgumentError), "called LightrailFund.create with empty array"
+        expect {lightrail_fund.create({})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailFund.create with empty object"
+        expect {lightrail_fund.create({card: ENV['LIGHTRAIL_TEST_CARD_ID']})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailFund.create with '{card: ENV['LIGHTRAIL_TEST_CARD_ID']}'"
+        expect {lightrail_fund.create([])}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailFund.create with empty array"
       end
     end
   end

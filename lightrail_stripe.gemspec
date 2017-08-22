@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "lightrail_client/version"
+require "lightrail_stripe/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "lightrail_client"
-  spec.version       = LightrailClient::VERSION
+  spec.name          = "lightrail_stripe"
+  spec.version       = Lightrail::VERSION
   spec.authors       = ["Lightrail"]
   spec.email         = ["tana.j@lightrail.com"]
 

@@ -1,4 +1,4 @@
-module LightrailClient
+module Lightrail
   class Constants
 
     LIGHTRAIL_CODE_KEYS = [:code, :lightrail_code]

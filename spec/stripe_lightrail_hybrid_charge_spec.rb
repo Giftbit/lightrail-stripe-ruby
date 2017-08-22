@@ -1,7 +1,7 @@
 require "spec_helper"
 
-RSpec.describe LightrailClient::StripeLightrailHybridCharge do
-  subject(:hybrid_charge) {LightrailClient::StripeLightrailHybridCharge}
+RSpec.describe Lightrail::StripeLightrailHybridCharge do
+  subject(:hybrid_charge) {Lightrail::StripeLightrailHybridCharge}
 
   before do
     Stripe.api_key = ENV['STRIPE_API_KEY']
@@ -35,7 +35,7 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
 
         hybrid_charge_response = hybrid_charge.create(charge_params)
 
-        LightrailClient::Refund.create(hybrid_charge_response.lightrail_charge)
+        Lightrail::Refund.create(hybrid_charge_response.lightrail_charge)
 
         expect(hybrid_charge_response).to be_a(hybrid_charge)
       end
@@ -50,7 +50,7 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
 
         hybrid_charge_response = hybrid_charge.create(charge_params)
 
-        LightrailClient::Refund.create(hybrid_charge_response.lightrail_charge)
+        Lightrail::Refund.create(hybrid_charge_response.lightrail_charge)
 
         expect(hybrid_charge_response.lightrail_charge.metadata['hybridChargeDetails']['stripeTransactionId']).to eq(hybrid_charge_response.stripe_charge.id)
       end
@@ -66,7 +66,7 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
         hybrid_charge_response = hybrid_charge.create(charge_params)
         # puts "#{hybrid_charge_response.inspect}"
         expect(hybrid_charge_response).to be_a(hybrid_charge)
-        expect(hybrid_charge_response.lightrail_charge).to be_a(LightrailClient::LightrailCharge)
+        expect(hybrid_charge_response.lightrail_charge).to be_a(Lightrail::LightrailCharge)
         expect(hybrid_charge_response.stripe_charge).to be(nil)
       end
 
@@ -79,7 +79,7 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
         }
         hybrid_charge_response = hybrid_charge.create(charge_params)
         expect(hybrid_charge_response).to be_a(hybrid_charge)
-        expect(hybrid_charge_response.lightrail_charge).to be_a(LightrailClient::LightrailCharge)
+        expect(hybrid_charge_response.lightrail_charge).to be_a(Lightrail::LightrailCharge)
         expect(hybrid_charge_response.stripe_charge).to be(nil)
       end
 
@@ -103,7 +103,7 @@ RSpec.describe LightrailClient::StripeLightrailHybridCharge do
             amount: 1000,
             currency: 'USD',
         }
-        expect {hybrid_charge.create(charge_params)}.to raise_error(LightrailClient::LightrailArgumentError)
+        expect {hybrid_charge.create(charge_params)}.to raise_error(Lightrail::LightrailArgumentError)
       end
     end
 

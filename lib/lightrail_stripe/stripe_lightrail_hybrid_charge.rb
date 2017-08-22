@@ -9,17 +9,9 @@ module Lightrail
       total_amount = charge_params[:amount]
       currency = charge_params[:currency]
 
-      lr_payment_param_key = Lightrail::Translator.get_code_or_card_id_key(charge_params)
-      lr_share = lr_payment_param_key ? self.determine_lightrail_share!(charge_params) : 0
-
-      if Lightrail::Validator.has_stripe_payment_option?(charge_params)
-        stripe_share = total_amount - lr_share
-      elsif (lr_share < total_amount)
-        raise Lightrail::InsufficientValueError.new('Gift card value not sufficient to cover total amount. Please provide a credit card.')
-      else
-        stripe_share = 0
-      end
-
+      split_amounts = self.determine_split!(charge_params)
+      lr_share = split_amounts[:lightrail_amount]
+      stripe_share = split_amounts[:stripe_amount]
 
       if lr_share > 0 # start with lightrail charge first
         lightrail_charge_params = Lightrail::Translator.construct_pending_charge_params_from_hybrid(charge_params, lr_share)
@@ -59,7 +51,8 @@ module Lightrail
 
     private
 
-    def self.determine_lightrail_share!(charge_params)
+    def self.determine_split!(charge_params)
+      total_amount = charge_params[:amount]
       code = Lightrail::Translator.get_code(charge_params)
       card_id = Lightrail::Translator.get_card_id(charge_params)
 
@@ -68,10 +61,25 @@ module Lightrail
                           elsif card_id
                             Lightrail::LightrailValue.retrieve_by_card_id(card_id)
                           else
-                            raise Lightrail::LightrailArgumentError.new('A valid Lightrail code or cardId is required for a balance check.')
+                            nil
                           end
 
-      [charge_params[:amount], lightrail_balance.total_available].min
+      lr_share = lightrail_balance ? [total_amount, lightrail_balance.total_available].min : 0
+
+      if (lr_share < total_amount) && (Lightrail::Validator.has_stripe_payment_option?(charge_params))
+        stripe_share = total_amount - lr_share
+        lr_share = stripe_share < 50 ? lr_share - (50-stripe_share) : lr_share
+        stripe_share = total_amount - lr_share
+      elsif (lr_share < total_amount)
+        raise Lightrail::InsufficientValueError.new('Gift card value not sufficient to cover total amount. Please provide a credit card.')
+      else
+        stripe_share = 0
+      end
+
+      {
+          lightrail_amount: lr_share,
+          stripe_amount: stripe_share
+      }
     end
 
   end

@@ -55,6 +55,21 @@ RSpec.describe Lightrail::StripeLightrailHybridCharge do
         expect(hybrid_charge_response.lightrail_charge.metadata['hybridChargeDetails']['stripeTransactionId']).to eq(hybrid_charge_response.stripe_charge.id)
       end
 
+      it "adjusts the LR share to respect Stripe's minimum charge amount when necessary" do
+        charge_params = {
+            amount: 510,
+            currency: 'USD',
+            code: ENV['LIGHTRAIL_TEST_CODE'],
+            source: 'tok_mastercard',
+        }
+
+        hybrid_charge_response = hybrid_charge.create(charge_params)
+
+        Lightrail::Refund.create(hybrid_charge_response.lightrail_charge)
+
+        expect(hybrid_charge_response.lightrail_charge.value).to eq(-460)
+      end
+
       it "charges Lightrail only, when card balance is sufficient" do
         charge_params = {
             amount: 1,

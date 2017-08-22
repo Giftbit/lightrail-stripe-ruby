@@ -1,6 +1,7 @@
 module Lightrail
-  class LightrailFund < Lightrail::LightrailObject
-    attr_accessor :transactionId, :value, :userSuppliedId, :dateCreated, :transactionType, :transactionAccessMethod, :giftbitUserId, :cardId, :currency, :codeLastFour
+  class LightrailFund < Lightrail::Transaction
+    # attr_accessor :transactionId, :value, :userSuppliedId, :dateCreated, :transactionType, :transactionAccessMethod, :giftbitUserId, :cardId, :currency, :codeLastFour
+
 
     def self.create(fund_object)
       Lightrail::Validator.validate_fund_object!(fund_object)

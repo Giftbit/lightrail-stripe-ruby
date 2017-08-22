@@ -1,6 +1,6 @@
 module Lightrail
-  class LightrailCharge < Lightrail::LightrailObject
-    attr_accessor :transactionId, :value, :userSuppliedId, :dateCreated, :transactionType, :transactionAccessMethod, :giftbitUserId, :cardId, :currency, :codeLastFour, :metadata
+  class LightrailCharge < Lightrail::Transaction
+    # attr_accessor :transactionId, :value, :userSuppliedId, :dateCreated, :transactionType, :transactionAccessMethod, :giftbitUserId, :cardId, :currency, :codeLastFour, :metadata
 
     def self.create (charge_params)
       Lightrail::Validator.validate_charge_object! (charge_params)

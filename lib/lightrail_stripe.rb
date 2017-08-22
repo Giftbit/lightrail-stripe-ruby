@@ -14,6 +14,7 @@ require "lightrail_stripe/translator"
 require "lightrail_stripe/connection"
 
 require "lightrail_stripe/lightrail_object"
+require "lightrail_stripe/transaction"
 require "lightrail_stripe/ping"
 require "lightrail_stripe/lightrail_value"
 require "lightrail_stripe/lightrail_charge"

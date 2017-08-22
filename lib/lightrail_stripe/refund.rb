@@ -1,6 +1,6 @@
 module Lightrail
-  class Refund < Lightrail::LightrailObject
-    attr_accessor :transactionId, :value, :userSuppliedId, :dateCreated, :transactionType, :transactionAccessMethod, :giftbitUserId, :cardId, :currency, :parentTransactionId, :metadata, :codeLastFour
+  class Refund < Lightrail::Transaction
+    # attr_accessor :transactionId, :value, :userSuppliedId, :dateCreated, :transactionType, :transactionAccessMethod, :giftbitUserId, :cardId, :currency, :parentTransactionId, :metadata, :codeLastFour
 
     def self.create(original_transaction_response)
       Lightrail::Validator.validate_transaction_response! (original_transaction_response)

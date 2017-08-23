@@ -1,6 +1,19 @@
 module Lightrail
   class Connection
 
+    def self.code_drawdown(charge_params)
+      code = charge_params.delete(:code)
+      response = self.send :make_post_request_and_parse_response, "codes/#{code}/transactions", charge_params
+      response['transaction']
+    end
+
+    def self.card_id_drawdown(charge_params)
+      card_id = charge_params.delete(:cardId)
+      response = self.send :make_post_request_and_parse_response, "cards/#{card_id}/transactions", charge_params
+      response['transaction']
+    end
+
+
     def self.ping
       self.send :make_get_request_and_parse_response, "ping"
     end

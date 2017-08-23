@@ -55,12 +55,12 @@ module Lightrail
 
 
     def self.validate_card_id! (card_id)
-      return true if ((card_id.is_a? String) && (/\A[A-Z0-9\-]+\z/i =~ card_id))
+      return true if ((card_id.is_a? String) && ((/\A[A-Z0-9\-]+\z/i =~ card_id).is_a? Integer))
       raise Lightrail::LightrailArgumentError.new("Invalid card_id: #{card_id.inspect}")
     end
 
     def self.validate_code! (code)
-      return true if ((code.is_a? String) && (/\A[A-Z0-9\-]+\z/i =~ code))
+      return true if ((code.is_a? String) && ((/\A[A-Z0-9\-]+\z/i =~ code).is_a? Integer))
       raise Lightrail::LightrailArgumentError.new("Invalid code: #{code.inspect}")
     end
 
@@ -86,14 +86,27 @@ module Lightrail
 
     private
 
+    def self.set_code!(charge_params)
+      charge_params[:code] = self.has_valid_code?(charge_params) ? Lightrail::Translator.get_code(charge_params) : nil
+    end
+
+    def self.set_cardId!(charge_params)
+      charge_params[:cardId] = self.has_valid_card_id?(charge_params) ? Lightrail::Translator.get_card_id(charge_params) : nil
+    end
+
+    def self.get_or_set_userSuppliedId!(charge_params)
+      charge_params[:userSuppliedId] ||= Lightrail::Translator.get_or_create_user_supplied_id(charge_params)
+    end
+
+
     def self.has_valid_code?(charge_params)
-      code = Lightrail::Translator.get_code(charge_params)
-      code && self.validate_code!(charge_params[:code])
+      code = (charge_params.respond_to? :keys) ? Lightrail::Translator.get_code(charge_params) : false
+      code && self.validate_code!(code)
     end
 
     def self.has_valid_card_id?(charge_params)
-      cardId = Lightrail::Translator.get_card_id(charge_params)
-      cardId && self.validate_card_id!(charge_params[:cardId])
+      cardId = (charge_params.respond_to? :keys) ? Lightrail::Translator.get_card_id(charge_params) :false
+      cardId && self.validate_card_id!(cardId)
     end
 
     def self.has_lightrail_payment_option?(charge_params)

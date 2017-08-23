@@ -71,7 +71,7 @@ module Lightrail
         lr_share = stripe_share < 50 ? lr_share - (50-stripe_share) : lr_share
         stripe_share = total_amount - lr_share
       elsif (lr_share < total_amount)
-        raise Lightrail::InsufficientValueError.new('Gift card value not sufficient to cover total amount. Please provide a credit card.')
+        raise Lightrail::BadParameterError.new('Please provide a Stripe payment method to complete the transaction.')
       else
         stripe_share = 0
       end

@@ -22,16 +22,10 @@ RSpec.describe Lightrail::Transaction do
   }}
 
 
-  describe ".charge" do
+  describe ".charge_code" do
     context "when posting a drawdown transaction" do
       it "charges a code with minimum parameters" do
-        transac = transaction.charge(code_charge_params, :code_drawdown)
-        expect(transac).to have_key('transactionId')
-        expect(transac['transactionType']).to eq('DRAWDOWN')
-      end
-
-      it "charges a card with minimum parameters" do
-        transac = transaction.charge(card_id_charge_params, :card_id_drawdown)
+        transac = transaction.charge_code(code_charge_params)
         expect(transac).to have_key('transactionId')
         expect(transac['transactionType']).to eq('DRAWDOWN')
       end
@@ -41,17 +35,33 @@ RSpec.describe Lightrail::Transaction do
 
     context "when posting a pending transaction" do
       it "posts a pending transaction to a code" do
-        transac = transaction.charge(code_charge_params, :code_pending)
-        expect(transac).to have_key('transactionId')
-        expect(transac['transactionType']).to eq('PENDING_CREATE')
-      end
-
-      it "posts a pending transaction to a card_id" do
-        transac = transaction.charge(card_id_charge_params, :card_id_pending)
+        code_charge_params[:pending] = true
+        transac = transaction.charge_code(code_charge_params)
         expect(transac).to have_key('transactionId')
         expect(transac['transactionType']).to eq('PENDING_CREATE')
       end
     end
+
+  end
+
+  describe ".charge_card" do
+    context "when posting a drawdown transaction" do
+      it "charges a card with minimum parameters" do
+        transac = transaction.charge_card(card_id_charge_params)
+        expect(transac).to have_key('transactionId')
+        expect(transac['transactionType']).to eq('DRAWDOWN')
+      end
+    end
+
+    context "when posting a pending transaction" do
+      it "posts a pending transaction to a card_id" do
+        card_id_charge_params[:pending] = true
+        transac = transaction.charge_card(card_id_charge_params)
+        expect(transac).to have_key('transactionId')
+        expect(transac['transactionType']).to eq('PENDING_CREATE')
+      end
+    end
+
   end
 
   describe ".fund_card" do

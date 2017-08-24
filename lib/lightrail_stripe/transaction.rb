@@ -2,7 +2,13 @@ module Lightrail
   class Transaction < Lightrail::LightrailObject
     attr_accessor :transactionId, :value, :userSuppliedId, :dateCreated, :transactionType, :transactionAccessMethod, :giftbitUserId, :cardId, :currency, :codeLastFour, :metadata, :parentTransactionId
 
-    def self.charge(transaction_params, transaction_type)
+    def self.charge_code(transaction_params)
+      transaction_type = transaction_params[:pending] ? :code_pending : :code_drawdown
+      self.create(transaction_params, transaction_type)
+    end
+
+    def self.charge_card(transaction_params)
+      transaction_type = transaction_params[:pending] ? :card_id_pending : :card_id_drawdown
       self.create(transaction_params, transaction_type)
     end
 

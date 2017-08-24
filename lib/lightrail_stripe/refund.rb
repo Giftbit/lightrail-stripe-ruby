@@ -5,17 +5,11 @@ module Lightrail
     def self.create(original_transaction_response)
       Lightrail::Validator.validate_transaction_response! (original_transaction_response)
 
-      card_id = original_transaction_response.cardId
-      transaction_id = original_transaction_response.transactionId
-
       # TODO: take userSuppliedId if provided in params
-      body = {
-          userSuppliedId: "#{transaction_id}-refund"
-      }
+      original_transaction_info = Lightrail::Translator.charge_instance_to_hash!(original_transaction_response)
 
-      response = Lightrail::Connection.post_refund(card_id, transaction_id, body)
-
-      self.new(response['transaction'])
+      transaction = Lightrail::Transaction.refund(original_transaction_info, {userSuppliedId: "#{original_transaction_response.transactionId}-refund"})
+      self.new(transaction)
     end
 
   end

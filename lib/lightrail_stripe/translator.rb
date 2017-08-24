@@ -50,6 +50,16 @@ module Lightrail
       }
     end
 
+    def self.charge_instance_to_hash!(charge_instance)
+      if charge_instance.is_a? Lightrail::LightrailCharge
+        charge_hash = {}
+        charge_instance.instance_variables.each { |instance_variable| charge_hash[instance_variable.to_s.delete('@')] = charge_instance.instance_variable_get(instance_variable) }
+        charge_hash
+      else
+        raise Lightrail::LightrailArgumentError.new("Translator.charge_instance_to_hash! received #{charge_instance.inspect}")
+      end
+    end
+
 
     private
 

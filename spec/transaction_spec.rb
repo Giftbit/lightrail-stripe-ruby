@@ -21,6 +21,13 @@ RSpec.describe Lightrail::Transaction do
       card_id: ENV['LIGHTRAIL_TEST_CARD_ID'],
   }}
 
+  let(:card_id_pending_charge_params) {{
+      value: -1,
+      currency: 'USD',
+      card_id: ENV['LIGHTRAIL_TEST_CARD_ID'],
+      pending: true,
+  }}
+
 
   describe ".charge_code" do
     context "when posting a drawdown transaction" do
@@ -81,15 +88,33 @@ RSpec.describe Lightrail::Transaction do
     end
   end
 
-  describe ".cancel" do
-    it "cancels a pending transaction"
+  describe ".void" do
+    it "cancels a pending transaction" do
+      pending = transaction.charge_card(card_id_pending_charge_params)
+      transac = transaction.void(pending)
+
+      expect(transac).to have_key('transactionId')
+      expect(transac['transactionType']).to eq('PENDING_VOID')
+    end
   end
 
   describe ".capture" do
-    it "captures a pending transaction"
+    it "captures a pending transaction" do
+      pending = transaction.charge_card(card_id_pending_charge_params)
+      transac = transaction.capture(pending)
+
+      expect(transac).to have_key('transactionId')
+      expect(transac['transactionType']).to eq('DRAWDOWN')
+    end
   end
 
   describe ".refund" do
-    it "refunds a drawdown transaction"
+    it "refunds a drawdown transaction" do
+      original_transac = transaction.charge_card(card_id_charge_params)
+      transac = transaction.refund(original_transac)
+
+      expect(transac).to have_key('transactionId')
+      expect(transac['transactionType']).to eq('DRAWDOWN_REFUND')
+    end
   end
 end

@@ -17,15 +17,15 @@ module Lightrail
     end
 
 
-    def self.refund!(original_transaction_info, new_request_body=nil)
+    def self.refund (original_transaction_info, new_request_body={})
       handle_transaction(original_transaction_info, 'refund', new_request_body)
     end
 
-    def self.cancel! (original_transaction_info, new_request_body=nil)
+    def self.void (original_transaction_info, new_request_body={})
       handle_transaction(original_transaction_info, 'void', new_request_body)
     end
 
-    def self.capture! (original_transaction_info, new_request_body=nil)
+    def self.capture (original_transaction_info, new_request_body={})
       handle_transaction(original_transaction_info, 'capture', new_request_body)
     end
 
@@ -36,19 +36,9 @@ module Lightrail
       response = Lightrail::Connection.send(transaction_type, transaction_params_for_lightrail)
     end
 
-    # UPDATE THIS!
-    def handle_transaction (original_transaction_info, action, new_request_body=nil)
-      Lightrail::Validator.validate_transaction_info!(original_transaction_info)
-
-      transaction_id = original_transaction_info['transactionId'] || original_transaction_info['transaction_id']
-      card_id = original_transaction_info['cardId'] || original_transaction_info['card_id']
-
-      body = new_request_body || {}
-      body[:userSuppliedId] ||= Lightrail::Translator.get_or_create_user_supplied_id_with_action_suffix(body, transaction_id, action)
-
-      response = Lightrail::Connection.handle_pending(card_id, transaction_id, action, body)
-
-      Lightrail::LightrailCharge.new(response['transaction'])
+    def self.handle_transaction (original_transaction_info, action, new_request_body={})
+      transaction_params_for_lightrail = Lightrail::Validator.set_params_for_acting_on_existing_transaction!(original_transaction_info, new_request_body)
+      response = Lightrail::Connection.send(action, transaction_params_for_lightrail)
     end
 
   end

@@ -4,7 +4,7 @@ module Lightrail
       validated_params = charge_params.clone
       begin
         return validated_params if ((validated_params.is_a? Hash) &&
-            self.set_code!(validated_params) &&
+            self.set_code!(validated_params, validated_params) &&
             self.validate_amount!(validated_params[:amount] || validated_params[:value]) &&
             self.validate_currency!(validated_params[:currency]) &&
             self.get_or_set_userSuppliedId!(validated_params))
@@ -27,7 +27,7 @@ module Lightrail
       validated_params = charge_params.clone
       begin
         return validated_params if ((validated_params.is_a? Hash) &&
-            self.set_cardId!(validated_params) &&
+            self.set_cardId!(validated_params, validated_params) &&
             self.validate_amount!(validated_params[:amount] || validated_params[:value]) &&
             self.validate_currency!(validated_params[:currency])) &&
             self.get_or_set_userSuppliedId!(validated_params)
@@ -40,7 +40,7 @@ module Lightrail
       validated_params = fund_params.clone
       begin
         return validated_params if ((validated_params.is_a? Hash) &&
-            self.set_cardId!(validated_params) &&
+            self.set_cardId!(validated_params, validated_params) &&
             self.validate_amount!(validated_params[:amount] || validated_params[:value]) &&
             self.validate_currency!(validated_params[:currency])) &&
             self.get_or_set_userSuppliedId!(validated_params)
@@ -58,6 +58,21 @@ module Lightrail
       end
       raise Lightrail::LightrailArgumentError.new("Invalid charge_params for set_params_for_card_id_pending!!: #{charge_params.inspect}")
     end
+
+    def self.set_params_for_acting_on_existing_transaction!(original_transaction, new_request_body={})
+      validated_params = new_request_body.clone
+      validated_params[:original_transaction] = original_transaction
+      begin
+        return validated_params if ((validated_params.is_a? Hash) &&
+            (validated_params[:original_transaction].is_a? Hash) &&
+            self.set_cardId!(validated_params, validated_params[:original_transaction]) &&
+            self.set_transactionId!(validated_params, validated_params[:original_transaction]) &&
+            self.get_or_set_userSuppliedId!(validated_params))
+        rescue Lightrail::LightrailArgumentError
+      end
+      raise Lightrail::LightrailArgumentError.new("Invalid params for set_params_for_acting_on_existing_transaction!: original_transaction: #{original_transaction.inspect}; new_request_body: #{new_request_body.inspect}")
+    end
+
 
     def self.validate_charge_object! (charge_params)
       begin
@@ -143,12 +158,16 @@ module Lightrail
 
     private
 
-    def self.set_code!(charge_params)
-      charge_params[:code] = self.has_valid_code?(charge_params) ? Lightrail::Translator.get_code(charge_params) : nil
+    def self.set_code!(destination_params, source_params)
+      destination_params[:code] ||= self.has_valid_code?(source_params) ? Lightrail::Translator.get_code(source_params) : nil
     end
 
-    def self.set_cardId!(charge_params)
-      charge_params[:cardId] = self.has_valid_card_id?(charge_params) ? Lightrail::Translator.get_card_id(charge_params) : nil
+    def self.set_cardId!(destination_params, source_params)
+      destination_params[:cardId] ||= self.has_valid_card_id?(source_params) ? Lightrail::Translator.get_card_id(source_params) : nil
+    end
+
+    def self.set_transactionId!(destination_params, source_params)
+      destination_params[:transactionId] = self.has_valid_transaction_id?(source_params) ? Lightrail::Translator.get_transaction_id(source_params) : nil
     end
 
     def self.get_or_set_userSuppliedId!(charge_params)
@@ -164,6 +183,11 @@ module Lightrail
     def self.has_valid_card_id?(charge_params)
       cardId = (charge_params.respond_to? :keys) ? Lightrail::Translator.get_card_id(charge_params) : false
       cardId && self.validate_card_id!(cardId)
+    end
+
+    def self.has_valid_transaction_id?(charge_params)
+      transactionId = (charge_params.respond_to? :keys) ? Lightrail::Translator.get_transaction_id(charge_params) : false
+      transactionId && self.validate_transaction_id!(transactionId)
     end
 
     def self.has_lightrail_payment_option?(charge_params)

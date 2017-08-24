@@ -83,6 +83,11 @@ module Lightrail
       charge_params[code_key]
     end
 
+    def self.get_transaction_id(charge_params)
+      transaction_id_key = (charge_params.keys & Lightrail::Constants::LIGHTRAIL_TRANSACTION_ID_KEYS).first
+      charge_params[transaction_id_key]
+    end
+
     def self.get_code_or_card_id_key(charge_params)
       (charge_params.keys & Lightrail::Constants::LIGHTRAIL_PAYMENT_METHODS).first
     end

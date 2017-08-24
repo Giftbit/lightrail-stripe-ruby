@@ -2,17 +2,30 @@ module Lightrail
   class Connection
 
     def self.code_drawdown(charge_params)
-      code = charge_params.delete(:code)
-      response = self.send :make_post_request_and_parse_response, "codes/#{code}/transactions", charge_params
-      response['transaction']
+      self.post_transaction(charge_params)
     end
 
     def self.card_id_drawdown(charge_params)
-      card_id = charge_params.delete(:cardId)
-      response = self.send :make_post_request_and_parse_response, "cards/#{card_id}/transactions", charge_params
-      response['transaction']
+      self.post_transaction(charge_params)
     end
 
+    def self.card_id_fund(fund_params)
+      self.post_transaction(fund_params)
+    end
+
+    def self.post_transaction(transaction_params)
+      response = {}
+      if (transaction_params[:code])
+        code = transaction_params.delete(:code)
+        response = self.send :make_post_request_and_parse_response, "codes/#{code}/transactions", transaction_params
+      elsif (transaction_params[:cardId])
+        card_id = transaction_params.delete(:cardId)
+        response = self.send :make_post_request_and_parse_response, "cards/#{card_id}/transactions", transaction_params
+      else
+        raise Lightrail::LightrailArgumentError.new("Lightrail code or cardId required to post a transaction: #{transaction_params.inspect}")
+      end
+      response['transaction']
+    end
 
     def self.ping
       self.send :make_get_request_and_parse_response, "ping"

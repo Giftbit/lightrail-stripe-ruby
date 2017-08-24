@@ -10,8 +10,13 @@ module Lightrail
       response = Lightrail::Connection.send(transaction_type, transaction_params_for_lightrail)
     end
 
+    def self.charge(transaction_params, transaction_type)
+      self.create(transaction_params, transaction_type)
+    end
 
-
+    def self.fund(transaction_params)
+      self.create(transaction_params, :card_id_fund)
+    end
 
 
     def self.refund!(original_transaction_info, new_request_body=nil)

@@ -5,15 +5,19 @@ module Lightrail
     def self.create (charge_params)
       Lightrail::Validator.validate_charge_object! (charge_params)
       charge_params_to_send_to_lightrail = Lightrail::Translator.translate_charge_params(charge_params)
+      charge_method = case
+                        when charge_params_to_send_to_lightrail[:code] && charge_params_to_send_to_lightrail[:pending]
+                          :code_pending
+                        when charge_params_to_send_to_lightrail[:cardId] && charge_params_to_send_to_lightrail[:pending]
+                          :card_id_pending
+                        when charge_params_to_send_to_lightrail[:code]
+                          :code_drawdown
+                        when charge_params_to_send_to_lightrail[:cardId]
+                          :card_id_drawdown
+                      end
 
-      charge_method = charge_params_to_send_to_lightrail[:code] ? 'code' : 'cardId'
-      code_or_card_id = charge_params_to_send_to_lightrail.delete(charge_method.to_sym)
-
-      response = (charge_method == 'code') ?
-          Lightrail::Connection.make_code_transaction(code_or_card_id, charge_params_to_send_to_lightrail) :
-          Lightrail::Connection.make_card_id_transaction(code_or_card_id, charge_params_to_send_to_lightrail)
-
-      self.new(response['transaction'])
+      transaction = Lightrail::Transaction.charge(charge_params_to_send_to_lightrail, charge_method)
+      self.new(transaction)
     end
 
 

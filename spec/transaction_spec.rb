@@ -35,12 +35,28 @@ RSpec.describe Lightrail::Transaction do
         expect(transac).to have_key('transactionId')
         expect(transac['transactionType']).to eq('DRAWDOWN')
       end
+
+      it "charges a code first if both code and cardId are present"
+    end
+
+    context "when posting a pending transaction" do
+      it "posts a pending transaction to a code" do
+        transac = transaction.charge(code_charge_params, :code_pending)
+        expect(transac).to have_key('transactionId')
+        expect(transac['transactionType']).to eq('PENDING_CREATE')
+      end
+
+      it "posts a pending transaction to a card_id" do
+        transac = transaction.charge(card_id_charge_params, :card_id_pending)
+        expect(transac).to have_key('transactionId')
+        expect(transac['transactionType']).to eq('PENDING_CREATE')
+      end
     end
   end
 
-  describe ".fund" do
+  describe ".fund_card" do
     it "funds a card" do
-      transac = transaction.fund(card_id_fund_params)
+      transac = transaction.fund_card(card_id_fund_params)
       expect(transac).to have_key('transactionId')
       expect(transac['transactionType']).to eq('FUND')
     end
@@ -51,8 +67,19 @@ RSpec.describe Lightrail::Transaction do
           currency: 'USD',
           code: ENV['LIGHTRAIL_TEST_CODE'],
       }
-      expect {transaction.fund(code_fund_params)}.to raise_error(Lightrail::LightrailArgumentError)
+      expect {transaction.fund_card(code_fund_params)}.to raise_error(Lightrail::LightrailArgumentError)
     end
   end
 
+  describe ".cancel" do
+    it "cancels a pending transaction"
+  end
+
+  describe ".capture" do
+    it "captures a pending transaction"
+  end
+
+  describe ".refund" do
+    it "refunds a drawdown transaction"
+  end
 end

@@ -7,7 +7,7 @@ module Lightrail
 
     LIGHTRAIL_PAYMENT_METHODS = self::LIGHTRAIL_CODE_KEYS + self::LIGHTRAIL_CARD_ID_KEYS
 
-    LIGHTRAIL_TRANSACTION_TYPES = [:code_drawdown, :card_id_drawdown, :code_pending, :card_id_pending, :fund, :refund, :capture, :void]
+    LIGHTRAIL_TRANSACTION_TYPES = [:code_drawdown, :card_id_drawdown, :code_pending, :card_id_pending, :fund_card, :refund, :capture, :void]
 
   end
 end

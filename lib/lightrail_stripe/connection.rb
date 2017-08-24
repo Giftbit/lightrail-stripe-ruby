@@ -5,7 +5,15 @@ module Lightrail
       self.post_transaction(charge_params)
     end
 
+    def self.code_pending(charge_params)
+      self.post_transaction(charge_params)
+    end
+
     def self.card_id_drawdown(charge_params)
+      self.post_transaction(charge_params)
+    end
+
+    def self.card_id_pending(charge_params)
       self.post_transaction(charge_params)
     end
 

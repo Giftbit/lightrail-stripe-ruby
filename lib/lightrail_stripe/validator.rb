@@ -6,11 +6,21 @@ module Lightrail
         return validated_params if ((validated_params.is_a? Hash) &&
             self.set_code!(validated_params) &&
             self.validate_amount!(validated_params[:amount] || validated_params[:value]) &&
-            self.validate_currency!(validated_params[:currency])) &&
-            self.get_or_set_userSuppliedId!(validated_params)
+            self.validate_currency!(validated_params[:currency]) &&
+            self.get_or_set_userSuppliedId!(validated_params))
       rescue Lightrail::LightrailArgumentError
       end
       raise Lightrail::LightrailArgumentError.new("Invalid charge_params for set_params_for_code_drawdown!: #{charge_params.inspect}")
+    end
+
+    def self.set_params_for_code_pending!(charge_params)
+      begin
+        validated_params = self.set_params_for_code_drawdown!(charge_params)
+        validated_params[:pending] = true
+        return validated_params
+      rescue Lightrail::LightrailError
+      end
+      raise Lightrail::LightrailArgumentError.new("Invalid charge_params for set_params_for_code_pending!: #{charge_params.inspect}")
     end
 
     def self.set_params_for_card_id_drawdown!(charge_params)
@@ -37,6 +47,16 @@ module Lightrail
       rescue Lightrail::LightrailArgumentError
       end
       raise Lightrail::LightrailArgumentError.new("Invalid fund_params for set_params_for_card_id_fund!: #{fund_params.inspect}")
+    end
+
+    def self.set_params_for_card_id_pending!(charge_params)
+      begin
+        validated_params = self.set_params_for_card_id_drawdown!(charge_params)
+        validated_params[:pending] = true
+        return validated_params
+      rescue Lightrail::LightrailError
+      end
+      raise Lightrail::LightrailArgumentError.new("Invalid charge_params for set_params_for_card_id_pending!!: #{charge_params.inspect}")
     end
 
     def self.validate_charge_object! (charge_params)

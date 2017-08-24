@@ -2,19 +2,11 @@ module Lightrail
   class Transaction < Lightrail::LightrailObject
     attr_accessor :transactionId, :value, :userSuppliedId, :dateCreated, :transactionType, :transactionAccessMethod, :giftbitUserId, :cardId, :currency, :codeLastFour, :metadata, :parentTransactionId
 
-    # PSEUDO CODE
-    # transaction_type comes from Constants list: [:code_drawdown, card_id_drawdown, :code_pending, :card_id_pending, :fund, :refund, :capture, :void]
-    def self.create(transaction_params, transaction_type)
-      # Validate the params based on the type of transaction being created
-      transaction_params_for_lightrail = Lightrail::Validator.send("set_params_for_#{transaction_type}!", transaction_params)
-      response = Lightrail::Connection.send(transaction_type, transaction_params_for_lightrail)
-    end
-
     def self.charge(transaction_params, transaction_type)
       self.create(transaction_params, transaction_type)
     end
 
-    def self.fund(transaction_params)
+    def self.fund_card(transaction_params)
       self.create(transaction_params, :card_id_fund)
     end
 
@@ -32,6 +24,11 @@ module Lightrail
     end
 
     private
+
+    def self.create(transaction_params, transaction_type)
+      transaction_params_for_lightrail = Lightrail::Validator.send("set_params_for_#{transaction_type}!", transaction_params)
+      response = Lightrail::Connection.send(transaction_type, transaction_params_for_lightrail)
+    end
 
     # UPDATE THIS!
     def handle_transaction (original_transaction_info, action, new_request_body=nil)

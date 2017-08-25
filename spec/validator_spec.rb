@@ -3,37 +3,42 @@ require "spec_helper"
 RSpec.describe Lightrail::Validator do
   subject(:validator) {Lightrail::Validator}
 
+  let(:code_charge_params) {{
+      amount: 1,
+      currency: 'USD',
+      code: ENV['LIGHTRAIL_TEST_CODE'],
+  }}
+
+  let(:card_id_charge_params) {{
+      amount: 1,
+      currency: 'USD',
+      cardId: ENV['LIGHTRAIL_TEST_CARD_ID'],
+  }}
+
+  let(:card_id_fund_params) {{
+      cardId: ENV['LIGHTRAIL_TEST_CARD_ID'],
+      amount: 20,
+      currency: 'USD',
+  }}
+
   describe "grouped validator methods" do
     let(:lr_argument_error) {Lightrail::LightrailArgumentError}
 
     describe ".validate_charge_object!" do
       it "returns true when the required keys are present" do
-        charge_params = {
-            amount: 1,
-            currency: 'USD',
-            code: ENV['LIGHTRAIL_TEST_CODE'],
-        }
-        expect(validator.validate_charge_object!(charge_params)).to be true
+        expect(validator.validate_charge_object!(code_charge_params)).to be true
       end
 
       it "raises LightrailArgumentError when missing required params" do
-        charge_params = {
-            amount: 1,
-            currency: 'USD',
-        }
-        expect{validator.validate_charge_object!(charge_params)}.to raise_error(lr_argument_error, /charge_params/)
+        code_charge_params.delete(:code)
+        expect{validator.validate_charge_object!(code_charge_params)}.to raise_error(lr_argument_error, /charge_params/)
         expect{validator.validate_charge_object!({})}.to raise_error(lr_argument_error, /charge_params/)
       end
     end
 
     describe ".validate_transaction_response!" do
       it "returns true when the required keys are present & formatted" do
-        charge_params = {
-            amount: 1,
-            currency: 'USD',
-            code: ENV['LIGHTRAIL_TEST_CODE'],
-        }
-        transaction_response = Lightrail::LightrailCharge.create(charge_params)
+        transaction_response = Lightrail::LightrailCharge.create(code_charge_params)
         expect(validator.validate_transaction_response!(transaction_response)).to be true
       end
 
@@ -51,12 +56,7 @@ RSpec.describe Lightrail::Validator do
 
     describe ".validate_fund_object!" do
       it "returns true when the required keys are present & formatted" do
-        fund_params = {
-            cardId: ENV['LIGHTRAIL_TEST_CARD_ID'],
-            amount: 20,
-            currency: 'USD',
-        }
-        expect(validator.validate_fund_object!(fund_params)).to be true
+        expect(validator.validate_fund_object!(card_id_fund_params)).to be true
       end
 
       it "raises LightrailArgumentError when missing required params" do

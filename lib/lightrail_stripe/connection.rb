@@ -59,6 +59,13 @@ module Lightrail
       response['transaction']
     end
 
+    def self.get_balance_details(by_code_or_card, fullcode_or_card_id)
+      response = by_code_or_card == :code ?
+          self.get_code_balance(fullcode_or_card_id) :
+          self.get_card_id_balance(fullcode_or_card_id)
+      response['balance']
+    end
+
     def self.ping
       self.send :make_get_request_and_parse_response, "ping"
     end

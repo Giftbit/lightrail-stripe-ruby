@@ -4,14 +4,14 @@ module Lightrail
 
     def self.retrieve_by_code (code)
       Lightrail::Validator.validate_code! (code)
-      response = Lightrail::Connection.get_code_balance(code)
-      self.new(response['balance'])
+      balance = Lightrail::Code.get_balance_details(code)
+      self.new(balance)
     end
 
     def self.retrieve_by_card_id (card_id)
       Lightrail::Validator.validate_card_id!(card_id)
-      response = Lightrail::Connection.get_card_id_balance(card_id)
-      self.new(response['balance'])
+      balance = Lightrail::Card.get_balance_details(card_id)
+      self.new(balance)
     end
 
 

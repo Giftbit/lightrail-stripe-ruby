@@ -17,7 +17,6 @@ module Lightrail
     end
 
 
-
     def cancel! (new_request_body=nil)
       handle_pending(self, 'void', new_request_body)
     end

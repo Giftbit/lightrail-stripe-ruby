@@ -31,8 +31,8 @@ RSpec.describe Lightrail::Validator do
 
       it "raises LightrailArgumentError when missing required params" do
         code_charge_params.delete(:code)
-        expect{validator.validate_charge_object!(code_charge_params)}.to raise_error(lr_argument_error, /charge_params/)
-        expect{validator.validate_charge_object!({})}.to raise_error(lr_argument_error, /charge_params/)
+        expect {validator.validate_charge_object!(code_charge_params)}.to raise_error(lr_argument_error, /charge_params/)
+        expect {validator.validate_charge_object!({})}.to raise_error(lr_argument_error, /charge_params/)
       end
     end
 
@@ -48,9 +48,9 @@ RSpec.describe Lightrail::Validator do
                 'transactionId' => ENV['LIGHTRAIL_TEST_TRANSACTION_ID'],
             }
         }
-        expect{validator.validate_transaction_response!(transaction_response)}.to raise_error(lr_argument_error, /transaction_response/)
-        expect{validator.validate_transaction_response!({})}.to raise_error(lr_argument_error, /transaction_response/)
-        expect{validator.validate_transaction_response!([])}.to raise_error(lr_argument_error, /transaction_response/)
+        expect {validator.validate_transaction_response!(transaction_response)}.to raise_error(lr_argument_error, /transaction_response/)
+        expect {validator.validate_transaction_response!({})}.to raise_error(lr_argument_error, /transaction_response/)
+        expect {validator.validate_transaction_response!([])}.to raise_error(lr_argument_error, /transaction_response/)
       end
     end
 
@@ -61,9 +61,9 @@ RSpec.describe Lightrail::Validator do
 
       it "raises LightrailArgumentError when missing required params" do
         fund_params = {amount: 1, currency: 'USD'}
-        expect{validator.validate_fund_object!(fund_params)}.to raise_error(lr_argument_error, /fund_params/)
-        expect{validator.validate_fund_object!({})}.to raise_error(lr_argument_error, /fund_params/)
-        expect{validator.validate_fund_object!([])}.to raise_error(lr_argument_error, /fund_params/)
+        expect {validator.validate_fund_object!(fund_params)}.to raise_error(lr_argument_error, /fund_params/)
+        expect {validator.validate_fund_object!({})}.to raise_error(lr_argument_error, /fund_params/)
+        expect {validator.validate_fund_object!([])}.to raise_error(lr_argument_error, /fund_params/)
       end
     end
 
@@ -83,9 +83,9 @@ RSpec.describe Lightrail::Validator do
                 'username' => '',
             }
         }
-        expect{validator.validate_ping_response!(ping_response)}.to raise_error(lr_argument_error, /ping_response/)
-        expect{validator.validate_ping_response!({})}.to raise_error(lr_argument_error, /ping_response/)
-        expect{validator.validate_ping_response!([])}.to raise_error(lr_argument_error, /ping_response/)
+        expect {validator.validate_ping_response!(ping_response)}.to raise_error(lr_argument_error, /ping_response/)
+        expect {validator.validate_ping_response!({})}.to raise_error(lr_argument_error, /ping_response/)
+        expect {validator.validate_ping_response!([])}.to raise_error(lr_argument_error, /ping_response/)
       end
     end
 
@@ -101,7 +101,7 @@ RSpec.describe Lightrail::Validator do
 
       it "raises LightrailArgumentError for any other type" do
         expect {validator.validate_card_id! ('')}.to raise_error(lr_argument_error), "called with empty string"
-        expect{validator.validate_card_id! ('some random string')}.to raise_error(lr_argument_error), "called with invalid string"
+        expect {validator.validate_card_id! ('some random string')}.to raise_error(lr_argument_error), "called with invalid string"
         expect {validator.validate_card_id! (123)}.to raise_error(lr_argument_error), "called with integer"
         expect {validator.validate_card_id! ({})}.to raise_error(lr_argument_error), "called with empty hash"
         expect {validator.validate_card_id! ([])}.to raise_error(lr_argument_error), "called with empty array"
@@ -115,7 +115,7 @@ RSpec.describe Lightrail::Validator do
 
       it "raises LightrailArgumentError for any other type" do
         expect {validator.validate_code! ('')}.to raise_error(lr_argument_error), "called with empty string"
-        expect{validator.validate_code! ('some random string')}.to raise_error(lr_argument_error), "called with invalid string"
+        expect {validator.validate_code! ('some random string')}.to raise_error(lr_argument_error), "called with invalid string"
         expect {validator.validate_code! (123)}.to raise_error(lr_argument_error), "called with integer"
         expect {validator.validate_code! ({})}.to raise_error(lr_argument_error), "called with empty hash"
         expect {validator.validate_code! ([])}.to raise_error(lr_argument_error), "called with empty array"

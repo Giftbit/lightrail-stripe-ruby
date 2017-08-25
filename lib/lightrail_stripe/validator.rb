@@ -129,7 +129,7 @@ module Lightrail
     end
 
     def self.has_valid_card_id?(charge_params)
-      cardId = (charge_params.respond_to? :keys) ? Lightrail::Translator.get_card_id(charge_params) :false
+      cardId = (charge_params.respond_to? :keys) ? Lightrail::Translator.get_card_id(charge_params) : false
       cardId && self.validate_card_id!(cardId)
     end
 

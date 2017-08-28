@@ -3,6 +3,67 @@ require "spec_helper"
 RSpec.describe Lightrail::Connection do
   subject(:connection) {Lightrail::Connection}
 
+  let(:example_code) {'this-is-a-code'}
+  let(:example_card_id) {'this-is-a-card-id'}
+  let(:example_transaction_id) {'this-is-a-transaction-id'}
+  let(:example_request_body) {{
+      value: -1,
+      userSuppliedId: '123456-abcdef'
+  }}
+
+
+  describe ".ping" do
+    it "GETs the ping endpoint" do
+      expect(connection).to receive(:make_get_request_and_parse_response).with(/ping/).and_return(true)
+      connection.ping
+    end
+  end
+
+  describe ".get_code_balance" do
+    it "GETs the balance endpoint for the provided code" do
+      expect(connection).to receive(:make_get_request_and_parse_response).with(/codes\/#{example_code}\/balance/).and_return(true)
+      connection.get_code_balance(example_code)
+    end
+  end
+
+  describe ".get_card_id_balance" do
+    it "GETs the balance endpoint for the provided cardId" do
+      expect(connection).to receive(:make_get_request_and_parse_response).with(/cards\/#{example_card_id}\/balance/).and_return(true)
+      connection.get_card_id_balance(example_card_id)
+    end
+  end
+
+  describe ".make_code_transaction" do
+    it "POSTs to the transaction endpoint for the provided code with the provided request body" do
+      expect(connection).to receive(:make_post_request_and_parse_response).with(/codes\/#{example_code}\/transactions/, example_request_body).and_return(true)
+      connection.make_code_transaction(example_code, example_request_body)
+    end
+  end
+
+  describe ".make_card_id_transaction" do
+    it "POSTs to the transaction endpoint for the provided cardId with the provided request body" do
+      expect(connection).to receive(:make_post_request_and_parse_response).with(/cards\/#{example_card_id}\/transactions/, example_request_body).and_return(true)
+      connection.make_card_id_transaction(example_card_id, example_request_body)
+    end
+  end
+
+  describe ".handle_pending" do
+    it "POSTs the action and request body to the transaction endpoint for the provided cardId & transactionId" do
+      action = 'void'
+      expect(connection).to receive(:make_post_request_and_parse_response).with(/cards\/#{example_card_id}\/transactions\/#{example_transaction_id}\/#{action}/, example_request_body).and_return(true)
+      connection.handle_pending(example_card_id, example_transaction_id, action, example_request_body)
+    end
+  end
+
+  describe ".post_refund" do
+    it "POSTs to the refund endpoint for the provided cardId & transactionId" do
+      expect(connection).to receive(:make_post_request_and_parse_response).with(/cards\/#{example_card_id}\/transactions\/#{example_transaction_id}\/refund/, example_request_body).and_return(true)
+      connection.post_refund(example_card_id, example_transaction_id, example_request_body)
+    end
+  end
+
+
+
   describe ".connection" do
     let(:conn) {Lightrail::Connection.connection}
 

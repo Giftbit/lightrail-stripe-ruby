@@ -3,27 +3,44 @@ require "spec_helper"
 RSpec.describe Lightrail::Validator do
   subject(:validator) {Lightrail::Validator}
 
+  let(:lr_argument_error) {Lightrail::LightrailArgumentError}
+
+  let(:example_code) {'this-is-a-code'}
+
+  let(:example_card_id) {'this-is-a-card-id'}
+
+  let(:example_transaction_id) {'this-is-a-transaction-id'}
+
   let(:code_charge_params) {{
       amount: 1,
       currency: 'USD',
-      code: ENV['LIGHTRAIL_TEST_CODE'],
+      code: example_code,
   }}
 
   let(:card_id_charge_params) {{
       amount: 1,
       currency: 'USD',
-      cardId: ENV['LIGHTRAIL_TEST_CARD_ID'],
+      cardId: example_card_id,
   }}
 
   let(:card_id_fund_params) {{
-      cardId: ENV['LIGHTRAIL_TEST_CARD_ID'],
+      cardId: example_card_id,
       amount: 20,
       currency: 'USD',
   }}
 
-  describe "grouped validator methods" do
-    let(:lr_argument_error) {Lightrail::LightrailArgumentError}
+  let(:transaction_response) {Lightrail::LightrailCharge.new({
+                                                                 cardId: 'card-123456',
+                                                                 codeLastFour: 'TEST',
+                                                                 currency: 'USD',
+                                                                 transactionId: 'transaction-123456',
+                                                                 transactionType: 'DRAWDOWN',
+                                                                 userSuppliedId: '123-abc-456-def',
+                                                                 value: -1,
+                                                             })}
 
+
+  describe "grouped validator methods" do
     describe ".validate_charge_object!" do
       it "returns true when the required keys are present" do
         expect(validator.validate_charge_object!(code_charge_params)).to be true
@@ -38,17 +55,12 @@ RSpec.describe Lightrail::Validator do
 
     describe ".validate_transaction_response!" do
       it "returns true when the required keys are present & formatted" do
-        transaction_response = Lightrail::LightrailCharge.create(code_charge_params)
         expect(validator.validate_transaction_response!(transaction_response)).to be true
       end
 
       it "raises LightrailArgumentError when missing required params" do
-        transaction_response = {
-            'transaction' => {
-                'transactionId' => ENV['LIGHTRAIL_TEST_TRANSACTION_ID'],
-            }
-        }
-        expect {validator.validate_transaction_response!(transaction_response)}.to raise_error(lr_argument_error, /transaction_response/)
+        invalid_transaction_response = {'transaction' => {'transactionId' => 'this-is-a-transaction-id'}}
+        expect {validator.validate_transaction_response!(invalid_transaction_response)}.to raise_error(lr_argument_error, /transaction_response/)
         expect {validator.validate_transaction_response!({})}.to raise_error(lr_argument_error, /transaction_response/)
         expect {validator.validate_transaction_response!([])}.to raise_error(lr_argument_error, /transaction_response/)
       end
@@ -69,20 +81,12 @@ RSpec.describe Lightrail::Validator do
 
     describe ".validate_ping_response!" do
       it "returns true when the required keys are present & formatted" do
-        ping_response = {
-            'user' => {
-                'username' => 'test@test.com',
-            }
-        }
+        ping_response = {'user' => {'username' => 'test@test.com'}}
         expect(validator.validate_ping_response!(ping_response)).to be true
       end
 
       it "raises LightrailArgumentError when missing required params" do
-        ping_response = {
-            'user' => {
-                'username' => '',
-            }
-        }
+        ping_response = {'user' => {'username' => ''}}
         expect {validator.validate_ping_response!(ping_response)}.to raise_error(lr_argument_error, /ping_response/)
         expect {validator.validate_ping_response!({})}.to raise_error(lr_argument_error, /ping_response/)
         expect {validator.validate_ping_response!([])}.to raise_error(lr_argument_error, /ping_response/)
@@ -92,11 +96,9 @@ RSpec.describe Lightrail::Validator do
   end
 
   describe "single validator methods" do
-    let(:lr_argument_error) {Lightrail::LightrailArgumentError}
-
     describe ".validate_card_id!" do
       it "returns true for a string of the right format" do
-        expect(validator.validate_card_id! (ENV['LIGHTRAIL_TEST_CARD_ID'])).to be true
+        expect(validator.validate_card_id! (example_card_id)).to be true
       end
 
       it "raises LightrailArgumentError for any other type" do
@@ -110,7 +112,7 @@ RSpec.describe Lightrail::Validator do
 
     describe ".validate_code!" do
       it "returns true for a string of the right format" do
-        expect(validator.validate_code! (ENV['LIGHTRAIL_TEST_CODE'])).to be true
+        expect(validator.validate_code! (example_code)).to be true
       end
 
       it "raises LightrailArgumentError for any other type" do
@@ -124,7 +126,7 @@ RSpec.describe Lightrail::Validator do
 
     describe ".validate_transaction_id!" do
       it "returns true for a string of the right format" do
-        expect(validator.validate_transaction_id! (ENV['LIGHTRAIL_TEST_TRANSACTION_ID'])).to be true
+        expect(validator.validate_transaction_id! (example_transaction_id)).to be true
       end
 
       it "raises LightrailArgumentError for any other type" do

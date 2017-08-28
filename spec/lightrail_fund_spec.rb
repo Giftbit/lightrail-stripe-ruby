@@ -3,23 +3,27 @@ require "spec_helper"
 RSpec.describe Lightrail::LightrailFund do
   subject(:lightrail_fund) {Lightrail::LightrailFund}
 
+  let(:lightrail_connection) {Lightrail::Connection}
+
   let(:fund_params) {{
       amount: 1,
       currency: 'USD',
-      cardId: ENV['LIGHTRAIL_TEST_CARD_ID'],
+      cardId: 'this-is-a-card-id',
+      userSuppliedId: '123-abc-456-def',
   }}
 
   describe ".create" do
     context "when given valid params" do
+      before(:each) do
+        expect(lightrail_connection).to receive(:make_post_request_and_parse_response).with(/cards\/#{fund_params[:cardId]}\/transactions/, hash_including({userSuppliedId: fund_params[:userSuppliedId]})).and_return({"transaction" => {}})
+      end
+
       it "funds a gift card with minimum required params" do
-        fund_response = lightrail_fund.create(fund_params)
-        expect(fund_response.transactionType).to eq('FUND'), "called LightrailFund.create with #{fund_params.inspect}, got back #{fund_response.inspect}"
+        lightrail_fund.create(fund_params)
       end
 
       it "uses userSuppliedId if supplied in param hash" do
-        fund_params[:userSuppliedId] = 'test-fund-' + rand().to_s
-        fund_response = lightrail_fund.create(fund_params)
-        expect(fund_response.userSuppliedId).to eq(fund_params[:userSuppliedId]), "called LightrailFund.create with #{fund_params.inspect}, got back #{fund_response.inspect}"
+        lightrail_fund.create(fund_params)
       end
     end
 

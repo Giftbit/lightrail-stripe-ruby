@@ -3,14 +3,28 @@ require "spec_helper"
 RSpec.describe Lightrail::LightrailCharge do
   subject(:lightrail_charge) {Lightrail::LightrailCharge}
 
+  let(:code_charge_params) {{
+      amount: 1,
+      currency: 'USD',
+      code: ENV['LIGHTRAIL_TEST_CODE'],
+  }}
+
+  let(:card_id_charge_params) {{
+      amount: 1,
+      currency: 'USD',
+      cardId: ENV['LIGHTRAIL_TEST_CARD_ID'],
+  }}
+
+  let(:pending_code_charge_params) {{
+      amount: 1,
+      currency: 'USD',
+      code: ENV['LIGHTRAIL_TEST_CODE'],
+      capture: false,
+  }}
+
   describe ".new" do
     it "creates a new charge object from valid API response" do
-      charge_params = {
-          amount: 1,
-          currency: 'USD',
-          code: ENV['LIGHTRAIL_TEST_CODE'],
-      }
-      charge_response = lightrail_charge.create(charge_params)
+      charge_response = lightrail_charge.create(code_charge_params)
       expect(charge_response).to be_a(lightrail_charge)
     end
   end
@@ -18,83 +32,49 @@ RSpec.describe Lightrail::LightrailCharge do
   describe ".create" do
     context "when given valid params" do
       it "creates a drawdown code transaction with minimum required params" do
-        charge_params = {
-            amount: 1,
-            currency: 'USD',
-            code: ENV['LIGHTRAIL_TEST_CODE'],
-        }
-        charge_response = lightrail_charge.create(charge_params)
+        charge_response = lightrail_charge.create(code_charge_params)
         expect(charge_response).to be_a(lightrail_charge)
         expect(charge_response.transactionType).to eq('DRAWDOWN')
       end
 
       it "creates a drawdown card transaction with minimum required params" do
-        charge_params = {
-            amount: 1,
-            currency: 'USD',
-            cardId: ENV['LIGHTRAIL_TEST_CARD_ID'],
-        }
-        charge_response = lightrail_charge.create(charge_params)
+        card_id_charge_params
+        charge_response = lightrail_charge.create(card_id_charge_params)
         expect(charge_response).to be_a(lightrail_charge)
         expect(charge_response.transactionType).to eq('DRAWDOWN')
       end
 
       it "uses userSuppliedId if supplied in param hash" do
-        charge_params = {
-            amount: 1,
-            currency: 'USD',
-            code: ENV['LIGHTRAIL_TEST_CODE'],
-            userSuppliedId: 'test-charge-' + rand().to_s,
-        }
-        charge_response = lightrail_charge.create(charge_params)
-        expect(charge_response.userSuppliedId).to eq(charge_params[:userSuppliedId])
+        code_charge_params[:userSuppliedId] ='test-charge-' + rand().to_s
+        charge_response = lightrail_charge.create(code_charge_params)
+        expect(charge_response.userSuppliedId).to eq(code_charge_params[:userSuppliedId])
       end
 
       it "uses 'value' instead of 'amount' if supplied in param hash" do
-        charge_params = {
-            amount: 1,
-            value: -2,
-            currency: 'USD',
-            code: ENV['LIGHTRAIL_TEST_CODE'],
-            userSuppliedId: 'test-charge-' + rand().to_s,
-        }
-        charge_response = lightrail_charge.create(charge_params)
-        expect(charge_response.value).to eq(charge_params[:value])
+        code_charge_params[:value] = -2
+        code_charge_params[:userSuppliedId] = 'test-charge-' + rand().to_s
+        charge_response = lightrail_charge.create(code_charge_params)
+        expect(charge_response.value).to eq(code_charge_params[:value])
       end
 
       it "creates a pending transaction when 'capture=false'" do
-        charge_params = {
-            amount: 1,
-            currency: 'USD',
-            code: ENV['LIGHTRAIL_TEST_CODE'],
-            capture: false,
-        }
-        charge_response = lightrail_charge.create(charge_params)
+        code_charge_params[:capture] = false
+        charge_response = lightrail_charge.create(code_charge_params)
         expect(charge_response.transactionType).to eq('PENDING_CREATE')
       end
 
       it "creates a pending transaction when 'pending=true'" do
-        charge_params = {
-            amount: 1,
-            currency: 'USD',
-            code: ENV['LIGHTRAIL_TEST_CODE'],
-            pending: true,
-        }
-        charge_response = lightrail_charge.create(charge_params)
+        code_charge_params[:pending] = true
+        charge_response = lightrail_charge.create(code_charge_params)
         expect(charge_response.transactionType).to eq('PENDING_CREATE')
       end
 
       context "when an error response comes back from the API anyway" do
         it "should produce a meaningful error" do
-          charge_params = {
-              amount: 1,
-              currency: 'USD',
-              code: ENV['LIGHTRAIL_TEST_CODE'],
-              metadata: {
-                  giftbit_exception_action: 'transaction:create'
-              }
+          code_charge_params[:metadata] = {
+              giftbit_exception_action: 'transaction:create'
           }
-          expect {lightrail_charge.create(charge_params)}.to raise_error(Lightrail::LightrailError, /Server responded with/), "expected a LightrailError with message 'Server responded with:'"
+          expect {lightrail_charge.create(code_charge_params)}.to raise_error(Lightrail::LightrailError, /Server responded with/), "expected a LightrailError with message 'Server responded with:'"
         end
       end
     end
@@ -110,60 +90,52 @@ RSpec.describe Lightrail::LightrailCharge do
 
   end
 
-  describe ".cancel" do
+  describe "#cancel" do
     before(:each) do
-      charge_params_to_handle = {
-          amount: 1,
-          currency: 'USD',
-          code: ENV['LIGHTRAIL_TEST_CODE'],
-          capture: false,
-      }
-      @pending_to_void = lightrail_charge.create(charge_params_to_handle)
+      @pending_to_void = lightrail_charge.create(pending_code_charge_params)
     end
 
-    context "when given valid params" do
+    context "called on a valid pending transaction" do
       it "voids a pending transaction" do
-        voiding_response = lightrail_charge.cancel(@pending_to_void)
+        voiding_response = @pending_to_void.cancel!
         expect(voiding_response.transactionType).to eq('PENDING_VOID')
       end
     end
 
-    context "when given bad/missing params" do
-      it "throws an error when required params are missing or in the wrong format" do
+    context "when called on an invalid pending transaction" do
+      it "throws an error when required vars are missing or in the wrong format" do
         @pending_to_void.remove_instance_variable(:@transactionId)
-        expect {lightrail_charge.cancel(@pending_to_void)}.to raise_error(Lightrail::LightrailArgumentError)
-        expect {lightrail_charge.cancel({})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.cancel with empty object"
-        expect {lightrail_charge.cancel([])}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.cancel with empty array"
-        expect {lightrail_charge.cancel('')}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.cancel with empty string"
+        expect {@pending_to_void.cancel!}.to raise_error(Lightrail::LightrailArgumentError)
+      end
+
+      it "throw an error when the transaction has already been captured (not voided)" do
+        @pending_to_void.capture!
+        expect {@pending_to_void.cancel!}.to raise_error(Lightrail::LightrailError)
       end
     end
   end
 
-  describe ".capture" do
+  describe "#capture" do
     before(:each) do
-      charge_params_to_handle = {
-          amount: 1,
-          currency: 'USD',
-          code: ENV['LIGHTRAIL_TEST_CODE'],
-          capture: false,
-      }
-      @pending_to_capture = lightrail_charge.create(charge_params_to_handle)
+      @pending_to_capture = lightrail_charge.create(pending_code_charge_params)
     end
 
-    context "when given valid params" do
+    context "called on a valid pending transaction" do
       it "captures a pending transaction" do
-        capture_response = lightrail_charge.capture(@pending_to_capture)
+        capture_response = @pending_to_capture.capture!
         expect(capture_response.transactionType).to eq('DRAWDOWN')
       end
     end
 
-    context "when given bad/missing params" do
-      it "throws an error when required params are missing or in the wrong format" do
+    context "when called on an invalid pending transaction" do
+      it "throws an error when required vars are missing or in the wrong format" do
         @pending_to_capture.remove_instance_variable(:@transactionId)
-        expect {lightrail_charge.capture(@pending_to_capture)}.to raise_error(Lightrail::LightrailArgumentError)
-        expect {lightrail_charge.capture({})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.capture with empty object"
-        expect {lightrail_charge.capture([])}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.capture with empty array"
-        expect {lightrail_charge.capture('')}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailCharge.capture with empty string"
+        expect {@pending_to_capture.capture!}.to raise_error(Lightrail::LightrailArgumentError)
+      end
+
+      it "throw an error when the transaction has already been voided (not captured)" do
+        @pending_to_capture.cancel!
+        expect {@pending_to_capture.capture!}.to raise_error(Lightrail::LightrailError)
       end
     end
   end

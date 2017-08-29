@@ -1,11 +1,35 @@
 module Lightrail
   class Validator
+    def self.set_params_for_code_drawdown!(charge_params)
+      validated_params = charge_params.clone
+      begin
+        return validated_params if ((validated_params.is_a? Hash) &&
+            self.set_code!(validated_params) &&
+            self.validate_amount!(validated_params[:amount] || validated_params[:value]) &&
+            self.validate_currency!(validated_params[:currency])) &&
+            self.get_or_set_userSuppliedId!(validated_params)
+      rescue Lightrail::LightrailArgumentError
+      end
+      raise Lightrail::LightrailArgumentError.new("Invalid charge_params for set_params_for_code_drawdown!: #{charge_params.inspect}")
+    end
+
+    def self.set_params_for_card_id_drawdown!(charge_params)
+      validated_params = charge_params.clone
+      begin
+        return validated_params if ((validated_params.is_a? Hash) &&
+            self.set_cardId!(validated_params) &&
+            self.validate_amount!(validated_params[:amount] || validated_params[:value]) &&
+            self.validate_currency!(validated_params[:currency])) &&
+            self.get_or_set_userSuppliedId!(validated_params)
+      rescue Lightrail::LightrailArgumentError
+      end
+      raise Lightrail::LightrailArgumentError.new("Invalid charge_params for set_params_for_card_id_drawdown!: #{charge_params.inspect}")
+    end
+
     def self.validate_charge_object! (charge_params)
       begin
-        return true if ((charge_params.is_a? Hash) &&
-            (self.has_valid_code?(charge_params) || self.has_valid_card_id?(charge_params)) &&
-            self.validate_amount!(charge_params[:amount] || charge_params[:value]) &&
-            self.validate_currency!(charge_params[:currency]))
+        return true if (self.set_params_for_code_drawdown!(charge_params) if self.has_valid_code?(charge_params)) ||
+            (self.set_params_for_card_id_drawdown!(charge_params) if self.has_valid_card_id?(charge_params))
       rescue Lightrail::LightrailArgumentError
       end
       raise Lightrail::LightrailArgumentError.new("Invalid charge_params: #{charge_params.inspect}")
@@ -55,12 +79,12 @@ module Lightrail
 
 
     def self.validate_card_id! (card_id)
-      return true if ((card_id.is_a? String) && (/\A[A-Z0-9\-]+\z/i =~ card_id))
+      return true if ((card_id.is_a? String) && ((/\A[A-Z0-9\-]+\z/i =~ card_id).is_a? Integer))
       raise Lightrail::LightrailArgumentError.new("Invalid card_id: #{card_id.inspect}")
     end
 
     def self.validate_code! (code)
-      return true if ((code.is_a? String) && (/\A[A-Z0-9\-]+\z/i =~ code))
+      return true if ((code.is_a? String) && ((/\A[A-Z0-9\-]+\z/i =~ code).is_a? Integer))
       raise Lightrail::LightrailArgumentError.new("Invalid code: #{code.inspect}")
     end
 
@@ -86,14 +110,27 @@ module Lightrail
 
     private
 
+    def self.set_code!(charge_params)
+      charge_params[:code] = self.has_valid_code?(charge_params) ? Lightrail::Translator.get_code(charge_params) : nil
+    end
+
+    def self.set_cardId!(charge_params)
+      charge_params[:cardId] = self.has_valid_card_id?(charge_params) ? Lightrail::Translator.get_card_id(charge_params) : nil
+    end
+
+    def self.get_or_set_userSuppliedId!(charge_params)
+      charge_params[:userSuppliedId] ||= Lightrail::Translator.get_or_create_user_supplied_id(charge_params)
+    end
+
+
     def self.has_valid_code?(charge_params)
-      code = Lightrail::Translator.get_code(charge_params)
-      code && self.validate_code!(charge_params[:code])
+      code = (charge_params.respond_to? :keys) ? Lightrail::Translator.get_code(charge_params) : false
+      code && self.validate_code!(code)
     end
 
     def self.has_valid_card_id?(charge_params)
-      cardId = Lightrail::Translator.get_card_id(charge_params)
-      cardId && self.validate_card_id!(charge_params[:cardId])
+      cardId = (charge_params.respond_to? :keys) ? Lightrail::Translator.get_card_id(charge_params) : false
+      cardId && self.validate_card_id!(cardId)
     end
 
     def self.has_lightrail_payment_option?(charge_params)

@@ -53,8 +53,8 @@ module Lightrail
 
     def self.determine_split!(charge_params)
       total_amount = charge_params[:amount]
-      code = Lightrail::Translator.get_code(charge_params)
-      card_id = Lightrail::Translator.get_card_id(charge_params)
+      code = Lightrail::Validator.get_code(charge_params)
+      card_id = Lightrail::Validator.get_card_id(charge_params)
 
       lightrail_balance = if code
                             Lightrail::LightrailValue.retrieve_by_code(code)

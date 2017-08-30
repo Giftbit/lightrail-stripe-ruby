@@ -28,18 +28,20 @@ module Lightrail
     private
 
     def handle_pending (original_transaction_response, void_or_capture, new_request_body=nil)
-      Lightrail::Validator.validate_transaction_response!(original_transaction_response)
 
-      transaction_id = original_transaction_response.transactionId
-      card_id = original_transaction_response.cardId
+      hash_of_original_transaction_response = original_transaction_response.clone
+      hash_of_original_transaction_response = Lightrail::Translator.charge_instance_to_hash!(hash_of_original_transaction_response)
 
+      Lightrail::Validator.validate_transaction_response!(hash_of_original_transaction_response)
+
+      transaction_id = Lightrail::Validator.get_transaction_id(hash_of_original_transaction_response)
 
       body = new_request_body || {}
-      body[:userSuppliedId] ||= Lightrail::Translator.get_or_create_user_supplied_id_with_action_suffix(body, transaction_id, void_or_capture)
+      body[:userSuppliedId] ||= Lightrail::Validator.get_or_create_user_supplied_id_with_action_suffix(body, transaction_id, void_or_capture)
 
-      response = Lightrail::Connection.handle_pending(card_id, transaction_id, void_or_capture, body)
+      response = Lightrail::Transaction.handle_transaction(hash_of_original_transaction_response, void_or_capture, body)
 
-      Lightrail::LightrailCharge.new(response['transaction'])
+      Lightrail::LightrailCharge.new(response)
     end
 
   end

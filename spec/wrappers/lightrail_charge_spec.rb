@@ -71,6 +71,20 @@ RSpec.describe Lightrail::LightrailCharge do
         lightrail_charge.create(card_id_charge_params)
       end
 
+      it "creates a pending code transaction when 'pending=true'" do
+        code_charge_params[:pending] = true
+        expect(lightrail_connection).to receive(:make_post_request_and_parse_response).with(/codes\/#{code_charge_params[:code]}\/transactions/, hash_including(:value, :currency, :userSuppliedId, pending: true)).and_return({"transaction" => {}})
+
+        lightrail_charge.create(code_charge_params)
+      end
+
+      it "creates a pending card transaction when 'pending=true'" do
+        card_id_charge_params[:pending] = true
+        expect(lightrail_connection).to receive(:make_post_request_and_parse_response).with(/cards\/#{card_id_charge_params[:cardId]}\/transactions/, hash_including(:value, :currency, :userSuppliedId, pending: true)).and_return({"transaction" => {}})
+
+        lightrail_charge.create(card_id_charge_params)
+      end
+
       it "uses userSuppliedId if supplied in param hash" do
         code_charge_params[:userSuppliedId] ='test-charge-' + rand().to_s
 

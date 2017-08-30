@@ -8,6 +8,9 @@ require "stripe"
 
 require "lightrail_stripe/version"
 
+require "lightrail_stripe/hybrid_validator"
+require "lightrail_stripe/hybrid_translator"
+
 require "lightrail_stripe/stripe_lightrail_hybrid_charge"
 
 module Lightrail

@@ -4,7 +4,7 @@ module Lightrail
 
     def self.create (charge_params)
       # Convert to Translator.translate_hybrid_charge_params!()
-      Lightrail::Validator.validate_hybrid_charge_params!(charge_params)
+      Lightrail::HybridValidator.validate_hybrid_charge_params!(charge_params)
 
       total_amount = charge_params[:amount]
       currency = charge_params[:currency]
@@ -14,15 +14,15 @@ module Lightrail
       stripe_share = split_amounts[:stripe_amount]
 
       if lr_share > 0 # start with lightrail charge first
-        lightrail_charge_params = Lightrail::Translator.construct_pending_charge_params_from_hybrid(charge_params, lr_share)
+        lightrail_charge_params = Lightrail::HybridTranslator.construct_pending_charge_params_from_hybrid(charge_params, lr_share)
 
         lightrail_pending_transaction = Lightrail::LightrailCharge.create(lightrail_charge_params)
 
         if stripe_share > 0 # continue to stripe charge
           begin
-            stripe_params = Lightrail::Translator.translate_charge_params_for_stripe(charge_params, stripe_share)
+            stripe_params = Lightrail::HybridTranslator.translate_charge_params_for_stripe(charge_params, stripe_share)
             stripe_transaction = Stripe::Charge.create(stripe_params)
-            lightrail_metadata = Lightrail::Translator.construct_lightrail_metadata_for_hybrid_charge(stripe_transaction)
+            lightrail_metadata = Lightrail::HybridTranslator.construct_lightrail_metadata_for_hybrid_charge(stripe_transaction)
           rescue
             lightrail_pending_transaction.cancel!
             raise $!, "Stripe payment failed: #{$!}", $!.backtrace
@@ -32,7 +32,7 @@ module Lightrail
         lightrail_captured_transaction = lightrail_pending_transaction.capture!(lightrail_metadata)
 
       else # all to stripe
-        stripe_params = Lightrail::Translator.translate_charge_params_for_stripe(charge_params, stripe_share)
+        stripe_params = Lightrail::HybridTranslator.translate_charge_params_for_stripe(charge_params, stripe_share)
         stripe_transaction = Stripe::Charge.create(stripe_params)
 
       end
@@ -66,7 +66,7 @@ module Lightrail
 
       lr_share = lightrail_balance ? [total_amount, lightrail_balance.total_available].min : 0
 
-      if (lr_share < total_amount) && (Lightrail::Validator.has_stripe_payment_option?(charge_params))
+      if (lr_share < total_amount) && (Lightrail::HybridValidator.has_stripe_payment_option?(charge_params))
         stripe_share = total_amount - lr_share
         lr_share = stripe_share < 50 ? lr_share - (50-stripe_share) : lr_share
         stripe_share = total_amount - lr_share

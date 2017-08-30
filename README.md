@@ -64,6 +64,12 @@ And then execute:
 $ bundle
 ```
 
+Note that this gem depends on the [Lightrail Client Gem](https://github.com/Giftbit/lightrail-client-ruby), which is also in alpha mode and may be added in a similar way:
+
+```ruby
+gem 'lightrail_client', :git => 'https://github.com/Giftbit/lightrail-client-ruby.git'
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/Giftbit/lightrail-stripe-ruby.

@@ -70,16 +70,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Giftbi
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. To run the tests, you'll need to set up a few environment variables (using a `.env` file in the root directory works well): 
-
-- `LIGHTRAIL_API_KEY` : your Lightrail API key (make sure to use your **test mode** API key for running tests: they make posts to the live API).
-- `STRIPE_API_KEY` : your Stripe API key (make sure to use your **test data** here as well)
-- `TEST_CURRENCY` : the currency to use when running the tests.
-- `LIGHTRAIL_TEST_CODE` : the fullcode that the tests will run against. It must have a balance of 500 (ie $5 USD).
-- `LIGHTRAIL_TEST_CARD_ID` : the cardId for the fullcode listed above.
-- `LIGHTRAIL_TEST_TRANSACTION_ID` : a transactionId for any drawdown transaction on the Lightrail code/card you're using for testing.
-
-Then, run `bundle exec rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies, then run `bundle exec rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`.
 

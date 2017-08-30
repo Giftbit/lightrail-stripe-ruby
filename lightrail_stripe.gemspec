@@ -38,7 +38,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry-byebug", "~>3.4"
 
   spec.add_runtime_dependency "stripe", "~>3.0"
-  spec.add_runtime_dependency "dotenv", "~>2.2"
   spec.add_runtime_dependency "faraday", "~>0.12"
   spec.add_runtime_dependency "json", "~>1.7"
   spec.add_runtime_dependency "openssl", "~>2.0"

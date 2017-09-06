@@ -6,9 +6,22 @@ If you are looking for specific use cases or other languages, check out [related
 
 ## Features
 
-- Simple order checkout which supports Lightrail gift card redemption alongside a Stripe payment.
+- Simple order checkout which supports Lightrail gift card redemption alongside a Stripe payment
+
+## Related Projects
+
+- [Lightrail Client Gem](https://github.com/Giftbit/lightrail-client-ruby)
+- [Lightrail-Stripe Java Integration](https://github.com/Giftbit/lightrail-stripe-java)
+- [Lightrail Java Client](https://github.com/Giftbit/lightrail-client-java)
 
 ## Usage
+
+Before using any parts of the library, you need to set up your Lightrail API key, and if you have not already done so, you will also need to set up your Stripe API key:
+
+```ruby
+Lightrail.api_key = '<your lightrail API key>'
+Stripe.api_key = '<your stripe API key>
+```
 
 ### Order Checkout Using `StripeLightrailHybridCharge`
 
@@ -25,9 +38,6 @@ The Stripe parameter could be:
 Here is a simple example:
 
 ```ruby
-LightrailClient.apiKey = '<your lightrail API key>';
-Stripe.apiKey = '<your stripe API key>';
-
 hybrid_charge_params = {
   amount: 1000,
   currency: 'USD',
@@ -44,11 +54,6 @@ When both a Lightrail and a Stripe parameter are provided, the library will try 
 
 - If the Lightrail value is sufficient, the entire transaction will be charged to the gift card.
 - If the transaction amount is larger than the Lightrail value, the remainder will be charged to Stripe.
-
-## Related Projects
-
-- [Lightrail-Stripe Java Integration](https://github.com/Giftbit/lightrail-stripe-java)
-- [Lightrail Java Client](https://github.com/Giftbit/lightrail-client-java)
 
 ## Installation
 

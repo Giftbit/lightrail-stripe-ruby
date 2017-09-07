@@ -14,15 +14,15 @@ module Lightrail
       stripe_share = split_amounts[:stripe_amount]
 
       if lr_share > 0 # start with lightrail charge first
-        lightrail_charge_params = Lightrail::HybridTranslator.construct_pending_charge_params_from_hybrid(charge_params, lr_share)
+        lightrail_charge_params = Lightrail::Translator.construct_pending_charge_params_from_hybrid(charge_params, lr_share)
 
         lightrail_pending_transaction = Lightrail::LightrailCharge.create(lightrail_charge_params)
 
         if stripe_share > 0 # continue to stripe charge
           begin
-            stripe_params = Lightrail::HybridTranslator.translate_charge_params_for_stripe(charge_params, stripe_share)
+            stripe_params = Lightrail::Translator.translate_charge_params_for_stripe(charge_params, stripe_share)
             stripe_transaction = Stripe::Charge.create(stripe_params)
-            lightrail_metadata = Lightrail::HybridTranslator.construct_lightrail_metadata_for_hybrid_charge(stripe_transaction)
+            lightrail_metadata = Lightrail::Translator.construct_lightrail_metadata_for_hybrid_charge(stripe_transaction)
           rescue
             lightrail_pending_transaction.cancel!
             raise $!, "Stripe payment failed: #{$!}", $!.backtrace
@@ -32,7 +32,7 @@ module Lightrail
         lightrail_captured_transaction = lightrail_pending_transaction.capture!(lightrail_metadata)
 
       else # all to stripe
-        stripe_params = Lightrail::HybridTranslator.translate_charge_params_for_stripe(charge_params, stripe_share)
+        stripe_params = Lightrail::Translator.translate_charge_params_for_stripe(charge_params, stripe_share)
         stripe_transaction = Stripe::Charge.create(stripe_params)
 
       end

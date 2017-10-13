@@ -22,7 +22,7 @@ RSpec.describe Lightrail::LightrailCharge do
   }}
 
   let(:translated_code_charge_params) {
-    Lightrail::Translator.translate_charge_params(code_charge_params)
+    Lightrail::Translator.charge_params_stripe_to_lightrail(code_charge_params)
   }
 
   let(:pending_charge_object_details) {{

@@ -1,7 +1,7 @@
 module Lightrail
   class Translator
 
-    def self.translate_charge_params(stripe_style_params)
+    def self.charge_params_stripe_to_lightrail(stripe_style_params)
       lightrail_params = stripe_style_params.clone
       lightrail_params[:value] ||= amount_to_negative_value(stripe_style_params)
 

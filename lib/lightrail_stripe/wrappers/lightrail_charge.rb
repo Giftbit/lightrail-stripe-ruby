@@ -4,7 +4,7 @@ module Lightrail
 
     def self.create (charge_params)
       Lightrail::Validator.validate_charge_object! (charge_params)
-      charge_params_to_send_to_lightrail = Lightrail::Translator.translate_charge_params(charge_params)
+      charge_params_to_send_to_lightrail = Lightrail::Translator.charge_params_stripe_to_lightrail(charge_params)
 
       charge_method = charge_params_to_send_to_lightrail[:code] ? 'code' : 'cardId'
 

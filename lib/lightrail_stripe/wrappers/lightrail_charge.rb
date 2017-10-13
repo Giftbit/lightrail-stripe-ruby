@@ -7,13 +7,12 @@ module Lightrail
       charge_params_to_send_to_lightrail = Lightrail::Translator.translate_charge_params(charge_params)
 
       charge_method = charge_params_to_send_to_lightrail[:code] ? 'code' : 'cardId'
-      code_or_card_id = charge_params_to_send_to_lightrail.delete(charge_method.to_sym)
 
       response = (charge_method == 'code') ?
-          Lightrail::Connection.make_code_transaction(code_or_card_id, charge_params_to_send_to_lightrail) :
-          Lightrail::Connection.make_card_id_transaction(code_or_card_id, charge_params_to_send_to_lightrail)
+          Lightrail::Code.charge(charge_params_to_send_to_lightrail) :
+          Lightrail::Card.charge(charge_params_to_send_to_lightrail)
 
-      self.new(response['transaction'])
+      self.new(response)
     end
 
 

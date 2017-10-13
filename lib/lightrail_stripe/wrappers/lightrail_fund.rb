@@ -7,11 +7,9 @@ module Lightrail
 
       fund_object_to_send_to_lightrail = Lightrail::Translator.translate_fund_params(fund_object)
 
-      card_id = fund_object_to_send_to_lightrail.delete(:cardId)
+      response = Lightrail::Card.fund(fund_object_to_send_to_lightrail)
 
-      response = Lightrail::Connection.make_card_id_transaction(card_id, fund_object_to_send_to_lightrail)
-
-      self.new(response['transaction'])
+      self.new(response)
     end
   end
 end

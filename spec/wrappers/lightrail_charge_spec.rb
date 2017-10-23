@@ -22,7 +22,7 @@ RSpec.describe Lightrail::LightrailCharge do
   }}
 
   let(:translated_code_charge_params) {
-    Lightrail::Translator.translate_charge_params(code_charge_params)
+    Lightrail::Translator.charge_params_stripe_to_lightrail(code_charge_params)
   }
 
   let(:pending_charge_object_details) {{
@@ -67,6 +67,20 @@ RSpec.describe Lightrail::LightrailCharge do
 
       it "creates a drawdown card transaction with minimum required params" do
         expect(lightrail_connection).to receive(:make_post_request_and_parse_response).with(/cards\/#{card_id_charge_params[:cardId]}\/transactions/, hash_including(:value, :currency, :userSuppliedId)).and_return({"transaction" => {}})
+
+        lightrail_charge.create(card_id_charge_params)
+      end
+
+      it "creates a pending code transaction when 'pending=true'" do
+        code_charge_params[:pending] = true
+        expect(lightrail_connection).to receive(:make_post_request_and_parse_response).with(/codes\/#{code_charge_params[:code]}\/transactions/, hash_including(:value, :currency, :userSuppliedId, pending: true)).and_return({"transaction" => {}})
+
+        lightrail_charge.create(code_charge_params)
+      end
+
+      it "creates a pending card transaction when 'pending=true'" do
+        card_id_charge_params[:pending] = true
+        expect(lightrail_connection).to receive(:make_post_request_and_parse_response).with(/cards\/#{card_id_charge_params[:cardId]}\/transactions/, hash_including(:value, :currency, :userSuppliedId, pending: true)).and_return({"transaction" => {}})
 
         lightrail_charge.create(card_id_charge_params)
       end

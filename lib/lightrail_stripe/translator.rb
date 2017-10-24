@@ -15,7 +15,7 @@ module Lightrail
       end
     end
 
-    def self.translate_fund_params(stripe_style_params)
+    def self.fund_params_stripe_to_lightrail(stripe_style_params)
       self.stripe_params_to_lightrail!(stripe_style_params, false)
     end
 

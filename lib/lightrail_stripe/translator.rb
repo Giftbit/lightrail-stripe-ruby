@@ -25,8 +25,8 @@ module Lightrail
       self.translate_transaction_params_except_amount!(lightrail_params)
     end
 
-    def self.construct_pending_charge_params_from_hybrid(hybrid_charge_params, lr_share)
-      lightrail_params = hybrid_charge_params.clone
+    def self.construct_pending_charge_params_from_split_tender(split_tender_charge_params, lr_share)
+      lightrail_params = split_tender_charge_params.clone
 
       lightrail_params[:pending] = true
       lightrail_params[:value] = -lr_share
@@ -40,8 +40,8 @@ module Lightrail
       lightrail_params
     end
 
-    def self.translate_charge_params_for_stripe(hybrid_charge_params, stripe_share)
-      stripe_params = hybrid_charge_params.clone
+    def self.translate_charge_params_for_stripe(split_tender_charge_params, stripe_share)
+      stripe_params = split_tender_charge_params.clone
       stripe_params[:amount] = stripe_share
 
       Lightrail::Constants::LIGHTRAIL_PAYMENT_METHODS.each {|charge_param_key| stripe_params.delete(charge_param_key)}
@@ -49,10 +49,10 @@ module Lightrail
       stripe_params
     end
 
-    def self.construct_lightrail_metadata_for_hybrid_charge(stripe_transaction)
+    def self.construct_lightrail_metadata_for_split_tender_charge(stripe_transaction)
       {
           metadata: {
-              hybridChargeDetails: {
+              splitTenderChargeDetails: {
                   stripeTransactionId: stripe_transaction.id
               }
           }

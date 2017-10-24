@@ -2,10 +2,7 @@ module Lightrail
   class Translator
 
     def self.charge_params_stripe_to_lightrail(stripe_style_params)
-      lightrail_params = stripe_style_params.clone
-      lightrail_params[:value] ||= amount_to_negative_value(stripe_style_params)
-
-      self.translate_transaction_params_except_amount!(lightrail_params)
+      self.stripe_params_to_lightrail!(stripe_style_params, true)
     end
 
     def self.charge_instance_to_hash!(charge_instance)
@@ -19,10 +16,7 @@ module Lightrail
     end
 
     def self.translate_fund_params(stripe_style_params)
-      lightrail_params = stripe_style_params.clone
-      lightrail_params[:value] ||= amount_to_positive_value(stripe_style_params)
-
-      self.translate_transaction_params_except_amount!(lightrail_params)
+      self.stripe_params_to_lightrail!(stripe_style_params, false)
     end
 
     def self.construct_pending_charge_params_from_split_tender(split_tender_charge_params, lr_share)
@@ -61,20 +55,13 @@ module Lightrail
 
     private
 
-    def self.translate_transaction_params_except_amount!(charge_or_fund_params)
-      charge_or_fund_params[:pending] ||= charge_or_fund_params[:capture] === nil ? false : !charge_or_fund_params.delete(:capture)
-      charge_or_fund_params[:userSuppliedId] ||= Lightrail::Validator.get_or_create_user_supplied_id(charge_or_fund_params)
-      charge_or_fund_params
+    def self.stripe_params_to_lightrail!(transaction_params, convert_amount_to_negative_value)
+      lr_transaction_params = transaction_params.clone
+      lr_transaction_params[:pending] ||= lr_transaction_params[:capture] === nil ? false : !lr_transaction_params.delete(:capture)
+      lr_transaction_params[:userSuppliedId] ||= Lightrail::Validator.get_or_create_user_supplied_id(lr_transaction_params)
+      lr_transaction_params[:value] ||= convert_amount_to_negative_value ? -(lr_transaction_params[:amount].abs) : lr_transaction_params[:amount].abs
+      lr_transaction_params
     end
 
-
-    def self.amount_to_positive_value(charge_params)
-      charge_params[:amount].abs if charge_params[:amount]
-    end
-
-    def self.amount_to_negative_value(charge_params)
-      -(charge_params[:amount].abs) if charge_params[:amount]
-    end
-    
   end
 end

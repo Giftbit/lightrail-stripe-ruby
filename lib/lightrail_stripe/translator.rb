@@ -26,6 +26,12 @@ module Lightrail
       lightrail_params[:value] = -lr_share
       lightrail_params.delete(:amount)
 
+      lightrail_params[:contact_id] ||= Lightrail::Validator.get_contact_id(lightrail_params)
+      lightrail_params[:shopper_id] ||= Lightrail::Validator.get_shopper_id(lightrail_params)
+      if (lightrail_params[:contact_id] || lightrail_params[:shopper_id])
+        lightrail_params = Lightrail::Contact.replace_contact_id_or_shopper_id_with_card_id(lightrail_params)
+      end
+
       lightrail_params[:code] ||= Lightrail::Validator.get_code(lightrail_params)
       lightrail_params[:cardId] ||= Lightrail::Validator.get_card_id(lightrail_params)
 

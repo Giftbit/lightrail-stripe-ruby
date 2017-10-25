@@ -34,7 +34,7 @@ module Lightrail
       lightrail_params
     end
 
-    def self.translate_charge_params_for_stripe(split_tender_charge_params, stripe_share)
+    def self.charge_params_split_tender_to_stripe(split_tender_charge_params, stripe_share)
       stripe_params = split_tender_charge_params.clone
       stripe_params[:amount] = stripe_share
 

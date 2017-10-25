@@ -20,7 +20,7 @@ module Lightrail
 
         if stripe_share > 0 # continue to stripe charge
           begin
-            stripe_params = Lightrail::Translator.translate_charge_params_for_stripe(charge_params, stripe_share)
+            stripe_params = Lightrail::Translator.charge_params_split_tender_to_stripe(charge_params, stripe_share)
             stripe_transaction = Stripe::Charge.create(stripe_params)
             lightrail_metadata = Lightrail::Translator.construct_lightrail_metadata_for_split_tender_charge(stripe_transaction)
           rescue
@@ -32,7 +32,7 @@ module Lightrail
         lightrail_captured_transaction = lightrail_pending_transaction.capture!(lightrail_metadata)
 
       else # all to stripe
-        stripe_params = Lightrail::Translator.translate_charge_params_for_stripe(charge_params, stripe_share)
+        stripe_params = Lightrail::Translator.charge_params_split_tender_to_stripe(charge_params, stripe_share)
         stripe_transaction = Stripe::Charge.create(stripe_params)
 
       end

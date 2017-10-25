@@ -6,8 +6,9 @@ RSpec.describe Lightrail::LightrailCharge do
   let(:lightrail_connection) {Lightrail::Connection}
 
   let(:example_code) {'this-is-a-code'}
-
   let(:example_card_id) {'this-is-a-card-id'}
+  let(:example_contact_id) {'this-is-a-contact-id'}
+  let(:example_shopper_id) {'this-is-a-shopper-id'}
 
   let(:code_charge_params) {{
       amount: 1,
@@ -19,6 +20,18 @@ RSpec.describe Lightrail::LightrailCharge do
       amount: 1,
       currency: 'USD',
       cardId: example_card_id,
+  }}
+
+  let(:contact_id_charge_params) {{
+      amount: 1,
+      currency: 'USD',
+      contact_id: example_contact_id,
+  }}
+
+  let(:shopper_id_charge_params) {{
+      amount: 1,
+      currency: 'USD',
+      shopper_id: example_shopper_id,
   }}
 
   let(:translated_code_charge_params) {
@@ -57,6 +70,7 @@ RSpec.describe Lightrail::LightrailCharge do
     end
   end
 
+
   describe ".create" do
     context "when given valid params" do
       it "creates a drawdown code transaction with minimum required params" do
@@ -69,6 +83,21 @@ RSpec.describe Lightrail::LightrailCharge do
         expect(lightrail_connection).to receive(:make_post_request_and_parse_response).with(/cards\/#{card_id_charge_params[:cardId]}\/transactions/, hash_including(:value, :currency, :userSuppliedId)).and_return({"transaction" => {}})
 
         lightrail_charge.create(card_id_charge_params)
+      end
+
+      it "creates a drawdown contactId transaction with minimum required params" do
+        allow(Lightrail::Contact).to receive(:get_account_card_id_by_contact_id).with(example_contact_id, 'USD').and_return(example_card_id)
+        expect(lightrail_connection).to receive(:make_post_request_and_parse_response).with(/cards\/#{card_id_charge_params[:cardId]}\/transactions/, hash_including(:value, :currency, :userSuppliedId)).and_return({"transaction" => {}})
+
+        lightrail_charge.create(contact_id_charge_params)
+      end
+
+      it "creates a drawdown shopperId transaction with minimum required params" do
+        allow(Lightrail::Contact).to receive(:get_contact_id_from_id_or_shopper_id).with(hash_including({shopper_id: example_shopper_id})).and_return(example_contact_id)
+        allow(Lightrail::Contact).to receive(:get_account_card_id_by_contact_id).with(example_contact_id, 'USD').and_return(example_card_id)
+        expect(lightrail_connection).to receive(:make_post_request_and_parse_response).with(/cards\/#{card_id_charge_params[:cardId]}\/transactions/, hash_including(:value, :currency, :userSuppliedId)).and_return({"transaction" => {}})
+
+        lightrail_charge.create(shopper_id_charge_params)
       end
 
       it "creates a pending code transaction when 'pending=true'" do

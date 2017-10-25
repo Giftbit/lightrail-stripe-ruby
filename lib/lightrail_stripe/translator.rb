@@ -66,6 +66,11 @@ module Lightrail
       lr_transaction_params[:pending] ||= lr_transaction_params[:capture] === nil ? false : !lr_transaction_params.delete(:capture)
       lr_transaction_params[:userSuppliedId] ||= Lightrail::Validator.get_or_create_user_supplied_id(lr_transaction_params)
       lr_transaction_params[:value] ||= convert_amount_to_negative_value ? -(lr_transaction_params[:amount].abs) : lr_transaction_params[:amount].abs
+
+      if (Lightrail::Validator.has_valid_contact_id?(lr_transaction_params) || Lightrail::Validator.has_valid_shopper_id?(lr_transaction_params))
+        lr_transaction_params = Lightrail::Contact.replace_contact_id_or_shopper_id_with_card_id(lr_transaction_params)
+      end
+
       lr_transaction_params
     end
 

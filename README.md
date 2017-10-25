@@ -33,9 +33,9 @@ Stripe.api_key = '<your stripe API key>
 
 *A note on sample code snippets: for reasons of legibility, the output for most calls has been simplified. Attributes of response objects that are not relevant here have been omitted.*
 
-### Order Checkout Using `StripeLightrailHybridCharge`
+### Order Checkout Using `StripeLightrailSplitTenderCharge`
 
-`StripeLightrailHybridCharge` is a class designed to resemble the interface of a Stripe `Charge` class which transparently splits the transaction between Lightrail and Stripe. The Lightrail parameter could be one of the following:
+`StripeLightrailSplitTenderCharge` is a class designed to resemble the interface of a Stripe `Charge` class which transparently splits the transaction between Lightrail and Stripe. The Lightrail parameter could be one of the following:
 
 - `code`, specifying a gift card by its code, or
 - `cardId`, specifying a gift card by its card ID
@@ -48,14 +48,14 @@ The Stripe parameter could be:
 Here is a simple example:
 
 ```ruby
-hybrid_charge_params = {
+split_tender_charge_params = {
   amount: 1000,
   currency: 'USD',
   code: '<GIFT CODE>',
   source: '<STRIPE TOKEN>',
 }
 
-hybrid_charge = LightrailClient::StripeLightrailHybridCharge.create(hybrid_charge_params);
+split_tender_charge = LightrailClient::StripeLightrailSplitTenderCharge.create(split_tender_charge_params);
 ```
 
 If you don't pass any Lightrail parameters, the entire transaction will be charged to Stripe. Similarly, if you don't provide any Stripe parameters, the library will attempt to charge the entire transaction to Lightrail. If the value of the gift card is not enough to cover the entire transaction amount and no Stripe payment method is included, you will receive a `BadParameterError` asking you to provide a Stripe parameter.

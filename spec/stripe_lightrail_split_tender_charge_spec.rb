@@ -1,7 +1,7 @@
 require "spec_helper"
 
-RSpec.describe Lightrail::StripeLightrailHybridCharge do
-  subject(:hybrid_charge) {Lightrail::StripeLightrailHybridCharge}
+RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
+  subject(:split_tender_charge) {Lightrail::StripeLightrailSplitTenderCharge}
 
   let(:lightrail_connection) {Lightrail::Connection}
   let(:lightrail_value) {Lightrail::LightrailValue}
@@ -59,7 +59,7 @@ RSpec.describe Lightrail::StripeLightrailHybridCharge do
         expect(stripe_charge).to receive(:create).with(hash_including({amount: 550})).and_return(stripe_charge_object)
         expect(lightrail_charge_instance).to receive(:capture!).and_return(lightrail_captured_transaction)
 
-        hybrid_charge.create(charge_params)
+        split_tender_charge.create(charge_params)
       end
 
       it "adds the Stripe transaction ID to Lightrail metadata" do
@@ -67,9 +67,9 @@ RSpec.describe Lightrail::StripeLightrailHybridCharge do
         allow(lightrail_charge).to receive(:create).with(hash_including({pending: true, value: -450})).and_return(lightrail_charge_instance)
         allow(stripe_charge).to receive(:create).with(hash_including({amount: 550})).and_return(stripe_charge_object)
 
-        expect(lightrail_charge_instance).to receive(:capture!).with(hash_including(:metadata => hash_including(:hybridChargeDetails))).and_return(lightrail_captured_transaction)
+        expect(lightrail_charge_instance).to receive(:capture!).with(hash_including(:metadata => hash_including(:splitTenderChargeDetails))).and_return(lightrail_captured_transaction)
 
-        hybrid_charge.create(charge_params)
+        split_tender_charge.create(charge_params)
       end
 
       it "adjusts the LR share to respect Stripe's minimum charge amount when necessary" do
@@ -82,7 +82,7 @@ RSpec.describe Lightrail::StripeLightrailHybridCharge do
         expect(lightrail_charge).to receive(:create).with(hash_including({pending: true, value: -410})).and_return(lightrail_charge_instance)
         expect(stripe_charge).to receive(:create).with(hash_including({amount: 50})).and_return(stripe_charge_object)
 
-        hybrid_charge.create(charge_params)
+        split_tender_charge.create(charge_params)
       end
 
       it "charges Lightrail only, when card balance is sufficient" do
@@ -94,7 +94,7 @@ RSpec.describe Lightrail::StripeLightrailHybridCharge do
         expect(lightrail_charge).to receive(:create).with(hash_including({value: -1})).and_return(lightrail_charge_instance)
         expect(stripe_charge).not_to receive(:create)
 
-        hybrid_charge.create(charge_params)
+        split_tender_charge.create(charge_params)
       end
 
       it "charges Lightrail only, when no Stripe params given" do
@@ -107,7 +107,7 @@ RSpec.describe Lightrail::StripeLightrailHybridCharge do
         expect(lightrail_charge).to receive(:create).with(hash_including({value: -1})).and_return(lightrail_charge_instance)
         expect(stripe_charge).not_to receive(:create)
 
-        hybrid_charge.create(charge_params)
+        split_tender_charge.create(charge_params)
       end
 
       it "charges Stripe only, when no Lightrail params given" do
@@ -118,7 +118,7 @@ RSpec.describe Lightrail::StripeLightrailHybridCharge do
         expect(stripe_charge).to receive(:create).and_return(stripe_charge_object)
 
 
-        hybrid_charge.create(charge_params)
+        split_tender_charge.create(charge_params)
       end
 
     end
@@ -127,7 +127,7 @@ RSpec.describe Lightrail::StripeLightrailHybridCharge do
       it "throws an error when missing both Stripe and Lightrail payment options" do
         charge_params.delete(:code)
         charge_params.delete(:source)
-        expect {hybrid_charge.create(charge_params)}.to raise_error(Lightrail::LightrailArgumentError)
+        expect {split_tender_charge.create(charge_params)}.to raise_error(Lightrail::LightrailArgumentError)
       end
     end
 

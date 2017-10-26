@@ -14,6 +14,20 @@ module Lightrail
       self.new(response)
     end
 
+    def self.retrieve_by_contact_id (contact_id, currency)
+      Lightrail::Validator.validate_contact_id!(contact_id)
+      Lightrail::Validator.validate_currency!(currency)
+      response = Lightrail::Contact.get_account_balance_details({contact_id: contact_id, currency: currency})
+      self.new(response)
+    end
+
+    def self.retrieve_by_shopper_id (shopper_id, currency)
+      Lightrail::Validator.validate_shopper_id!(shopper_id)
+      Lightrail::Validator.validate_currency!(currency)
+      response = Lightrail::Contact.get_account_balance_details({shopper_id: shopper_id, currency: currency})
+      self.new(response)
+    end
+
 
     def total_available
       total = self.principal['currentValue']

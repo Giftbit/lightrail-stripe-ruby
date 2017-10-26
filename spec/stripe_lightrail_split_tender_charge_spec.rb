@@ -10,6 +10,8 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
 
   let(:example_code) {'this-is-a-code'}
   let(:example_card_id) {'this-is-a-card-id'}
+  let(:example_contact_id) {'this-is-a-contact-id'}
+  let(:example_shopper_id) {'this-is-a-shopper-id'}
   let(:example_pending_transaction_id) {'transaction-pending-123456'}
   let(:example_captured_transaction_id) {'transaction-captured-123456'}
 
@@ -28,7 +30,7 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
           codeLastFour: 'TEST',
           currency: 'USD',
           transactionId: example_captured_transaction_id,
-          transactionType: 'DRADOWN',
+          transactionType: 'DRAWDOWN',
           userSuppliedId: '123-abc-456-def',
           value: -500,
       }
@@ -52,8 +54,50 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
 
   describe ".create" do
     context "when given valid params" do
-      it "charges the appropriate amounts to Stripe and Lightrail with minimum required params" do
+      it "charges the appropriate amounts to Stripe and Lightrail code" do
         allow(lightrail_value).to receive(:retrieve_by_code).with(example_code).and_return(lightrail_value_object)
+
+        expect(lightrail_charge).to receive(:create).with(hash_including({pending: true, value: -450})).and_return(lightrail_charge_instance)
+        expect(stripe_charge).to receive(:create).with(hash_including({amount: 550})).and_return(stripe_charge_object)
+        expect(lightrail_charge_instance).to receive(:capture!).and_return(lightrail_captured_transaction)
+
+        split_tender_charge.create(charge_params)
+      end
+
+      it "charges the appropriate amounts to Stripe and Lightrail cardId" do
+        charge_params.delete(:code)
+        charge_params[:card_id] = example_card_id
+
+        allow(lightrail_value).to receive(:retrieve_by_card_id).with(example_card_id).and_return(lightrail_value_object)
+
+        expect(lightrail_charge).to receive(:create).with(hash_including({pending: true, value: -450})).and_return(lightrail_charge_instance)
+        expect(stripe_charge).to receive(:create).with(hash_including({amount: 550})).and_return(stripe_charge_object)
+        expect(lightrail_charge_instance).to receive(:capture!).and_return(lightrail_captured_transaction)
+
+        split_tender_charge.create(charge_params)
+      end
+
+      it "charges the appropriate amounts to Stripe and Lightrail contactId" do
+        charge_params.delete(:code)
+        charge_params[:contact_id] = example_contact_id
+
+        allow(lightrail_value).to receive(:retrieve_by_card_id).with(example_card_id).and_return(lightrail_value_object)
+        allow(Lightrail::Contact).to receive(:get_account_card_id_by_contact_id).with(example_contact_id, 'USD').and_return(example_card_id)
+
+        expect(lightrail_charge).to receive(:create).with(hash_including({pending: true, value: -450})).and_return(lightrail_charge_instance)
+        expect(stripe_charge).to receive(:create).with(hash_including({amount: 550})).and_return(stripe_charge_object)
+        expect(lightrail_charge_instance).to receive(:capture!).and_return(lightrail_captured_transaction)
+
+        split_tender_charge.create(charge_params)
+      end
+
+      it "charges the appropriate amounts to Stripe and Lightrail shopperId" do
+        charge_params.delete(:code)
+        charge_params[:shopper_id] = example_shopper_id
+
+        allow(lightrail_value).to receive(:retrieve_by_card_id).with(example_card_id).and_return(lightrail_value_object)
+        allow(Lightrail::Contact).to receive(:get_contact_id_from_id_or_shopper_id).with(hash_including({shopper_id: example_shopper_id})).and_return(example_contact_id)
+        allow(Lightrail::Contact).to receive(:get_account_card_id_by_contact_id).with(example_contact_id, 'USD').and_return(example_card_id)
 
         expect(lightrail_charge).to receive(:create).with(hash_including({pending: true, value: -450})).and_return(lightrail_charge_instance)
         expect(stripe_charge).to receive(:create).with(hash_including({amount: 550})).and_return(stripe_charge_object)

@@ -2,16 +2,16 @@ module Lightrail
   class StripeLightrailSplitTenderCharge < Lightrail::LightrailObject
     attr_accessor :lightrail_charge, :stripe_charge, :payment_summary
 
-    def self.create (charge_params)
+    def self.create (charge_params, stripe_share, lr_share)
       # Convert to Translator.translate_split_tender_charge_params!()
       Lightrail::SplitTenderValidator.validate_split_tender_charge_params!(charge_params)
 
       total_amount = charge_params[:amount]
       currency = charge_params[:currency]
 
-      split_amounts = self.determine_split!(charge_params)
-      lr_share = split_amounts[:lightrail_amount]
-      stripe_share = split_amounts[:stripe_amount]
+      if total_amount != stripe_share + lr_share
+        raise Lightrail::LightrailArgumentError.new("Transaction amount does not match the sum of the given Stripe and Lightrail shares.")
+      end
 
       if lr_share > 0 # start with lightrail charge first
         lightrail_charge_params = Lightrail::Translator.construct_pending_charge_params_from_split_tender(charge_params, lr_share)
@@ -46,6 +46,16 @@ module Lightrail
       }
 
       self.new({lightrail_charge: lightrail_captured_transaction, stripe_charge: stripe_transaction, payment_summary: split_tender_charge_payment_summary})
+    end
+
+    def self.create_with_automatic_split (charge_params)
+      Lightrail::SplitTenderValidator.validate_split_tender_charge_params!(charge_params)
+
+      split_amounts = self.determine_split!(charge_params)
+      lr_share = split_amounts[:lightrail_amount]
+      stripe_share = split_amounts[:stripe_amount]
+
+      self.create(charge_params, stripe_share, lr_share)
     end
 
 

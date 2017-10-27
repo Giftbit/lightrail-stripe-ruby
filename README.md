@@ -47,6 +47,8 @@ The Stripe parameter could be:
 - `source`, indicating a Stripe token, or
 - `customer`, indicating a Stripe customer ID
 
+You must also pass in the amount to charge to Stripe and the amount to charge to Lightrail. 
+
 Here is a simple example:
 
 ```ruby
@@ -56,13 +58,15 @@ split_tender_charge_params = {
   code: '<GIFT CODE>',
   source: '<STRIPE TOKEN>',
 }
+stripe_amount = 550
+lightrail_amount = 450
 
-split_tender_charge = LightrailClient::StripeLightrailSplitTenderCharge.create(split_tender_charge_params);
+split_tender_charge = Lightrail::StripeLightrailSplitTenderCharge.create(split_tender_charge_params, stripe_amount, lightrail_amount);
 ```
 
-If you don't pass any Lightrail parameters, the entire transaction will be charged to Stripe. Similarly, if you don't provide any Stripe parameters, the library will attempt to charge the entire transaction to Lightrail. If the value of the gift card is not enough to cover the entire transaction amount and no Stripe payment method is included, you will receive a `BadParameterError` asking you to provide a Stripe parameter.
+If you don't provide any Lightrail payment parameters and set the `lightrail_amount` to 0, the entire transaction will be charged to Stripe. Similarly, if you don't provide any Stripe payment parameters and set the `stripe_amount` to 0, the library will attempt to charge the entire transaction to Lightrail. If the value of the gift card is not enough to cover the entire transaction amount and no Stripe payment method is included, you will receive a `BadParameterError` asking you to provide a Stripe parameter.
 
-When both a Lightrail and a Stripe parameter are provided, the library will try to split the payment, in such a way that Lightrail contributes to the payment as much as possible. This usually means:
+There is also a wrapper method that can determine the Stripe/Lightrail split automatically: `Lightrail::StripeLightrailSplitTenderCharge.create_with_automatic_split`. This method accepts the same `charge_params` as the default `.create`, but does not expect a `stripe_amount` or `lightrail_amount`. When both a Lightrail and a Stripe payment method are provided to this method, the library will try to split the payment in such a way that Lightrail contributes to the payment as much as possible. This usually means:
 
 - If the Lightrail value is sufficient, the entire transaction will be charged to the gift card.
 - If the transaction amount is larger than the Lightrail value, the remainder will be charged to Stripe.

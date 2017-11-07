@@ -29,14 +29,14 @@ module Lightrail
     end
 
 
-    def total_available
-      total = self.principal['currentValue']
-      self.attached.reduce(total) do |sum, valueStore|
-        if valueStore['state'] == "ACTIVE"
-          total += valueStore['currentValue']
+    def maximum_value
+      maximum_value = 0
+      self['valueStores'].each do |valueStore|
+        if valueStore['state'] == 'ACTIVE'
+          maximum_value += valueStore['value']
         end
       end
-      total
+      maximum_value
     end
 
   end

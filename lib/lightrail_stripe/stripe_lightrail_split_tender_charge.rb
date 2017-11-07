@@ -80,7 +80,7 @@ module Lightrail
                             nil
                           end
 
-      lr_share = lightrail_balance ? [total_amount, lightrail_balance.total_available].min : 0
+      lr_share = lightrail_balance ? [total_amount, lightrail_balance.maximum_value].min : 0
 
       if (lr_share < total_amount) && (Lightrail::SplitTenderValidator.has_stripe_payment_option?(charge_params))
         stripe_share = total_amount - lr_share

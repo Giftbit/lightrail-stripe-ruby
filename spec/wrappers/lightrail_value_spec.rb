@@ -84,7 +84,7 @@ RSpec.describe Lightrail::LightrailValue do
     end
   end
 
-  describe "#total_available" do
+  describe "#maximum_value" do
     before(:each) do
       @balance_object = lightrail_value.new(
           {
@@ -101,12 +101,12 @@ RSpec.describe Lightrail::LightrailValue do
     end
 
     it "returns the sum of all active value stores" do
-      expect(@balance_object.total_available).to be 650
+      expect(@balance_object.maximum_value).to be 650
     end
 
     it "excludes value stores if their state is not active" do
       @balance_object.attached[0]['state'] = 'EXPIRED'
-      expect(@balance_object.total_available).to be 550
+      expect(@balance_object.maximum_value).to be 550
     end
 
   end

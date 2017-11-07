@@ -13,7 +13,7 @@ This gem depends on the [Lightrail Client Gem](https://github.com/Giftbit/lightr
 
 ```ruby
 gift_value = Lightrail::LightrailValue.retrieve_by_card_id(<CARD ID>)
-gift_value.total_available #=> 3500
+gift_value.maximum_value #=> 3500
 ```
 
 ## Related Projects
@@ -108,7 +108,7 @@ gift_balance_details = Lightrail::LightrailValue.retrieve_by_card("<GIFT CARD ID
          @balanceDate="2017-05-29T13:37:02.756Z",
          @cardId="card-123456>
 
-gift_total_value = gift_balance_details.total_available
+gift_maximum_value = gift_balance_details.maximum_value
 #=>  3500
 ```
 

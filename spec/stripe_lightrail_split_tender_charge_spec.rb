@@ -147,7 +147,7 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
       it "charges Stripe only, when no Lightrail params given" do
         charge_params.delete(:code)
 
-        expect(lightrail_value).not_to receive(:retrieve_by_code || :retrieve_by_card_id)
+        expect(lightrail_value).not_to receive(:retrieve_code_details || :retrieve_card_details)
         expect(lightrail_charge).not_to receive(:create)
         expect(stripe_charge).to receive(:create).and_return(stripe_charge_object)
 
@@ -167,7 +167,7 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
   describe ".create_with_automatic_split" do
     context "when given valid params" do
       it "passes the Stripe and Lightrail amounts to .create" do
-        allow(lightrail_value).to receive(:retrieve_by_code).with(example_code).and_return(lightrail_value_object)
+        allow(lightrail_value).to receive(:retrieve_code_details).with(example_code).and_return(lightrail_value_object)
 
         expect(lightrail_charge).to receive(:create).with(hash_including({pending: true, value: -450})).and_return(lightrail_charge_instance)
         expect(stripe_charge).to receive(:create).with(hash_including({amount: 550})).and_return(stripe_charge_object)

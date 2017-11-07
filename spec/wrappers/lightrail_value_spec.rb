@@ -11,38 +11,38 @@ RSpec.describe Lightrail::LightrailValue do
   let(:example_shopper_id) {'this-is-a-shopper-id'}
   let(:example_currency) {'ABC'}
 
-  describe ".retrieve_by_code" do
+  describe ".retrieve_code_details" do
     context "when given valid params" do
       it "checks balance by code" do
         expect(lightrail_connection).to receive(:make_get_request_and_parse_response).with(/codes\/#{example_code}\/balance\/details/).and_return({"balance" => {}})
-        lightrail_value.retrieve_by_code(example_code)
+        lightrail_value.retrieve_code_details(example_code)
       end
     end
 
     context "when given bad/missing params" do
       it "throws an error when required params are missing" do
-        expect {lightrail_value.retrieve_by_code()}.to raise_error(ArgumentError), "called LightrailValue.retrieve_by_code with no params"
-        expect {lightrail_value.retrieve_by_code('')}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_by_code with empty string"
-        expect {lightrail_value.retrieve_by_code({})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_by_code with empty object"
-        expect {lightrail_value.retrieve_by_code([])}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_by_code with empty array"
+        expect {lightrail_value.retrieve_code_details()}.to raise_error(ArgumentError), "called LightrailValue.retrieve_code_details with no params"
+        expect {lightrail_value.retrieve_code_details('')}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_code_details with empty string"
+        expect {lightrail_value.retrieve_code_details({})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_code_details with empty object"
+        expect {lightrail_value.retrieve_code_details([])}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_code_details with empty array"
       end
     end
   end
 
-  describe ".retrieve_by_card_id" do
+  describe ".retrieve_card_details" do
     context "when given valid params" do
       it "checks balance by cardId" do
         expect(lightrail_connection).to receive(:make_get_request_and_parse_response).with(/cards\/#{example_card_id}\/balance/).and_return({"balance" => {}})
-        lightrail_value.retrieve_by_card_id(example_card_id)
+        lightrail_value.retrieve_card_details(example_card_id)
       end
     end
 
     context "when given bad/missing params" do
       it "throws an error when required params are missing" do
-        expect {lightrail_value.retrieve_by_card_id()}.to raise_error(ArgumentError), "called LightrailValue.retrieve_by_card_id with no params"
-        expect {lightrail_value.retrieve_by_card_id('')}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_by_card_id with empty string"
-        expect {lightrail_value.retrieve_by_card_id({})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_by_card_id with empty object"
-        expect {lightrail_value.retrieve_by_card_id([])}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_by_card_id with empty array"
+        expect {lightrail_value.retrieve_card_details()}.to raise_error(ArgumentError), "called LightrailValue.retrieve_card_details with no params"
+        expect {lightrail_value.retrieve_card_details('')}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_card_details with empty string"
+        expect {lightrail_value.retrieve_card_details({})}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_card_details with empty object"
+        expect {lightrail_value.retrieve_card_details([])}.to raise_error(Lightrail::LightrailArgumentError), "called LightrailValue.retrieve_card_details with empty array"
       end
     end
   end

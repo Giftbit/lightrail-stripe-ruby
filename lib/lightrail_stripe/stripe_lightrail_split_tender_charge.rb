@@ -73,9 +73,9 @@ module Lightrail
       end
 
       lightrail_balance = if code
-                            Lightrail::LightrailValue.retrieve_by_code(code)
+                            Lightrail::LightrailValue.retrieve_code_details(code)
                           elsif card_id
-                            Lightrail::LightrailValue.retrieve_by_card_id(card_id)
+                            Lightrail::LightrailValue.retrieve_card_details(card_id)
                           else
                             nil
                           end

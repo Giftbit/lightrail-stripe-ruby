@@ -36,10 +36,12 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
       }
   )}
 
-  let(:lightrail_value_object) {lightrail_value.new(
-      {principal: {"currentValue" => 400, "state" => "ACTIVE", "programId" => "program-123456", "valueStoreId" => "value-123456"},
-       attached: [{"currentValue" => 50, "state" => "ACTIVE", "programId" => "program-789", "valueStoreId" => "value-2468"}]}
-  )}
+  let(:lightrail_simulated_transaction) {{
+      "value" => -450,
+      "cardId" => example_card_id,
+      "currency" => "USD",
+      "transactionBreakdown" => [{"value" => -450, "valueAvailableAfterTransaction" => 0, "valueStoreId" => "some-value-store"}]
+  }}
 
   let(:stripe_charge_object) {
     charge = stripe_charge.new({:id => 'mock-stripe-charge'})
@@ -167,9 +169,9 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
   describe ".create_with_automatic_split" do
     context "when given valid params" do
       it "passes the Stripe and Lightrail amounts to .create" do
-        allow(lightrail_value).to receive(:retrieve_code_details).with(example_code).and_return(lightrail_value_object)
+        expect(Lightrail::Code).to receive(:simulate_charge).with(charge_params).and_return(lightrail_simulated_transaction)
 
-        expect(lightrail_charge).to receive(:create).with(hash_including({pending: true, value: -450})).and_return(lightrail_charge_instance)
+        expect(lightrail_charge).to receive(:create).with(hash_including({value: -450})).and_return(lightrail_charge_instance)
         expect(stripe_charge).to receive(:create).with(hash_including({amount: 550})).and_return(stripe_charge_object)
         expect(lightrail_charge_instance).to receive(:capture!).and_return(lightrail_captured_transaction)
 

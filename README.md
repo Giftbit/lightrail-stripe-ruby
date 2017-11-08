@@ -84,9 +84,9 @@ Use the `Lightrail::LightrailValue` class to check the balance of gift cards or 
 For **gift cards**, use `.retrieve_by_card` or `.retrieve_by_code`:
 
 ```ruby
-gift_balance_details = Lightrail::LightrailValue.retrieve_by_card("<GIFT CARD ID>")
+gift_balance_details = Lightrail::LightrailValue.retrieve_card_details("<GIFT CARD ID>")
 # or use the fullCode:
-# gift_balance_details = Lightrail::LightrailValue.retrieve_by_code("<GIFT CODE>")
+# gift_balance_details = Lightrail::LightrailValue.retrieve_code_details("<GIFT CODE>")
 
 #=>  <Lightrail::LightrailValue:0x007fe24b16f500
          @principal=

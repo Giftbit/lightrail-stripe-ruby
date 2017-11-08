@@ -1,6 +1,6 @@
 module Lightrail
   class LightrailValue < Lightrail::LightrailObject
-    attr_accessor :principal, :attached, :currency, :cardType, :balanceDate, :cardId
+    attr_accessor :valueStores, :currency, :cardType, :asAtDate, :cardId
 
     def self.retrieve_code_details (code)
       Lightrail::Validator.validate_code! (code)
@@ -14,10 +14,10 @@ module Lightrail
       self.new(response)
     end
 
-    def self.retrieve_by_contact_id (contact_id, currency)
+    def self.retrieve_contact_account_details (contact_id, currency)
       Lightrail::Validator.validate_contact_id!(contact_id)
       Lightrail::Validator.validate_currency!(currency)
-      response = Lightrail::Contact.get_account_balance_details({contact_id: contact_id, currency: currency})
+      response = Lightrail::Contact.get_account_details({contact_id: contact_id, currency: currency})
       self.new(response)
     end
 
@@ -31,7 +31,7 @@ module Lightrail
 
     def maximum_value
       maximum_value = 0
-      self['valueStores'].each do |valueStore|
+      self.valueStores.each do |valueStore|
         if valueStore['state'] == 'ACTIVE'
           maximum_value += valueStore['value']
         end

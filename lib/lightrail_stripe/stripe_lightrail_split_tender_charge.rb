@@ -72,15 +72,13 @@ module Lightrail
         card_id = Lightrail::Validator.get_card_id(charge_params)
       end
 
-      lightrail_balance = if code
-                            Lightrail::LightrailValue.retrieve_code_details(code)
-                          elsif card_id
-                            Lightrail::LightrailValue.retrieve_card_details(card_id)
-                          else
-                            nil
-                          end
-
-      lr_share = lightrail_balance ? [total_amount, lightrail_balance.maximum_value].min : 0
+      lr_share = if code
+                   Lightrail::Code.simulate_charge(charge_params)['value'].abs
+                 elsif card_id
+                   Lightrail::Card.simulate_charge(charge_params)['value'].abs
+                 else
+                   nil
+                 end
 
       if (lr_share < total_amount) && (Lightrail::SplitTenderValidator.has_stripe_payment_option?(charge_params))
         stripe_share = total_amount - lr_share

@@ -5,11 +5,11 @@ require "lightrail_stripe/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "lightrail_stripe"
-  spec.version       = Lightrail::VERSION
+  spec.version       = LightrailStripe::VERSION
   spec.authors       = ["Lightrail"]
   spec.email         = ["tana.j@lightrail.com"]
 
-  spec.summary       = "A client library for the Lightrail API"
+  spec.summary       = "A gem for creating Lightrail-Stripe integrated applications"
   spec.description   = "Acquire and retain customers using account credits, gift cards, promotions, and points."
   spec.homepage      = "https://www.lightrail.com/"
   spec.license       = "MIT"

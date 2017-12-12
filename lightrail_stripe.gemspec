@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Lightrail"]
   spec.email         = ["tana.j@lightrail.com"]
 
-  spec.summary       = "A gem for creating Lightrail-Stripe integrated applications"
+  spec.summary       = "A integration gem to use Stripe and Lightrail for payment processing"
   spec.description   = "Acquire and retain customers using account credits, gift cards, promotions, and points."
   spec.homepage      = "https://www.lightrail.com/"
   spec.license       = "MIT"

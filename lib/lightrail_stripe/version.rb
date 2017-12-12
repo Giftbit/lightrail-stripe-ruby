@@ -1,3 +1,3 @@
-module Lightrail
-  VERSION = "0.4.0"
+module LightrailStripe
+  VERSION = "0.5.0"
 end

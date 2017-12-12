@@ -44,7 +44,7 @@ RSpec.describe Lightrail::Refund do
       it "throws an error when required params are missing" do
         expect {refund.create()}.to raise_error(ArgumentError), "called Refund.create with no params"
         expect {refund.create({})}.to raise_error(Lightrail::LightrailArgumentError), "called Refund.create with empty object"
-        expect {refund.create({card: ENV['LIGHTRAIL_TEST_CARD_ID']})}.to raise_error(Lightrail::LightrailArgumentError), "called Refund.create with '{card: ENV['LIGHTRAIL_TEST_CARD_ID']}'"
+        expect {refund.create({card: example_card_id})}.to raise_error(Lightrail::LightrailArgumentError), "called Refund.create with '{card: 'example_card_id'}'"
         expect {refund.create([])}.to raise_error(Lightrail::LightrailArgumentError), "called Refund.create with empty array"
       end
     end

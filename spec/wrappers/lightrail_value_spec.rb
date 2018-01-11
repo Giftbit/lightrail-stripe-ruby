@@ -50,7 +50,7 @@ RSpec.describe Lightrail::LightrailValue do
   describe ".retrieve_contact_account_details" do
     context "when given valid params" do
       it "gets details by contactId" do
-        allow(Lightrail::Contact).to receive(:get_account_card_id_by_contact_id).with(example_contact_id, example_currency).and_return(example_card_id)
+        allow(Lightrail::Account).to receive(:retrieve).with({contact_id: example_contact_id, currency: example_currency}).and_return({'cardId' => example_card_id})
         expect(lightrail_connection).to receive(:make_get_request_and_parse_response).with(/cards\/#{example_card_id}\/details/).and_return({"details" => {}})
         lightrail_value.retrieve_contact_account_details(example_contact_id, example_currency)
       end

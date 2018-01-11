@@ -61,33 +61,36 @@ module Lightrail
       total_amount = charge_params[:amount]
       contact_id = Lightrail::Contact.get_contact_id_from_id_or_shopper_id(charge_params)
       code = Lightrail::Validator.get_code(charge_params)
+      card_id = Lightrail::Validator.get_card_id(charge_params)
 
-      if contact_id
-        card_id = Lightrail::Contact.get_account_card_id_by_contact_id(contact_id, charge_params[:currency])
-      else
-        card_id = Lightrail::Validator.get_card_id(charge_params)
-      end
+      lr_share = if contact_id || code || card_id
+                   charge_params_for_simulate = charge_params.clone
+                   charge_params_for_simulate[:value] = -charge_params[:amount] || -charge_params['amount']
 
-      lr_share = if code
-                   Lightrail::Code.simulate_charge(charge_params)['value'].abs
-                 elsif card_id
-                   Lightrail::Card.simulate_charge(charge_params)['value'].abs
+                   if contact_id
+                     Lightrail::Account.simulate_charge(charge_params_for_simulate)['value'].abs
+                   elsif code
+                     Lightrail::Code.simulate_charge(charge_params_for_simulate)['value'].abs
+                   elsif card_id
+                     Lightrail::Card.simulate_charge(charge_params_for_simulate)['value'].abs
+                   end
+
                  else
                    nil
                  end
 
-      if (lr_share < total_amount) && (Lightrail::SplitTenderValidator.has_stripe_payment_option?(charge_params))
+      if lr_share && (lr_share < total_amount) && (Lightrail::SplitTenderValidator.has_stripe_payment_option?(charge_params))
         stripe_share = total_amount - lr_share
         lr_share = stripe_share < 50 ? lr_share - (50-stripe_share) : lr_share
         stripe_share = total_amount - lr_share
-      elsif (lr_share < total_amount)
+      elsif lr_share && (lr_share < total_amount)
         raise Lightrail::BadParameterError.new('Please provide a Stripe payment method to complete the transaction.')
       else
-        stripe_share = 0
+        stripe_share = charge_params[:amount]
       end
 
       {
-          lightrail_amount: lr_share,
+          lightrail_amount: lr_share || 0,
           stripe_amount: stripe_share
       }
     end

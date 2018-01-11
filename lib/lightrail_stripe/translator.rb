@@ -29,7 +29,7 @@ module Lightrail
       lightrail_params[:contact_id] ||= Lightrail::Validator.get_contact_id(lightrail_params)
       lightrail_params[:shopper_id] ||= Lightrail::Validator.get_shopper_id(lightrail_params)
       if (lightrail_params[:contact_id] || lightrail_params[:shopper_id])
-        lightrail_params = Lightrail::Contact.replace_contact_id_or_shopper_id_with_card_id(lightrail_params)
+        lightrail_params = Lightrail::Account.replace_contact_id_or_shopper_id_with_card_id(lightrail_params)
       end
 
       lightrail_params[:code] ||= Lightrail::Validator.get_code(lightrail_params)
@@ -68,7 +68,7 @@ module Lightrail
       lr_transaction_params[:value] ||= convert_amount_to_negative_value ? -(lr_transaction_params[:amount].abs) : lr_transaction_params[:amount].abs
 
       if (Lightrail::Validator.has_valid_contact_id?(lr_transaction_params) || Lightrail::Validator.has_valid_shopper_id?(lr_transaction_params))
-        lr_transaction_params = Lightrail::Contact.replace_contact_id_or_shopper_id_with_card_id(lr_transaction_params)
+        lr_transaction_params = Lightrail::Account.replace_contact_id_or_shopper_id_with_card_id(lr_transaction_params)
       end
 
       lr_transaction_params

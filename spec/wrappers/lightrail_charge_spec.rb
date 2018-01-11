@@ -86,7 +86,7 @@ RSpec.describe Lightrail::LightrailCharge do
       end
 
       it "creates a drawdown contactId transaction with minimum required params" do
-        allow(Lightrail::Contact).to receive(:get_account_card_id_by_contact_id).with(example_contact_id, 'USD').and_return(example_card_id)
+        allow(Lightrail::Account).to receive(:retrieve).with({contact_id: example_contact_id, currency: 'USD'}).and_return({'cardId' => example_card_id})
         expect(lightrail_connection).to receive(:make_post_request_and_parse_response).with(/cards\/#{card_id_charge_params[:cardId]}\/transactions/, hash_including(:value, :currency, :userSuppliedId)).and_return({"transaction" => {}})
 
         lightrail_charge.create(contact_id_charge_params)
@@ -94,7 +94,7 @@ RSpec.describe Lightrail::LightrailCharge do
 
       it "creates a drawdown shopperId transaction with minimum required params" do
         allow(Lightrail::Contact).to receive(:get_contact_id_from_id_or_shopper_id).with(hash_including({shopper_id: example_shopper_id})).and_return(example_contact_id)
-        allow(Lightrail::Contact).to receive(:get_account_card_id_by_contact_id).with(example_contact_id, 'USD').and_return(example_card_id)
+        allow(Lightrail::Account).to receive(:retrieve).with({contact_id: example_contact_id, currency: 'USD'}).and_return({'cardId' => example_card_id})
         expect(lightrail_connection).to receive(:make_post_request_and_parse_response).with(/cards\/#{card_id_charge_params[:cardId]}\/transactions/, hash_including(:value, :currency, :userSuppliedId)).and_return({"transaction" => {}})
 
         lightrail_charge.create(shopper_id_charge_params)

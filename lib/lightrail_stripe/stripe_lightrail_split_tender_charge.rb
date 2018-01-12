@@ -12,7 +12,7 @@ module Lightrail
       stripe_share = total_amount - lr_share
 
       if lr_share > 0 # start with lightrail charge first
-        lightrail_charge_params = Lightrail::Translator.construct_pending_charge_params_from_split_tender(charge_params, lr_share)
+        lightrail_charge_params = Lightrail::Translator.construct_lightrail_pending_charge_params_from_split_tender(charge_params, lr_share)
 
         lightrail_pending_transaction = Lightrail::LightrailCharge.create(lightrail_charge_params)
 
@@ -62,8 +62,8 @@ module Lightrail
 
       stripe_share = total_amount - lr_share
 
-      if lr_share > 0 # start with lightrail charge first
-        lightrail_charge_params = Lightrail::Translator.construct_pending_charge_params_from_split_tender(charge_params, lr_share)
+      if lr_share > 0 # only need to simulate Lightrail transaction
+        lightrail_charge_params = Lightrail::Translator.construct_lightrail_charge_params_from_split_tender(charge_params, lr_share)
 
         lightrail_simulated_transaction = Lightrail::LightrailCharge.simulate(lightrail_charge_params)
 

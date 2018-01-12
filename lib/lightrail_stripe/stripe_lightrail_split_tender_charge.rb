@@ -54,6 +54,40 @@ module Lightrail
       self.create(charge_params, lr_share)
     end
 
+    def self.simulate (charge_params, lr_share)
+      Lightrail::SplitTenderValidator.validate_split_tender_charge_params!(charge_params)
+
+      total_amount = charge_params[:amount]
+      currency = charge_params[:currency]
+
+      stripe_share = total_amount - lr_share
+
+      if lr_share > 0 # start with lightrail charge first
+        lightrail_charge_params = Lightrail::Translator.construct_pending_charge_params_from_split_tender(charge_params, lr_share)
+
+        lightrail_simulated_transaction = Lightrail::LightrailCharge.simulate(lightrail_charge_params)
+
+        lr_final_share = lightrail_simulated_transaction.value
+      end
+
+      split_tender_charge_payment_summary = {
+          total_amount: total_amount,
+          currency: currency,
+          lightrail_amount: lr_final_share ? lr_final_share : 0,
+          stripe_amount: lr_final_share ? total_amount - lr_final_share.abs : total_amount
+      }
+
+      self.new({lightrail_charge: lightrail_simulated_transaction, stripe_charge: nil, payment_summary: split_tender_charge_payment_summary})
+    end
+
+    def self.simulate_with_automatic_split (charge_params)
+      Lightrail::SplitTenderValidator.validate_split_tender_charge_params!(charge_params)
+
+      split_amounts = self.determine_split!(charge_params)
+      lr_share = split_amounts[:lightrail_amount]
+      self.simulate(charge_params, lr_share)
+    end
+
 
     private
 

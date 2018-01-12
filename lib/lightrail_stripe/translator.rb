@@ -19,10 +19,10 @@ module Lightrail
       self.stripe_params_to_lightrail!(stripe_style_params, false)
     end
 
-    def self.construct_pending_charge_params_from_split_tender(split_tender_charge_params, lr_share)
+    def self.construct_lightrail_charge_params_from_split_tender(split_tender_charge_params, lr_share)
       lightrail_params = split_tender_charge_params.clone
 
-      lightrail_params[:pending] = true
+      lightrail_params[:pending] ||= lightrail_params[:capture] === nil ? false : !lightrail_params.delete(:capture)
       lightrail_params[:value] = -lr_share
       lightrail_params.delete(:amount)
 
@@ -36,6 +36,13 @@ module Lightrail
       lightrail_params[:cardId] ||= Lightrail::Validator.get_card_id(lightrail_params)
 
       lightrail_params[:userSuppliedId] ||= Lightrail::Validator.get_or_create_user_supplied_id(lightrail_params)
+
+      lightrail_params
+    end
+
+    def self.construct_lightrail_pending_charge_params_from_split_tender(split_tender_charge_params, lr_share)
+      lightrail_params = self.construct_lightrail_charge_params_from_split_tender(split_tender_charge_params, lr_share)
+      lightrail_params[:pending] = true
 
       lightrail_params
     end

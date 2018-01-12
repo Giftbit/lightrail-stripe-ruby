@@ -15,6 +15,18 @@ module Lightrail
       self.new(response)
     end
 
+    def self.simulate (charge_params)
+      Lightrail::Validator.validate_charge_object! (charge_params)
+      charge_params_to_send_to_lightrail = Lightrail::Translator.charge_params_stripe_to_lightrail(charge_params)
+
+      charge_method = charge_params_to_send_to_lightrail[:code] ? 'code' : 'cardId'
+
+      response = (charge_method == 'code') ?
+          Lightrail::Code.simulate_charge(charge_params_to_send_to_lightrail) :
+          Lightrail::Card.simulate_charge(charge_params_to_send_to_lightrail)
+
+      self.new(response)
+    end
 
     def cancel! (new_request_body=nil)
       handle_pending(self, 'void', new_request_body)

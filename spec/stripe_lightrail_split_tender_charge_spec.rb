@@ -6,6 +6,8 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
   let(:lightrail_connection) {Lightrail::Connection}
   let(:lightrail_value) {Lightrail::LightrailValue}
   let(:lightrail_charge) {Lightrail::LightrailCharge}
+  let(:lightrail_contact) {Lightrail::Contact}
+  let(:lightrail_account) {Lightrail::Account}
   let(:stripe_charge) {Stripe::Charge}
 
   let(:example_code) {'this-is-a-code'}
@@ -79,7 +81,7 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
         charge_params.delete(:code)
         charge_params[:contact_id] = example_contact_id
 
-        allow(Lightrail::Account).to receive(:retrieve).with(hash_including(contact_id: example_contact_id, currency: 'USD')).and_return({'cardId' => example_card_id})
+        allow(lightrail_account).to receive(:retrieve).with(hash_including(contact_id: example_contact_id, currency: 'USD')).and_return({'cardId' => example_card_id})
 
         expect(lightrail_charge).to receive(:create).with(hash_including({pending: true, value: -450})).and_return(lightrail_charge_instance)
         expect(stripe_charge).to receive(:create).with(hash_including({amount: 550})).and_return(stripe_charge_object)
@@ -92,8 +94,8 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
         charge_params.delete(:code)
         charge_params[:shopper_id] = example_shopper_id
 
-        allow(Lightrail::Contact).to receive(:get_contact_id_from_id_or_shopper_id).with(hash_including({shopper_id: example_shopper_id})).and_return(example_contact_id)
-        allow(Lightrail::Account).to receive(:retrieve).with({contact_id: example_contact_id, currency: 'USD'}).and_return({'cardId' => example_card_id})
+        allow(lightrail_contact).to receive(:get_contact_id_from_id_or_shopper_id).with(hash_including({shopper_id: example_shopper_id})).and_return(example_contact_id)
+        allow(lightrail_account).to receive(:retrieve).with({contact_id: example_contact_id, currency: 'USD'}).and_return({'cardId' => example_card_id})
 
         expect(lightrail_charge).to receive(:create).with(hash_including({pending: true, value: -450})).and_return(lightrail_charge_instance)
         expect(stripe_charge).to receive(:create).with(hash_including({amount: 550})).and_return(stripe_charge_object)

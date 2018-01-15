@@ -52,6 +52,7 @@ module Lightrail
       stripe_params[:amount] = stripe_share
 
       Lightrail::Constants::LIGHTRAIL_PAYMENT_METHODS.each {|charge_param_key| stripe_params.delete(charge_param_key)}
+      Lightrail::Constants::LIGHTRAIL_USER_SUPPLIED_ID_KEYS.each {|supplied_id_key| stripe_params.delete(supplied_id_key)}
 
       stripe_params
     end

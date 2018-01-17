@@ -6,12 +6,15 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
   let(:lightrail_connection) {Lightrail::Connection}
   let(:lightrail_value) {Lightrail::LightrailValue}
   let(:lightrail_charge) {Lightrail::LightrailCharge}
+  let(:lightrail_contact) {Lightrail::Contact}
+  let(:lightrail_account) {Lightrail::Account}
   let(:stripe_charge) {Stripe::Charge}
 
   let(:example_code) {'this-is-a-code'}
   let(:example_card_id) {'this-is-a-card-id'}
   let(:example_contact_id) {'this-is-a-contact-id'}
   let(:example_shopper_id) {'this-is-a-shopper-id'}
+  let(:example_user_supplied_id) {'this-is-a-user-supplied-id'}
   let(:example_pending_transaction_id) {'transaction-pending-123456'}
   let(:example_captured_transaction_id) {'transaction-captured-123456'}
 
@@ -20,6 +23,14 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
       currency: 'USD',
       code: example_code,
       source: 'tok_mastercard',
+  }}
+
+  let(:charge_params_with_user_supplied_id) {{
+      amount: 1000,
+      currency: 'USD',
+      shopper_id: example_shopper_id,
+      source: 'tok_mastercard',
+      userSuppliedId: example_user_supplied_id
   }}
 
   let (:lightrail_charge_instance) {instance_double(lightrail_charge)}
@@ -79,7 +90,7 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
         charge_params.delete(:code)
         charge_params[:contact_id] = example_contact_id
 
-        allow(Lightrail::Account).to receive(:retrieve).with(hash_including(contact_id: example_contact_id, currency: 'USD')).and_return({'cardId' => example_card_id})
+        allow(lightrail_account).to receive(:retrieve).with(hash_including(contact_id: example_contact_id, currency: 'USD')).and_return({'cardId' => example_card_id})
 
         expect(lightrail_charge).to receive(:create).with(hash_including({pending: true, value: -450})).and_return(lightrail_charge_instance)
         expect(stripe_charge).to receive(:create).with(hash_including({amount: 550})).and_return(stripe_charge_object)
@@ -92,14 +103,25 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
         charge_params.delete(:code)
         charge_params[:shopper_id] = example_shopper_id
 
-        allow(Lightrail::Contact).to receive(:get_contact_id_from_id_or_shopper_id).with(hash_including({shopper_id: example_shopper_id})).and_return(example_contact_id)
-        allow(Lightrail::Account).to receive(:retrieve).with({contact_id: example_contact_id, currency: 'USD'}).and_return({'cardId' => example_card_id})
+        allow(lightrail_contact).to receive(:get_contact_id_from_id_or_shopper_id).with(hash_including({shopper_id: example_shopper_id})).and_return(example_contact_id)
+        allow(lightrail_account).to receive(:retrieve).with({contact_id: example_contact_id, currency: 'USD'}).and_return({'cardId' => example_card_id})
 
         expect(lightrail_charge).to receive(:create).with(hash_including({pending: true, value: -450})).and_return(lightrail_charge_instance)
         expect(stripe_charge).to receive(:create).with(hash_including({amount: 550})).and_return(stripe_charge_object)
         expect(lightrail_charge_instance).to receive(:capture!).and_return(lightrail_captured_transaction)
 
         split_tender_charge.create(charge_params, 450)
+      end
+
+      it "passes the userSuppliedId to Lightrail and not to Stripe" do
+        allow(lightrail_contact).to receive(:get_contact_id_from_id_or_shopper_id).with(hash_including({shopper_id: example_shopper_id})).and_return(example_contact_id)
+        allow(lightrail_account).to receive(:retrieve).with({contact_id: example_contact_id, currency: 'USD'}).and_return({'cardId' => example_card_id})
+
+        expect(lightrail_charge).to receive(:create).with(hash_including({pending: true, value: -450, userSuppliedId: example_user_supplied_id})).and_return(lightrail_charge_instance)
+        expect(stripe_charge).to receive(:create).with(hash_excluding(:userSuppliedId, :user_supplied_id)).and_return(stripe_charge_object)
+        expect(lightrail_charge_instance).to receive(:capture!).and_return(lightrail_captured_transaction)
+
+        split_tender_charge.create(charge_params_with_user_supplied_id, 450)
       end
 
       it "adds the Stripe transaction ID to Lightrail metadata" do
@@ -176,6 +198,19 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
         expect(lightrail_charge_instance).to receive(:capture!).and_return(lightrail_captured_transaction)
 
         split_tender_charge.create_with_automatic_split(charge_params)
+      end
+
+      it "passes the Stripe and Lightrail amounts to .create - including userSuppliedId" do
+        allow(lightrail_contact).to receive(:get_contact_id_from_id_or_shopper_id).with(hash_including({shopper_id: example_shopper_id})).and_return(example_contact_id)
+        allow(lightrail_account).to receive(:retrieve).with({contact_id: example_contact_id, currency: 'USD'}).and_return({'cardId' => example_card_id})
+
+        expect(lightrail_account).to receive(:simulate_charge).with(hash_including(charge_params_with_user_supplied_id)).and_return(lightrail_simulated_transaction)
+
+        expect(lightrail_charge).to receive(:create).with(hash_including({value: -450, userSuppliedId: example_user_supplied_id})).and_return(lightrail_charge_instance)
+        expect(stripe_charge).to receive(:create).with(hash_excluding(:userSuppliedId, :user_supplied_id)).and_return(stripe_charge_object)
+        expect(lightrail_charge_instance).to receive(:capture!).and_return(lightrail_captured_transaction)
+
+        split_tender_charge.create_with_automatic_split(charge_params_with_user_supplied_id)
       end
     end
   end

@@ -1,4 +1,4 @@
-# Lightrail Stripe Integration Gem (alpha)
+# Lightrail Stripe Integration Gem
 
 Lightrail is a modern platform for digital account credits, gift cards, promotions, and points (to learn more, visit [Lightrail](https://www.lightrail.com/)). The Lightrail Stripe gem provides a client library for developers to easily use Lightrail alongside [Stripe](https://stripe.com/).
 
@@ -250,22 +250,16 @@ gift_fund = Lightrail::LightrailFund.create({
 
 ## Installation
 
-This gem is in alpha mode and is not yet available on RubyGems. You can use it in your project by adding this line to your application's Gemfile:
+This gem is available on RubyGems.org. To use it in your project, add this line to your application's Gemfile:
 
 ```ruby
-gem 'lightrail_stripe', :git => 'https://github.com/Giftbit/lightrail-stripe-ruby.git'
+gem 'lightrail_stripe'
 ```
 
 And then execute:
 
 ```
 $ bundle
-```
-
-Note that this gem depends on the [Lightrail Client Gem](https://github.com/Giftbit/lightrail-client-ruby), which is also in alpha mode and may be added in a similar way:
-
-```ruby
-gem 'lightrail_client', :git => 'https://github.com/Giftbit/lightrail-client-ruby.git'
 ```
 
 ## Contributing

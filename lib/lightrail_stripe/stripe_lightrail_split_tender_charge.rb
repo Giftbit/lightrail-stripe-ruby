@@ -4,7 +4,7 @@ module Lightrail
 
     def self.create (charge_params, lr_share)
       # Convert to Translator.translate_split_tender_charge_params!()
-      Lightrail::SplitTenderValidator.validate_split_tender_charge_params!(charge_params)
+      Lightrail::SplitTenderValidator.validate_split_tender_charge_params!(charge_params, lr_share)
 
       total_amount = charge_params[:amount]
       currency = charge_params[:currency]
@@ -55,7 +55,7 @@ module Lightrail
     end
 
     def self.simulate (charge_params, lr_share)
-      Lightrail::SplitTenderValidator.validate_split_tender_charge_params!(charge_params)
+      Lightrail::SplitTenderValidator.validate_split_tender_charge_params!(charge_params, lr_share)
 
       total_amount = charge_params[:amount]
       currency = charge_params[:currency]

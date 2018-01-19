@@ -1,10 +1,11 @@
 module Lightrail
   class SplitTenderValidator < Lightrail::Validator
 
-    def self.validate_split_tender_charge_params! (split_tender_charge_params)
+    def self.validate_split_tender_charge_params! (split_tender_charge_params, lr_share=0)
       begin
         return true if ((split_tender_charge_params.is_a? Hash) &&
             Lightrail::Validator.validate_amount!(split_tender_charge_params[:amount]) &&
+            (split_tender_charge_params[:amount] >= lr_share) &&
             Lightrail::Validator.validate_currency!(split_tender_charge_params[:currency]) &&
             (self.has_lightrail_payment_option?(split_tender_charge_params) ||
                 self.has_stripe_payment_option?(split_tender_charge_params)))

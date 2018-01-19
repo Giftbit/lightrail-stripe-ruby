@@ -185,6 +185,11 @@ RSpec.describe Lightrail::StripeLightrailSplitTenderCharge do
         charge_params.delete(:source)
         expect {split_tender_charge.create(charge_params, 0)}.to raise_error(Lightrail::LightrailArgumentError)
       end
+
+      it "throws an error when Lightrail share set to more than total split tender amount" do
+        expect {split_tender_charge.create(charge_params, 10000000)}.to raise_error(Lightrail::LightrailArgumentError)
+      end
+
     end
   end
 

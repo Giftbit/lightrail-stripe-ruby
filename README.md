@@ -272,6 +272,14 @@ After checking out the repo, run `bin/setup` to install dependencies, then run `
 
 To install this gem onto your local machine, run `bundle exec rake install`.
 
+### Publishing
+
+Make sure to bump the version number before publishing changes. 
+
+Run `gem build lightrail_stripe` to build the gem locally. The output will contain the gem name, version, and filename of the built `.gem`. 
+
+Run `gem push {{filename}}` to publish to RubyGems. 
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
